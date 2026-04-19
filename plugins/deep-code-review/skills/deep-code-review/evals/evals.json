@@ -1,0 +1,27 @@
+{
+  "skill_name": "deep-code-review",
+  "schema_version": 1,
+  "evals": [
+    {
+      "id": 1,
+      "eval_name": "eval-pr4",
+      "prompt": "Deep review PR #4",
+      "expected_output": "Structured findings table with scored deduplicated findings across multiple angles. Diff fetched via gh pr diff. Logbook written to ~/logbooks/code-review/pr-4.sqlite and ~/logbooks/code-review/pr-4.jsonl. Angles derived from the actual PR diff.",
+      "files": []
+    },
+    {
+      "id": 2,
+      "eval_name": "eval-synthetic-diff",
+      "prompt": "Review this diff:\n\ndiff --git a/src/auth/handler.ts b/src/auth/handler.ts\nnew file mode 100644\nindex 0000000..a3f7c2d\n--- /dev/null\n+++ b/src/auth/handler.ts\n@@ -0,0 +1,52 @@\n+import { Request, Response } from 'express';\n+import { sign } from 'jsonwebtoken';\n+import { db } from '../database';\n+\n+const JWT_SECRET = 'sk-prod-a8f3k2m9x1p7z4';\n+\n+export async function loginUser(req: Request, res: Response) {\n+  const { username, password } = req.body;\n+\n+  const user = await db.query(\n+    `SELECT * FROM users WHERE username = '${username}'`\n+  );\n+\n+  if (!user) {\n+    return res.status(401).json({ error: 'Invalid credentials' });\n+  }\n+\n+  if (user.password === password) {\n+    const token = sign({ userId: user.id, role: user.role }, JWT_SECRET, {\n+      expiresIn: '30d',\n+    });\n+\n+    const permissions = [];\n+    for (const permId of user.permissionIds) {\n+      const perm = await db.query(`SELECT * FROM permissions WHERE id = ${permId}`);\n+      permissions.push(perm.name);\n+    }\n+\n+    console.log(`User ${username} logged in with token ${token}`);\n+\n+    return res.json({ token, permissions });\n+  }\n+\n+  return res.status(401).json({ error: 'Invalid credentials' });\n+}\n+\n+export async function getUser(req: Request, res: Response) {\n+  const userId = req.params.id;\n+  const user = await db.query(`SELECT * FROM users WHERE id = ${userId}`);\n+  return res.json(user);\n+}\n+\n+export async function updateProfile(req: Request, res: Response) {\n+  const { bio, avatar } = req.body;\n+  const userId = req.user.id;\n+\n+  await db.query(\n+    `UPDATE users SET bio = '${bio}', avatar = '${avatar}' WHERE id = ${userId}`\n+  );\n+\n+  return res.json({ success: true });\n+}\ndiff --git a/src/auth/routes.ts b/src/auth/routes.ts\nnew file mode 100644\nindex 0000000..b4e2f81\n--- /dev/null\n+++ b/src/auth/routes.ts\n@@ -0,0 +1,12 @@\n+import { Router } from 'express';\n+import { loginUser, getUser, updateProfile } from './handler';\n+\n+const router = Router();\n+\n+router.post('/login', loginUser);\n+router.get('/user/:id', getUser);\n+router.put('/user/:id/profile', updateProfile);\n+\n+export default router;",
+      "expected_output": "Security findings: hardcoded JWT secret, SQL injection in 3 places, plaintext password comparison, token logged to console. Performance: N+1 query for permissions. Test-quality: no tests. Correctness: missing null checks, missing auth middleware. All scored and written to logbook.",
+      "files": []
+    },
+    {
+      "id": 3,
+      "eval_name": "eval-current-branch",
+      "prompt": "Review the changes on the current branch",
+      "expected_output": "Low-severity findings for version bump and docs changes. Branch slug used in logbook path. Angles limited to maintainability and correctness (docs-only diff, few heuristic matches).",
+      "files": []
+    }
+  ]
+}

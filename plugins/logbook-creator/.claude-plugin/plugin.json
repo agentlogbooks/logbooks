@@ -1,0 +1,8 @@
+{
+  "name": "logbook-creator",
+  "version": "1.1.0",
+  "description": "Design and create a logbook — a shared, queryable, schema-stable working surface for agents and humans to append, annotate, and query across sessions.",
+  "author": {
+    "name": "agentlogbooks"
+  }
+}

@@ -1,0 +1,52 @@
+# logbook-creator
+
+A Claude plugin that helps you design and create a logbook — a shared, queryable, schema-stable working surface that agents and humans append to, annotate, and query across sessions.
+
+## Setup
+
+### Claude Desktop
+
+Works in both **Chat** and **Cowork** modes — the plugin installs once and is available everywhere.
+
+**In Chat mode:**
+
+1. Click **Customize** in the left sidebar
+2. Open the **Directory** and select the **Plugins** tab
+3. Switch to the **Personal** tab, click **"+"** → **Add marketplace**
+4. Enter `agentlogbooks/logbook-creator` and click **Sync**
+
+**In Cowork mode:**
+
+1. Click **Customize** in the left sidebar
+2. Next to **Personal plugins**, click **"+"** → **Add marketplace**
+3. Enter `agentlogbooks/logbook-creator` and click **Sync**
+
+**Upload manually:**
+
+1. Go to [github.com/agentlogbooks/logbook-creator](https://github.com/agentlogbooks/logbook-creator) → green **Code** button → **Download ZIP**
+2. Rename the file from `.zip` to `.plugin`
+3. In the same plugin menu above, choose **Upload plugin** instead and select the file
+
+### Claude Code (CLI)
+
+```shell
+/plugin marketplace add agentlogbooks/logbook-creator
+/plugin install logbook-creator@agentlogbooks-logbook-creator
+```
+
+Or from a local clone:
+
+```bash
+git clone https://github.com/agentlogbooks/logbook-creator.git ~/logbook-creator
+claude --plugin-dir ~/logbook-creator
+```
+
+## Usage
+
+Ask Claude to create a logbook when you need to track structured entries across sessions, stage drafts before pushing to a target system, or coordinate state between agents. Invoke the skill directly with:
+
+```
+/logbook-creator
+```
+
+Claude will walk you through the motivation, schema, and storage choice, then write the logbook file and a sibling spec describing it.

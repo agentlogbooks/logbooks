@@ -1,0 +1,23 @@
+{
+  "name": "logbooks",
+  "owner": {
+    "name": "agentlogbooks"
+  },
+  "metadata": {
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "logbook-creator",
+      "source": "./plugins/logbook-creator",
+      "version": "1.1.0",
+      "description": "Design and create a logbook — a shared, queryable, schema-stable working surface for agents and humans to append, annotate, and query across sessions."
+    },
+    {
+      "name": "deep-code-review",
+      "source": "./plugins/deep-code-review",
+      "version": "1.0.0",
+      "description": "Multi-phase deep code review that detects angles, researches best practices, runs parallel subagent review, deduplicates findings, and scores by severity × confidence."
+    }
+  ]
+}

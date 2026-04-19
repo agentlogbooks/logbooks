@@ -1,0 +1,32 @@
+# findings.logbook.local.yaml — LOCAL OVERRIDES (never commit this file)
+#
+# Copy this file to findings.logbook.local.yaml and fill in real values.
+# The sibling findings.logbook.md is the shared spec — read-only.
+# This file is the only place where resolved IDs and credentials live.
+
+bindings:
+  - driver: airtable
+    label: angles
+    address: airtable://<BASE_ID>/<ANGLES_TABLE_ID>?pat_env=AIRTABLE_PAT
+    status: active          # change pending-auth → active once IDs are filled in
+
+  - driver: airtable
+    label: findings
+    address: airtable://<BASE_ID>/<FINDINGS_TABLE_ID>?pat_env=AIRTABLE_PAT
+    status: active
+
+  - driver: google_sheets
+    label: angles
+    address: gsheets://<SPREADSHEET_ID>/angles?gws_account=<YOUR_EMAIL>
+    status: active
+
+  - driver: google_sheets
+    label: findings
+    address: gsheets://<SPREADSHEET_ID>/findings?gws_account=<YOUR_EMAIL>
+    status: active
+
+# Environment variables referenced above:
+#   AIRTABLE_PAT — your Airtable personal access token
+#
+# To activate Google Sheets: run `gws auth login` once, then fill in SPREADSHEET_ID.
+# To activate Airtable: set AIRTABLE_PAT in your shell profile, fill in BASE_ID + TABLE_IDs.

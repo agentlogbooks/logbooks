@@ -2,6 +2,7 @@
   "name": "deep-code-review",
   "version": "1.0.0",
   "description": "Multi-phase deep code review that detects angles, researches best practices, runs parallel subagent review, deduplicates findings, and scores by severity × confidence.",
+  "source": "./skills",
   "author": {
     "name": "agentlogbooks"
   }

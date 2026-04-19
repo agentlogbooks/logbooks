@@ -4,24 +4,69 @@
   "evals": [
     {
       "id": 1,
-      "eval_name": "eval-pr4",
-      "prompt": "Deep review PR #4",
-      "expected_output": "Structured findings table with scored deduplicated findings across multiple angles. Diff fetched via gh pr diff. Logbook written to ~/logbooks/code-review/pr-4.sqlite and ~/logbooks/code-review/pr-4.jsonl. Angles derived from the actual PR diff.",
-      "files": []
+      "eval_name": "eval-synthetic-auth-diff",
+      "description": "Fixed synthetic diff with multiple security issues — no network required, fully reproducible",
+      "prompt": "Review this diff:\n\ndiff --git a/src/auth/handler.ts b/src/auth/handler.ts\nnew file mode 100644\nindex 0000000..a3f7c2d\n--- /dev/null\n+++ b/src/auth/handler.ts\n@@ -0,0 +1,52 @@\n+import { Request, Response } from 'express';\n+import { sign } from 'jsonwebtoken';\n+import { db } from '../database';\n+\n+const JWT_SECRET = 'sk-prod-a8f3k2m9x1p7z4';\n+\n+export async function loginUser(req: Request, res: Response) {\n+  const { username, password } = req.body;\n+\n+  const user = await db.query(\n+    `SELECT * FROM users WHERE username = '${username}'`\n+  );\n+\n+  if (!user) {\n+    return res.status(401).json({ error: 'Invalid credentials' });\n+  }\n+\n+  if (user.password === password) {\n+    const token = sign({ userId: user.id, role: user.role }, JWT_SECRET, {\n+      expiresIn: '30d',\n+    });\n+\n+    const permissions = [];\n+    for (const permId of user.permissionIds) {\n+      const perm = await db.query(`SELECT * FROM permissions WHERE id = ${permId}`);\n+      permissions.push(perm.name);\n+    }\n+\n+    console.log(`User ${username} logged in with token ${token}`);\n+\n+    return res.json({ token, permissions });\n+  }\n+\n+  return res.status(401).json({ error: 'Invalid credentials' });\n+}\n+\n+export async function getUser(req: Request, res: Response) {\n+  const userId = req.params.id;\n+  const user = await db.query(`SELECT * FROM users WHERE id = ${userId}`);\n+  return res.json(user);\n+}\n+\n+export async function updateProfile(req: Request, res: Response) {\n+  const { bio, avatar } = req.body;\n+  const userId = req.user.id;\n+\n+  await db.query(\n+    `UPDATE users SET bio = '${bio}', avatar = '${avatar}' WHERE id = ${userId}`\n+  );\n+\n+  return res.json({ success: true });\n+}\ndiff --git a/src/auth/routes.ts b/src/auth/routes.ts\nnew file mode 100644\nindex 0000000..b4e2f81\n--- /dev/null\n+++ b/src/auth/routes.ts\n@@ -0,0 +1,12 @@\n+import { Router } from 'express';\n+import { loginUser, getUser, updateProfile } from './handler';\n+\n+const router = Router();\n+\n+router.post('/login', loginUser);\n+router.get('/user/:id', getUser);\n+router.put('/user/:id/profile', updateProfile);\n+\n+export default router;",
+      "expected_output": {
+        "angles_must_include": ["security", "maintainability", "correctness"],
+        "angles_must_not_include": ["test-quality"],
+        "slug_pattern": "^paste-",
+        "findings_security_must_include": [
+          { "keyword": "JWT_SECRET", "severity_min": "critical" },
+          { "keyword": "sql injection", "severity_min": "critical", "count_min": 2 },
+          { "keyword": "token", "file": "src/auth/handler.ts" }
+        ],
+        "findings_correctness_must_include": [
+          { "keyword": "null", "file": "src/auth/handler.ts" }
+        ],
+        "logbook_written": true,
+        "logbook_path_pattern": "~/logbooks/code-review/paste-*.sqlite"
+      }
     },
     {
       "id": 2,
-      "eval_name": "eval-synthetic-diff",
-      "prompt": "Review this diff:\n\ndiff --git a/src/auth/handler.ts b/src/auth/handler.ts\nnew file mode 100644\nindex 0000000..a3f7c2d\n--- /dev/null\n+++ b/src/auth/handler.ts\n@@ -0,0 +1,52 @@\n+import { Request, Response } from 'express';\n+import { sign } from 'jsonwebtoken';\n+import { db } from '../database';\n+\n+const JWT_SECRET = 'sk-prod-a8f3k2m9x1p7z4';\n+\n+export async function loginUser(req: Request, res: Response) {\n+  const { username, password } = req.body;\n+\n+  const user = await db.query(\n+    `SELECT * FROM users WHERE username = '${username}'`\n+  );\n+\n+  if (!user) {\n+    return res.status(401).json({ error: 'Invalid credentials' });\n+  }\n+\n+  if (user.password === password) {\n+    const token = sign({ userId: user.id, role: user.role }, JWT_SECRET, {\n+      expiresIn: '30d',\n+    });\n+\n+    const permissions = [];\n+    for (const permId of user.permissionIds) {\n+      const perm = await db.query(`SELECT * FROM permissions WHERE id = ${permId}`);\n+      permissions.push(perm.name);\n+    }\n+\n+    console.log(`User ${username} logged in with token ${token}`);\n+\n+    return res.json({ token, permissions });\n+  }\n+\n+  return res.status(401).json({ error: 'Invalid credentials' });\n+}\n+\n+export async function getUser(req: Request, res: Response) {\n+  const userId = req.params.id;\n+  const user = await db.query(`SELECT * FROM users WHERE id = ${userId}`);\n+  return res.json(user);\n+}\n+\n+export async function updateProfile(req: Request, res: Response) {\n+  const { bio, avatar } = req.body;\n+  const userId = req.user.id;\n+\n+  await db.query(\n+    `UPDATE users SET bio = '${bio}', avatar = '${avatar}' WHERE id = ${userId}`\n+  );\n+\n+  return res.json({ success: true });\n+}\ndiff --git a/src/auth/routes.ts b/src/auth/routes.ts\nnew file mode 100644\nindex 0000000..b4e2f81\n--- /dev/null\n+++ b/src/auth/routes.ts\n@@ -0,0 +1,12 @@\n+import { Router } from 'express';\n+import { loginUser, getUser, updateProfile } from './handler';\n+\n+const router = Router();\n+\n+router.post('/login', loginUser);\n+router.get('/user/:id', getUser);\n+router.put('/user/:id/profile', updateProfile);\n+\n+export default router;",
-      "expected_output": "Security findings: hardcoded JWT secret, SQL injection in 3 places, plaintext password comparison, token logged to console. Performance: N+1 query for permissions. Test-quality: no tests. Correctness: missing null checks, missing auth middleware. All scored and written to logbook.",
-      "files": []
+      "eval_name": "eval-docs-only-diff",
+      "description": "Docs-majority diff must trigger docs-quality special rule regardless of diff size",
+      "prompt": "Review this diff:\n\ndiff --git a/README.md b/README.md\nindex abc..def 100644\n--- a/README.md\n+++ b/README.md\n@@ -1,3 +1,5 @@\n # My Project\n \n-Install with npm.\n+## Installation\n+\n+Install with `npm install my-project`. Run `npm start` to launch.\ndiff --git a/docs/guide.md b/docs/guide.md\nnew file mode 100644\n--- /dev/null\n+++ b/docs/guide.md\n@@ -0,0 +1,5 @@\n+# Guide\n+\n+See README for setup.\n+\n+Configuration options are listed below.",
+      "expected_output": {
+        "angles_must_include": ["maintainability", "correctness", "docs-quality"],
+        "angles_must_not_include": ["security", "data-integrity"],
+        "logbook_written": true
+      }
     },
     {
       "id": 3,
-      "eval_name": "eval-current-branch",
-      "prompt": "Review the changes on the current branch",
-      "expected_output": "Low-severity findings for version bump and docs changes. Branch slug used in logbook path. Angles limited to maintainability and correctness (docs-only diff, few heuristic matches).",
-      "files": []
+      "eval_name": "eval-negative-vague-opinion",
+      "description": "Vague opinion request with no diff or code reference must NOT trigger the skill pipeline",
+      "prompt": "What do you think of these changes?",
+      "expected_output": {
+        "skill_invoked": false,
+        "no_logbook_written": true,
+        "no_subagents_spawned": true
+      }
+    },
+    {
+      "id": 4,
+      "eval_name": "eval-dedup-cross-run",
+      "description": "Second run on same PR slug must mark findings that match existing logbook entries as duplicate-logbook rather than inserting fresh rows",
+      "prompt": "Review PR #42 [precondition: logbook ~/logbooks/code-review/pr-42.sqlite already contains a finding for src/auth.ts line 22 with status=new]",
+      "expected_output": {
+        "slug": "pr-42",
+        "has_status_duplicate_logbook": true,
+        "duplicate_ref_non_empty": true,
+        "no_duplicate_inserted_as_new": true
+      }
+    },
+    {
+      "id": 5,
+      "eval_name": "eval-angle-cap-short-diff",
+      "description": "A diff under 100 lines must produce at most 3 heuristic angles (plus always-on and applicable special-rule angles)",
+      "prompt": "Review this diff:\n\ndiff --git a/config.yaml b/config.yaml\n--- a/config.yaml\n+++ b/config.yaml\n@@ -1,3 +1,5 @@\n database:\n   host: localhost\n+  password: secret123\n+  token: abc\n   port: 5432",
+      "expected_output": {
+        "heuristic_angle_count_max": 3,
+        "angles_must_include": ["security"],
+        "total_angle_count_max": 6
+      }
     }
   ]
 }

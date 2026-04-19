@@ -41,7 +41,18 @@ git clone https://github.com/agentlogbooks/logbook-creator.git ~/logbook-creator
 claude --plugin-dir ~/logbook-creator
 ```
 
+## Plugins
+
+This repo contains two plugins:
+
+| Plugin | Skill | What it does |
+|---|---|---|
+| `logbook-creator` | `/logbook-creator` | Design and create a logbook — a shared, queryable, schema-stable working surface for agents and humans to append, annotate, and query across sessions. |
+| `deep-code-review` | `/deep-code-review` | Multi-phase deep code review: detect angles → research best practices → parallel subagent review → deduplicate → score findings by severity × confidence. |
+
 ## Usage
+
+### logbook-creator
 
 Ask Claude to create a logbook when you need to track structured entries across sessions, stage drafts before pushing to a target system, or coordinate state between agents. Invoke the skill directly with:
 
@@ -50,3 +61,14 @@ Ask Claude to create a logbook when you need to track structured entries across 
 ```
 
 Claude will walk you through the motivation, schema, and storage choice, then write the logbook file and a sibling spec describing it.
+
+### deep-code-review
+
+Run a deep multi-angle code review on a PR, branch, or diff:
+
+```
+/deep-code-review review PR #42
+/deep-code-review review current branch changes
+```
+
+Findings are scored by severity × confidence and persisted to a per-PR SQLite + JSONL logbook at `~/logbooks/code-review/`.

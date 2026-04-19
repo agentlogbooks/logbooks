@@ -1,5 +1,6 @@
 ---
 schema_version: 1
+# schema_version must match evals/evals.json schema_version — bump both together when the schema changes
 scope: solo-cross-machine
 bindings:
   # GOVERNANCE: This file is a shared repo artifact — permanently read-only once committed.
@@ -9,12 +10,10 @@ bindings:
   # Per-PR file backends — {slug} is replaced with the PR ref (e.g. pr-123) at runtime
   - driver: sqlite
     address_pattern: ~/logbooks/code-review/{slug}.sqlite
-    address: sqlite://~/logbooks/code-review/{slug}.sqlite?table=findings
-    note: creates both `angles` and `findings` tables; {slug} resolved per PR/session
+    note: creates both `angles` and `findings` tables; {slug} resolved per PR/session at runtime
   - driver: jsonl
     address_pattern: ~/logbooks/code-review/{slug}.jsonl
-    address: jsonl://~/logbooks/code-review/{slug}.jsonl
-    note: mixed record_type (angle | finding); {slug} resolved per PR/session
+    note: mixed record_type (angle | finding); {slug} resolved per PR/session at runtime
   # Cloud backends — shared across PRs; pr_ref + date stored as columns
   - driver: airtable
     label: angles
@@ -57,9 +56,13 @@ columns:
     values: [info, low, medium, high, critical]
   - name: confidence
     type: real
+    not_null: true
+    constraint: "BETWEEN 0.0 AND 1.0"
     note: 0.0–1.0, AI confidence in the finding
   - name: score
     type: integer
+    not_null: true
+    constraint: "BETWEEN 0 AND 100"
     note: 0–100, final weighted score (severity × confidence)
   - name: status
     type: enum
@@ -79,23 +82,29 @@ columns:
     type: date
     note: cloud backends only; ISO 8601
 
-# Angles table schema (secondary — documented here, not in columns above)
+# Angles table schema (secondary — documented separately because it is a related table, not a column of findings)
 angles_schema:
   - name: id
     type: integer
+    note: auto-increment primary key
   - name: name
     type: text
-    note: e.g. security, maintainability, correctness, performance
+    not_null: true
+    unique: true
+    note: e.g. security, maintainability, correctness, data-integrity; UNIQUE enforced in DDL
   - name: description
     type: text
+    not_null: true
     note: what this angle examines
   - name: source
     type: enum
+    not_null: true
     values: [always-on, heuristic, web-researched, user-defined]
+    note: user-defined = angle requested explicitly by the user, bypasses heuristic detection
   - name: research_notes
     type: text
     nullable: true
-    note: best practices summary from web research phase
+    note: best practices summary from web research phase; null for always-on and special-rule angles
 
 ---
 
@@ -152,7 +161,7 @@ Two backends are active immediately (SQLite and JSONL, one file per PR); two clo
 
 ## Pipeline phases
 
-1. **Angle detection** — analyse the diff/PR to identify relevant review dimensions. Always add `maintainability` and `correctness`. Add heuristic angles based on what the code touches (auth → security, DB queries → performance, public API → api-design, etc.).
+1. **Angle detection** — analyse the diff/PR to identify relevant review dimensions. Always add `maintainability` and `correctness`. Add heuristic angles based on what the code touches (auth → security, DB queries → data-integrity, public API → api-design, etc.).
 2. **Angle augmentation** — for each non-always-on angle, web-search for known best practices and store the summary in `research_notes`.
 3. **Subagent review** — one subagent per angle reads the diff/PR plus `research_notes`, produces findings with `severity` and `confidence`.
 4. **Deduplication** — mark findings as `duplicate-logbook` if a near-identical finding exists in this logbook for the same PR; mark `duplicate-pr` if a matching comment already exists on the PR (via `gh pr view --comments`).
@@ -165,26 +174,28 @@ Two backends are active immediately (SQLite and JSONL, one file per PR); two clo
 **Initialize a new PR review** (run once per PR):
 ```bash
 sqlite3 ~/logbooks/code-review/pr-123.sqlite "
+PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS angles (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  name TEXT NOT NULL,
+  name TEXT NOT NULL UNIQUE,
   description TEXT NOT NULL,
   source TEXT NOT NULL CHECK(source IN ('always-on','heuristic','web-researched','user-defined')),
   research_notes TEXT
 );
 CREATE TABLE IF NOT EXISTS findings (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
-  angle_id INTEGER REFERENCES angles(id),
+  angle_id INTEGER NOT NULL REFERENCES angles(id),
   finding TEXT NOT NULL,
   file_path TEXT,
   line_ref TEXT,
   severity TEXT NOT NULL CHECK(severity IN ('info','low','medium','high','critical')),
-  confidence REAL NOT NULL,
-  score INTEGER NOT NULL,
+  confidence REAL NOT NULL CHECK(confidence BETWEEN 0.0 AND 1.0),
+  score INTEGER NOT NULL CHECK(score BETWEEN 0 AND 100),
   status TEXT NOT NULL DEFAULT 'new' CHECK(status IN ('new','duplicate-logbook','duplicate-pr','addressed')),
   duplicate_ref TEXT,
   agent_model TEXT NOT NULL
 );
+CREATE INDEX IF NOT EXISTS idx_findings_angle_id ON findings(angle_id);
 "
 ```
 
@@ -231,8 +242,14 @@ echo '{"record_type":"angle","id":1,"name":"security","description":"Auth, injec
 
 **Append a finding record** (include `pr_ref` and `date` in JSONL even though they're encoded in the filename — makes records self-describing if extracted to a cloud backend later):
 ```bash
-echo '{"record_type":"finding","id":1,"angle_id":1,"finding":"API key logged in plaintext","file_path":"src/client.ts","line_ref":"88","severity":"critical","confidence":0.95,"score":95,"status":"new","duplicate_ref":"","agent_model":"claude-sonnet-4-6","pr_ref":"pr-123","date":"2026-04-19"}' \
-  >> ~/logbooks/code-review/pr-123.jsonl
+python3 -c "
+import json, datetime
+record = {'record_type':'finding','id':1,'angle_id':1,'finding':'API key logged in plaintext',
+          'file_path':'src/client.ts','line_ref':'88','severity':'critical','confidence':0.95,
+          'score':95,'status':'new','duplicate_ref':'','agent_model':'claude-sonnet-4-6',
+          'pr_ref':'pr-123','date':str(datetime.date.today())}
+print(json.dumps(record))
+" >> ~/logbooks/code-review/pr-123.jsonl
 ```
 
 **Top findings by score:**
@@ -269,11 +286,12 @@ Once `status: active` — append a finding:
 ```bash
 gws sheets spreadsheets values append \
   --params '{"spreadsheetId":"SPREADSHEET_ID_PLACEHOLDER","range":"findings!A1","valueInputOption":"RAW","insertDataOption":"INSERT_ROWS"}' \
-  --json '{"values":[["pr-123","'"$(date -I)"'","security","API key logged","","","critical","0.95","95","new","","claude-sonnet-4-6"]]}'
+  --json '{"values":[["pr-123","'"$(date -I)"'","security","heuristic","API key logged","","","critical","0.95","95","new","","claude-sonnet-4-6"]]}'
 ```
 
 Query last 20:
 ```bash
 gws sheets spreadsheets values get \
   --params '{"spreadsheetId":"SPREADSHEET_ID_PLACEHOLDER","range":"findings!A1:M21"}'
+# Columns A–M: pr_ref, date, angle_name, angle_source, finding, file_path, line_ref, severity, confidence, score, status, duplicate_ref, agent_model
 ```

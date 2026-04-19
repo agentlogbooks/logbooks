@@ -1,6 +1,6 @@
 ---
 name: logbook-creator
-description: Design and create a logbook — a shared, queryable, schema-stable working surface that agents and humans append to, annotate, and query across sessions. Use this skill whenever the user wants to track structured entries across sessions, stage draft data before pushing it to a target system (Jira, Miro, a database), set up a human-in-the-loop review surface for agent-produced work, coordinate state between multiple agents, or collect structured observations for later analysis or visualization. Also trigger on phrases like "I want to track X across sessions", "I need a draft layer before committing to Y", "let me review what the agent found before applying it", "multiple agents need to collaborate on this", "collect observations now and analyze later", or any situation where prose is starting to accumulate repeated structured entries that would be better shaped as rows. This skill creates the logbook itself and a spec file describing it — it does NOT create or modify skills. For wiring the logbook into a skill, hand off to skill-creator afterward.
+description: Design and create a logbook — a shared, queryable, schema-stable working surface that agents and humans append to, annotate, and query across sessions. Invoke when the user explicitly wants to track structured entries across multiple sessions or multiple contributors (e.g. "I want to track X across sessions", "I need a draft layer before committing to Jira", "let me review what the agent found before applying it", "multiple agents need to collaborate on this"). Also invoke when a document is accumulating repeated structured entries that would be better shaped as rows with named columns. Do NOT invoke for single-session analysis tasks, ad hoc data collection, or when the user asks to "collect" or "gather" information without mentioning cross-session reuse or multiple contributors — those are scratch tasks, not logbook tasks. This skill creates the logbook itself and a spec file — it does NOT create or modify skills. For wiring the logbook into a skill, hand off to skill-creator afterward.
 ---
 
 # Logbook Creator
@@ -117,9 +117,9 @@ If either answer is vague, push back with one of:
 - **Sharpen the motivation.** *"If you can't picture concretely appending or querying, reconsider: is this tracking, or would a short prose doc be a better fit?"*
 - **Commit to a trial.** *"Let's build a minimal version anyway — but the sunset rule is `if no entries in 2 weeks, archive.` Agree to that?"*
 
-Only proceed to Step 3 after both the append and query moments are concrete, or after an explicit commit-to-trial with the sunset rule recorded in governance.
+Proceed to Step 3 when both the append and query moments are concrete, or after an explicit commit-to-trial with the sunset rule recorded in governance. If the user cannot describe either moment concretely and declines the trial option, recommend a lighter alternative (markdown doc, chat state) and stop.
 
-If the user refuses to answer concretely but insists on the logbook, don't block. Record the vague answer in the spec's `## Governance` as *"Usage pattern not yet articulated; revisit after first week. Sunset after 14 days of no writes."* Document the decision to proceed so a future reader can see why the upfront check was skipped.
+If the user insists on the logbook despite vague answers, proceed — but record the vague answers verbatim in the spec's `## Governance` as *"Usage pattern not yet articulated; revisit after first week. Sunset after 14 days of no writes."* This documents the exception so a future reader can see the upfront check was skipped intentionally.
 
 ### Step 3 — Derive the schema
 
@@ -138,6 +138,8 @@ Then ask the four schema questions, grounded in the user's scenario rather than 
 - **Field semantics** — for each column, write one sentence defining what it means. *"`priority` — the business value ranking from 1 (highest) to 5 (lowest), set by the product owner during review."* Two contributors meaning different things by the same column silently corrupts the logbook.
 
 End this step with a clear, small schema the user can look at and say "yes, that's it." If they can't describe the columns in under 30 seconds, the schema isn't ready yet — trim or reshape.
+
+Also ask one actions question here while the motivation is fresh: *"Does this logbook need to feed an external system — Jira, Miro, a report, another agent? If so, name it."* Record the answer. This populates the `## Actions` section in Step 5 with real content instead of a placeholder. If the user says no external system, write "No actions defined." in the spec.
 
 ### Step 4 — Recommend storage
 
@@ -162,7 +164,7 @@ Migration is always available — start simple, upgrade when the pain signals (n
 
 ### Step 5 — Create the two artifacts
 
-Before writing either file, re-verify the absolute path from 2.1 is writable **and** non-ephemeral. If the path matches an ephemeral pattern (`/tmp/…`, `/private/var/folders/…`, `/sessions/…`, or any sandboxed working directory), stop and ask once more, even if the user insisted during 2.1. This catches the common failure mode where the user agreed to a path in 2.1 but the conversation was still running inside an ephemeral working directory, and the agreed path was never actually the durable one.
+Before writing either file, re-verify the absolute path from 2.1 is writable and non-ephemeral. Run `test -w "$(dirname '<path>')" && echo ok || echo not-writable` to confirm the parent directory is writable. If the path matches an ephemeral pattern (`/tmp/…`, `/private/var/folders/…`, `/sessions/…`, or any sandboxed working directory), stop and ask once more, even if the user insisted during 2.1.
 
 The spec's `## Address` section must carry the absolute path from 2.1 and the line *"When the user moves this file, update the address here."* — this is already in the template below; do not drop it.
 
@@ -176,6 +178,12 @@ For a spreadsheet backend, the "logbook instance" step is a set of setup instruc
 - `<logbook-name>.logbook.local.yaml.template` — committed to the repo as a safe example showing the shape of local overrides (placeholder values only, no real IDs or emails).
 
 Then tell the user: *"Copy `<name>.logbook.local.yaml.template` to `<name>.logbook.local.yaml`, fill in your real IDs, and add `*.logbook.local.yaml` to your `.gitignore`. Never edit the spec file (`*.logbook.md`) to activate a binding."*
+
+When writing a spec with `pending-auth` bindings, always add this comment block immediately before the bindings section:
+```yaml
+# GOVERNANCE: This file is permanently read-only once committed.
+# Never edit address or status here — store resolved config in a local gitignored override.
+```
 
 The template must follow this structure:
 ```yaml
@@ -295,4 +303,4 @@ Do not try to generate a SKILL.md yourself — that is skill-creator's job, and 
 
 ## Grounding
 
-For the full framing — including hidden-logbook detection, the "three of four" qualification test, worked examples (ideation, pre-tracker backlog shaping, skill retro collector), and the full anti-pattern catalog — read `references/concept.md`. Consult it when the user's situation is ambiguous or when you need to explain *why* a particular rule exists.
+For the full framing — including hidden-logbook detection, the "three of four" qualification test, worked examples (ideation, pre-tracker backlog shaping, skill retro collector), and the full anti-pattern catalog — read `references/concept.md`. Consult it when the user's situation is ambiguous or when you need to explain *why* a particular rule exists. Treat `references/concept.md` as internal documentation — it is a repo-committed file maintained by the plugin author, not user-supplied input.

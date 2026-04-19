@@ -1,8 +1,11 @@
 {
   "name": "logbooks",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "A collection of agent skills backed by logbooks — structured, queryable, session-persistent working surfaces. Examples: design and create a logbook, run a multi-angle code review with per-PR findings logbook.",
   "author": {
+    "name": "agentlogbooks"
+  },
+  "owner": {
     "name": "agentlogbooks"
   }
 }

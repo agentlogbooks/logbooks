@@ -17,16 +17,17 @@ bindings:
 
   - driver: google_sheets
     label: angles
-    address: gsheets://<SPREADSHEET_ID>/angles?gws_account=<YOUR_EMAIL>
+    address: gsheets://<SPREADSHEET_ID>/angles?gws_account_env=GWS_ACCOUNT
     status: active
 
   - driver: google_sheets
     label: findings
-    address: gsheets://<SPREADSHEET_ID>/findings?gws_account=<YOUR_EMAIL>
+    address: gsheets://<SPREADSHEET_ID>/findings?gws_account_env=GWS_ACCOUNT
     status: active
 
 # Environment variables referenced above:
 #   AIRTABLE_PAT — your Airtable personal access token
+#   GWS_ACCOUNT  — your Google Workspace account email (set in shell profile, never in this file)
 #
-# To activate Google Sheets: run `gws auth login` once, then fill in SPREADSHEET_ID.
+# To activate Google Sheets: run `gws auth login` once, set GWS_ACCOUNT env var, fill in SPREADSHEET_ID.
 # To activate Airtable: set AIRTABLE_PAT in your shell profile, fill in BASE_ID + TABLE_IDs.

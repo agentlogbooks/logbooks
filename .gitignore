@@ -2,3 +2,4 @@
 .claude/settings.local.json
 .worktrees/
 plugins/deep-code-review/deep-code-review-workspace/
+*.logbook.local.yaml

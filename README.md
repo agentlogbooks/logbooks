@@ -43,14 +43,12 @@ git clone https://github.com/agentlogbooks/logbook-creator.git ~/logbook-creator
 claude --plugin-dir ~/logbook-creator
 ```
 
-## Plugins
-
-This repo contains two plugins:
+## Skills
 
 | Plugin | Skill | What it does |
 |---|---|---|
 | `logbook-creator` | `/logbook-creator` | Design and create a logbook — a shared, queryable, schema-stable working surface for agents and humans to append, annotate, and query across sessions. |
-| `deep-code-review` | `/deep-code-review` | Multi-phase deep code review: detect angles → research best practices → parallel subagent review → deduplicate → score findings by severity × confidence. |
+| `deep-code-review` | `/deep-code-review` | Hotspot-first deep code review: change map → risky hotspot selection → per-hotspot lens subagents → skeptic pass → comment budget. Surfaces at most 5 high-signal findings or questions per run. |
 
 ## Usage
 

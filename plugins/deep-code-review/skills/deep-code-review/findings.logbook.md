@@ -22,13 +22,13 @@ bindings:
   # Optional human-facing exports — not authoritative
   - driver: airtable
     label: review-outputs-export
-    address: airtable://appPLACEHOLDER/tblREVIEW_OUTPUTS_PLACEHOLDER?pat_env=AIRTABLE_PAT
+    address_pattern: airtable://appPLACEHOLDER/tblREVIEW_OUTPUTS_PLACEHOLDER?pat_env=AIRTABLE_PAT
     status: pending-auth
     mode: export-only
 
   - driver: google_sheets
     label: review-outputs-export
-    address: gsheets://SPREADSHEET_ID_PLACEHOLDER/review_outputs?gws_account_env=GWS_ACCOUNT
+    address_pattern: gsheets://SPREADSHEET_ID_PLACEHOLDER/review_outputs?gws_account_env=GWS_ACCOUNT
     status: pending-auth
     mode: export-only
 ---

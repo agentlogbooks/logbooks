@@ -75,10 +75,10 @@ One row per risky changed unit selected for focused review in a run.
 | line_start | integer | Nullable |
 | line_end | integer | Nullable |
 | summary | text NOT NULL | Why this unit was selected and what changed |
-| change_archetypes_json | text | JSON array of archetype strings |
-| risk_tags_json | text | JSON array of risk dimension names |
+| change_archetypes_json | text NOT NULL DEFAULT '[]' | JSON array of archetype strings |
+| risk_tags_json | text NOT NULL DEFAULT '[]' | JSON array of risk dimension names |
 | why_selected | text NOT NULL | Human-readable selection rationale |
-| lenses_json | text | JSON array of lens names assigned to this hotspot |
+| lenses_json | text NOT NULL DEFAULT '[]' | JSON array of lens names assigned to this hotspot; updated in Phase 3 after lens selection |
 
 **Always-on lenses** (included in every hotspot's `lenses_json`): `correctness`, `maintainability`
 
@@ -91,23 +91,23 @@ Judgments produced by hotspot subagents. May be surfaced, dropped, or deduplicat
 | candidate_id | text PK | Unique candidate id |
 | run_id | text NOT NULL | |
 | hotspot_id | text NOT NULL FK | References `hotspots.hotspot_id` — NOT NULL enforced |
-| output_type | enum | `finding / question` |
-| issue_class | text | Machine-readable class, e.g. `auth-boundary-regression` |
-| fingerprint | text | Root-cause fingerprint for semantic dedup |
-| summary | text | Reviewer-facing summary |
-| evidence | text | What in the diff/context supports this |
-| why_now | text | What changed that created this risk |
+| output_type | enum NOT NULL | `finding / question` |
+| issue_class | text NOT NULL | Machine-readable class, e.g. `auth-boundary-regression` |
+| fingerprint | text NOT NULL | Root-cause fingerprint for semantic dedup |
+| summary | text NOT NULL | Reviewer-facing summary |
+| evidence | text NOT NULL | What in the diff/context supports this |
+| why_now | text NOT NULL | What changed that created this risk |
 | file_path | text | Nullable |
 | line_start | integer | Nullable |
 | line_end | integer | Nullable |
-| severity | enum | `info / low / medium / high / critical` |
-| confidence_local | real | 0.0–1.0, confidence from diff/context alone |
-| confidence_context | real | 0.0–1.0, confidence including wider codebase context |
-| actionability | enum | `low / medium / high` |
-| blast_radius | enum | `local / module / service / public-contract` |
-| priority_score | integer | 0–100 (see Priority model) |
-| detection_state | enum | `candidate / selected / dropped / duplicate-in-run / already-on-pr` |
-| surfacing_state | enum | `pending / suppressed / posted / question-only` |
+| severity | enum NOT NULL | `info / low / medium / high / critical` |
+| confidence_local | real NOT NULL | 0.0–1.0, confidence from diff/context alone; CHECK BETWEEN 0.0 AND 1.0 |
+| confidence_context | real NOT NULL | 0.0–1.0, confidence including wider codebase context; CHECK BETWEEN 0.0 AND 1.0 |
+| actionability | enum NOT NULL | `low / medium / high` |
+| blast_radius | enum NOT NULL | `local / module / service / public-contract` |
+| priority_score | integer NOT NULL | 0–100 (see Priority model); CHECK BETWEEN 0 AND 100 |
+| detection_state | enum NOT NULL | `candidate / selected / dropped / duplicate-in-run / already-on-pr` |
+| surfacing_state | enum NOT NULL | `pending / suppressed / posted / question-only` |
 | drop_reason | text | Nullable — reason if `detection_state = dropped` |
 | suggested_fix | text | Nullable — optional concise fix direction from subagent |
 | current_model | text | Model that produced this candidate |
@@ -317,7 +317,7 @@ All JSONL writes use `jq -nc` with named `--arg`/`--argjson` parameters — neve
 | record_type | Written in phase | Key fields |
 |-------------|-----------------|------------|
 | `run` | Phase 0 | run_id, repo_slug, pr_ref, review_target_type, diff_hash, current_model, skill_version, started_at |
-| `hotspot` | Phase 2 | run_id, hotspot_id, hotspot_key, file_path, symbol, summary, change_archetypes, risk_tags, why_selected |
+| `hotspot` | Phase 2 + 3 | run_id, hotspot_id, hotspot_key, file_path, symbol, summary, change_archetypes, risk_tags, why_selected, lenses |
 | `candidate` | Phase 5 | run_id, candidate_id, hotspot_id, output_type, issue_class, fingerprint, summary, evidence, why_now, severity, confidence_local, confidence_context, actionability, blast_radius |
 | `decision` | Phase 9 | run_id, candidate_id, detection_state, surfacing_state, drop_reason, priority_score |
 | `output` | Phase 9 | run_id, candidate_id, pr_ref, output_type, severity, summary, file_path, line_start, line_end, priority_score |

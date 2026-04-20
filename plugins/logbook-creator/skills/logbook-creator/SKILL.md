@@ -329,6 +329,64 @@ If no actions are defined yet, state that explicitly.
 
 The query snippets must be the **actual commands** that work against the logbook as created — not abstract examples. If the logbook is at `/work/retro.csv`, the filter snippet should be a working `awk` or `python` call against that exact path. This is what makes the spec directly consumable by skill-creator.
 
+### Multi-entity variant
+
+When Step 2.4 decided this is a multi-entity logbook, extend the template above as follows. Sections not listed here stay identical to the single-table template.
+
+- **Storage** becomes **Physical stores** — lists the authoritative store first, then each projection with its role (`run-trace`, `export-only`, `mirror`) and address.
+- **Schema** becomes one `### <RecordType>` subsection per table, each with its own schema table.
+- **Identity**, **Partial rows**, **Corrections** each become per-record-type subsections, one block per record type — so a reader can see the full contract for one table without scanning the whole spec.
+- **Queries** remains flat but includes cross-table JOIN examples where relevant.
+
+No new YAML frontmatter fields. The `bindings` block remains the only structured frontmatter, present only when auth config is needed.
+
+Example skeleton for the expanded sections (record type names are illustrative — substitute the ones derived in 3A):
+
+````markdown
+## Physical stores
+
+- **Authoritative:** <format> at `<absolute path or address>` — <one-sentence rationale>
+- **Projection: <label>** — role: `run-trace` | `export-only` | `mirror` — at `<address>` — <purpose>
+
+## Schema
+
+### <record_type_1>
+
+| Column | Type | Required | Semantics |
+|---|---|---|---|
+| ... | ... | ... | ... |
+
+### <record_type_2>
+
+| Column | Type | Required | Semantics |
+|---|---|---|---|
+| ... | ... | ... | ... |
+
+## Identity
+
+### <record_type_1>
+<rule>
+
+### <record_type_2>
+<rule>
+
+## Partial rows
+
+### <record_type_1>
+<convention>
+
+### <record_type_2>
+<convention>
+
+## Corrections
+
+### <record_type_1>
+<rule>
+
+### <record_type_2>
+<rule>
+````
+
 ## Handoff to skill-creator
 
 After the two files are written, tell the user what to do next. Typical next steps:

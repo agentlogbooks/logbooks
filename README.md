@@ -15,17 +15,17 @@ Works in both **Chat** and **Cowork** modes — the plugin installs once and is 
 1. Click **Customize** in the left sidebar
 2. Open the **Directory** and select the **Plugins** tab
 3. Switch to the **Personal** tab, click **"+"** → **Add marketplace**
-4. Enter `agentlogbooks/logbook-creator` and click **Sync**
+4. Enter `agentlogbooks/logbooks` and click **Sync**
 
 **In Cowork mode:**
 
 1. Click **Customize** in the left sidebar
 2. Next to **Personal plugins**, click **"+"** → **Add marketplace**
-3. Enter `agentlogbooks/logbook-creator` and click **Sync**
+3. Enter `agentlogbooks/logbooks` and click **Sync**
 
 **Upload manually:**
 
-1. Go to [github.com/agentlogbooks/logbook-creator](https://github.com/agentlogbooks/logbook-creator) → green **Code** button → **Download ZIP**
+1. Go to [github.com/agentlogbooks/logbooks](https://github.com/agentlogbooks/logbooks) → green **Code** button → **Download ZIP**
 2. Rename the file from `.zip` to `.plugin`
 3. In the same plugin menu above, choose **Upload plugin** instead and select the file
 

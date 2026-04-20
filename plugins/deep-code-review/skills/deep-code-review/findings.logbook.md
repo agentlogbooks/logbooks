@@ -346,6 +346,14 @@ Nullable fields (`symbol`, `line_start`, `line_end`) use SQL NULL; all NOT NULL 
 ### candidate_findings
 Nullable fields (`file_path`, `line_start`, `line_end`, `drop_reason`, `suggested_fix`) use SQL NULL; no empty-string convention.
 
+## Governance
+
+- **Owner:** logbook-creator / deep-code-review skill author
+- **Access:** append by deep-code-review skill agents; read by humans and downstream agents
+- **Lifetime:** indefinite; one SQLite file and one JSONL file per PR_REF
+- **Conflict resolution:** SQLite transactions for the ledger; JSONL is append-only (no conflict possible)
+- **Sunset:** archive (move to `~/logbooks/code-review/archive/`) when the PR is closed and no further review runs are expected
+
 ## Cloud export
 
 Airtable and Google Sheets may be used as human-facing views — **one-way exports only**.

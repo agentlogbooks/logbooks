@@ -93,6 +93,21 @@ In a **row-shaped logbook**, each entry is a row with named columns. Questions a
 
 **One job, one coherent memory design.** Sometimes that is one table; sometimes it is a small relational bundle with a few related record types. What to avoid is a universal domain schema — not multi-entity designs that genuinely need them. Reusable infrastructure (id formats, timestamp conventions, validation helpers) remains fine. A universal logbook platform or shared ontology is the trap.
 
+### Single-table vs multi-entity
+
+**Use a single table when:**
+- One row type dominates
+- Rows don't recur as stable entities across sessions
+- No separate trace vs. memory vs. feedback layer
+
+**Use a multi-entity logbook when:**
+- The workflow has repeated runs against the same artifact
+- Raw outputs differ from accepted/surfaced outputs and need to live separately
+- The same real-world thing recurs across sessions (same issue reappears across PRs, same candidate across runs)
+- Humans or agents annotate results in a later pass
+
+Rule of thumb: if you'd naturally say "a run has many hotspots, each hotspot has many candidates" — that's a relational bundle, not a flat table. If you'd say "each session has one entry" — it's probably single-table.
+
 ### Anti-patterns
 
 **The unified substrate.** Trying to make one logbook library serve every use case — building a generic platform when each logbook needs its own schema, commands, and query verbs. Code is cheap; cognition is expensive. Rebuild the domain schema every time. Reuse infrastructure conventions: id formats, timestamp fields, provenance columns, validation helpers. The reusable things are this concept and lightweight shared conventions — not a universal domain schema or platform.

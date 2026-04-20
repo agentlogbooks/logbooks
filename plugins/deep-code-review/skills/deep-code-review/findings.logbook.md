@@ -326,6 +326,16 @@ All JSONL writes use `jq -nc` with named `--arg`/`--argjson` parameters — neve
 
 ---
 
+## Corrections
+
+Both tables are append-only; no rows are ever patched in place.
+
+### hotspots
+Append-only; no in-place correction; new runs produce new rows.
+
+### candidate_findings
+Append-only; superseded candidates are marked via `detection_state`, not deleted or patched.
+
 ## Cloud export
 
 Airtable and Google Sheets may be used as human-facing views — **one-way exports only**.

@@ -134,6 +134,16 @@ Pick the format that fits the data, not by default.
 
 Migration is always available. A common starting point is CSV when no stronger signal exists, but spreadsheet-first or SQLite-first are equally valid when the workflow calls for them. Notice the pain (nested fields → jsonl; need joins → SQLite; need human UI → spreadsheet), and migrate that specific logbook. The concept and schema don't change — only the serialization does.
 
+### Authoritative store vs projections
+
+One store is authoritative; others are views. Three projection kinds:
+
+- **run-trace** — append-only event log alongside the ledger; preserves full execution record; not the source of truth for current state
+- **export-only** — read-only snapshot for human browsing (Sheets, Airtable); regenerated from the authoritative store; never edited directly
+- **mirror** — editable copy; almost always wrong; creates the "second place to update" anti-pattern
+
+If it's unclear which store is authoritative, the logbook isn't designed yet. The authoritative store is where writes happen; projections are derived from it.
+
 ### Operating the schema
 
 Naming columns in 30 seconds tells you the logbook is row-shaped. It does not tell you the schema is ready for contributors. The hard problems are below.

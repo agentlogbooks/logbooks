@@ -142,23 +142,36 @@ Ask these seven questions in conversation (not as a form):
 
 Whether a multi-entity logbook also needs an append-only JSONL run-trace alongside its SQLite ledger is a Step 4 question (projections), not a separate branch here.
 
-### Step 3 — Derive the schema
+### Step 3 — Entity-first schema design
 
-Propose columns based on the motivation from Step 1, the partitioning choice from 2.2, and the specifics the user described. Don't make the user invent the columns cold — give them a starter set and let them refine.
+By this point Step 2.4 has decided whether this is a single-table or a multi-entity logbook. Both paths run through the same three sub-steps — single-table collapses them trivially (one record type) while multi-entity fans them out per record type.
 
-Two answers from Step 2 directly shape the schema:
+Two answers from earlier still shape what gets recorded:
 
-- **Partitioning (2.2).** If the user chose one file per X, drop columns whose values are encoded in the filename (`problem_id`, `session`, `topic`, `date`, `week`, etc.). Annotate those fields in the schema table — or rather, annotate their absence — by adding a one-line note under the table: *"Column `<name>` is encoded in the filename, not stored."* Keeping the column in the schema and the filename both is redundant and invites drift.
-- **Scope (2.1).** If the logbook is shared, `author` (or equivalent) is a required column. If personal, `author` can be optional and defaults to the single owner recorded in governance.
+- **Partitioning (2.2).** If the user chose one file per X, drop columns whose values are encoded in the filename (`problem_id`, `session`, `topic`, `date`, `week`, etc.) from every record type that would otherwise include them. Annotate their absence with a one-line note under the affected table: *"Column `<name>` is encoded in the filename, not stored."* Keeping the column in a record type's schema and the filename both is redundant and invites drift.
+- **Scope (2.1).** If the logbook is shared, `author` (or equivalent) is a required column on any record type a human or external agent writes. If personal, `author` can be optional and defaults to the single owner recorded in governance.
 
-Then ask the four schema questions, grounded in the user's scenario rather than abstractly:
+#### 3A — Derive record types
 
-- **Identity** — *"How should rows be identified? Auto-increment IDs are simple. A natural key like `component + title` is readable but breaks if those fields change. A UUID is safest but meaningless outside the logbook."* Pick one and document it.
-- **Partial rows** — *"Not every contributor will know every field at write time. When a field is missing, should it be an empty string, an explicit null, or the literal text 'unknown'?"* One convention per logbook. Mixed conventions corrupt filters.
-- **Corrections** — *"When an entry is wrong, should we update it in place, or append a new row that marks the old one superseded? Patching is simpler; appending preserves history for audit-sensitive logbooks."* Align with the motivation — ideation scoring patches, retro decision logs usually append.
-- **Field semantics** — for each column, write one sentence defining what it means. *"`priority` — the business value ranking from 1 (highest) to 5 (lowest), set by the product owner during review."* Two contributors meaning different things by the same column silently corrupts the logbook.
+List the tables or record kinds before naming any columns. Examples: `review_runs`, `hotspots`, `candidate_findings`, `issues`, `occurrences`, `feedback_events`. For single-table logbooks this is trivial — one record type — but ask the question anyway so the decision is recorded rather than assumed.
 
-End this step with a clear, small schema the user can look at and say "yes, that's it." If they can't describe the columns in under 30 seconds, the schema isn't ready yet — trim or reshape.
+#### 3B — For each record type, define
+
+Answer each of these once per record type, grounded in the user's scenario rather than abstractly:
+
+- **Purpose** — one sentence: what this record type is for.
+- **Identity key(s)** — the row key. If Step 2.4 surfaced cross-session recurrence, add a domain fingerprint. If the record type is run-scoped, add a run-boundary key as well.
+- **Mutability** — append-only or patchable current state. This usually falls out of the motivation: audit-sensitive record types append; refinement-heavy ones patch.
+- **Partial-row convention** — empty string, explicit null, or "unknown". One convention per record type. Mixed conventions corrupt filters.
+- **Correction rule** — append-only (new row supersedes) or patch-in-place. Must be consistent with mutability: append-only types correct by appending; patchable types correct by patching.
+- **Relationships** — foreign keys into other record types, parent/child hierarchies, any cross-table link.
+- **Suggested indexes** — for SQLite backends, propose indexes based on the expected query patterns for this record type (skip for CSV/JSONL).
+
+If two contributors might mean different things by the same column name (`priority`, `status`, `score`), write one sentence of field semantics so the meaning is explicit — define it now, before 3C drafts the columns.
+
+#### 3C — Columns
+
+Only after 3B is settled. Propose a starter set per record type; let the user refine. Include one sentence of field semantics per column. If the schema for any record type can't be described in under 30 seconds, trim or reshape before proceeding.
 
 Also ask one actions question here while the motivation is fresh: *"Does this logbook need to feed an external system — Jira, Miro, a report, another agent? If so, name it."* Record the answer. This populates the `## Actions` section in Step 5 with real content instead of a placeholder. If the user says no external system, write "No actions defined." in the spec.
 

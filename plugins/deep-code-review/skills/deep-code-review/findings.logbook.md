@@ -328,13 +328,20 @@ All JSONL writes use `jq -nc` with named `--arg`/`--argjson` parameters — neve
 
 ## Corrections
 
-Both tables are append-only; no rows are ever patched in place.
+Rows are inserted once per run; specific lifecycle and scoring columns are patched in place by later phases within the same run. All other columns are immutable after insert. A new run never modifies rows from a prior run — it produces new rows.
 
 ### hotspots
-Append-only; no in-place correction; new runs produce new rows.
+INSERTed at Phase 2 (hotspot selection). `lenses_json` is patched in place at Phase 3 (lens selection). All other columns are immutable after insert.
 
 ### candidate_findings
-Append-only; superseded candidates are marked via `detection_state`, not deleted or patched.
+INSERTed at Phase 5 with placeholder scoring/state (`priority_score = 0`, `detection_state = 'candidate'`, `surfacing_state = 'pending'`, `drop_reason = NULL`). The following columns are patched in place across later phases within the same run:
+
+- `priority_score` — set at Phase 7; re-written at Phase 9 (may shift if the Phase 6 skeptic pass downgraded the candidate's effective severity after the Phase 7 scoring)
+- `detection_state` — patched at Phase 9 from `'candidate'` to one of `'selected' / 'dropped' / 'duplicate-in-run' / 'already-on-pr'`
+- `surfacing_state` — patched at Phase 9 from `'pending'` to one of `'suppressed' / 'posted' / 'question-only'`
+- `drop_reason` — patched at Phase 9 (non-NULL iff `detection_state = 'dropped'`)
+
+Content fields — `summary`, `evidence`, `why_now`, `fingerprint`, `severity`, `confidence_local`, `confidence_context`, `actionability`, `blast_radius`, `issue_class`, `output_type`, file/line coords, `suggested_fix`, `current_model`, `created_at` — are immutable after insert.
 
 ## Partial rows
 

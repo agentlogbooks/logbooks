@@ -171,13 +171,13 @@ Naming columns in 30 seconds tells you the logbook is row-shaped. It does not te
 **Deep review / multi-phase agent workflow logbook.** A per-PR code review logbook with two physical stores.
 
 - **SQLite ledger** (`~/logbooks/code-review/{PR_REF}.sqlite`):
-  - `hotspots` — append-only, one row per risky unit selected for review; key: `hotspot_id`
-  - `candidate_findings` — append-only, one judgment per hotspot per run; key: `candidate_id`
+  - `hotspots` — one row per risky unit selected for review per run; key: `hotspot_id`; inserted at selection time with `lenses_json` patched in place later in the same run
+  - `candidate_findings` — one judgment per hotspot per run; key: `candidate_id`; inserted at generation time; lifecycle and scoring columns (`priority_score`, `detection_state`, `surfacing_state`, `drop_reason`) are patched in place by later phases within the same run
 - **JSONL run-trace** (`~/logbooks/code-review/{PR_REF}.jsonl`):
   - Append-only event log; `record_type` one of run/hotspot/candidate/decision/output
   - Preserves full execution record; not queried relationally
 
-Identity has four layers: `run_id` (execution boundary), `hotspot_id` (planning unit within a run), `candidate_id` (one model judgment), `fingerprint` (root-cause hash for semantic dedup across runs). Both tables are append-only — corrections are never patched in place; a new run produces new rows. Cloud exports (Sheets, Airtable) are export-only projections — not authoritative, regenerated from the SQLite ledger.
+Identity has four layers: `run_id` (execution boundary), `hotspot_id` (planning unit within a run), `candidate_id` (one model judgment), `fingerprint` (root-cause hash for semantic dedup across runs). Both tables are insert-once-per-run — within a run, a handful of lifecycle and scoring columns get patched in place by later phases; all content fields are immutable after insert, and corrections across runs are made by appending new rows from a new run, not by modifying prior-run rows. Cloud exports (Sheets, Airtable) are export-only projections — not authoritative, regenerated from the SQLite ledger.
 
 The value of the multi-entity design: `detection_state` + `surfacing_state` can be tracked separately per candidate, cross-run dedup works via fingerprint without touching earlier rows, and the run-trace preserves the full reasoning record independently of the current-state ledger.
 

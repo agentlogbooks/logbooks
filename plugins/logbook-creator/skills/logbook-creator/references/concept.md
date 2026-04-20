@@ -91,7 +91,7 @@ In a **row-shaped logbook**, each entry is a row with named columns. Questions a
 
 **Queries via tools, not in-context scanning.** Once the logbook grows beyond trivial size, common questions should be answered by filtering, sorting, or aggregating columns rather than by loading the whole file into prompt context. The tool can be a CLI, a spreadsheet filter, or SQL. Building that query layer is part of building the logbook. Rereading a small logbook in full is fine; the rule is that the logbook should not *need* to be reread as it grows.
 
-**One logbook, one schema, one job.** Each logbook gets the columns its job needs. Shared columns across logbooks is coincidence, not a design goal. This rejects universal schemas, not shared tooling — small reusable helpers are fine. A universal logbook platform or shared ontology is the trap.
+**One job, one coherent memory design.** Sometimes that is one table; sometimes it is a small relational bundle with a few related record types. What to avoid is a universal domain schema — not multi-entity designs that genuinely need them. Reusable infrastructure (id formats, timestamp conventions, validation helpers) remains fine. A universal logbook platform or shared ontology is the trap.
 
 ### Anti-patterns
 

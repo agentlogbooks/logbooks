@@ -32,15 +32,16 @@ Works in both **Chat** and **Cowork** modes — the plugin installs once and is 
 ### Claude Code (CLI)
 
 ```shell
-/plugin marketplace add agentlogbooks/logbook-creator
-/plugin install logbook-creator@agentlogbooks-logbook-creator
+/plugin marketplace add agentlogbooks/logbooks
+/plugin install logbook-creator@logbooks
+/plugin install deep-code-review@logbooks
 ```
 
 Or from a local clone:
 
 ```bash
-git clone https://github.com/agentlogbooks/logbook-creator.git ~/logbook-creator
-claude --plugin-dir ~/logbook-creator
+git clone https://github.com/agentlogbooks/logbooks.git ~/logbooks
+claude --plugin-dir ~/logbooks/plugins/logbook-creator
 ```
 
 ## Skills

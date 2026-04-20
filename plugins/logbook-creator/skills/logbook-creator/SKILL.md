@@ -175,7 +175,11 @@ Only after 3B is settled. Propose a starter set per record type; let the user re
 
 Also ask one actions question here while the motivation is fresh: *"Does this logbook need to feed an external system — Jira, Miro, a report, another agent? If so, name it."* Record the answer. This populates the `## Actions` section in Step 5 with real content instead of a placeholder. If the user says no external system, write "No actions defined." in the spec.
 
-### Step 4 — Recommend storage
+### Step 4 — Primary store + projections
+
+First establish what is authoritative, then what views exist. One store is the source of truth; everything else is a derived view.
+
+#### Authoritative store
 
 Pick the format that fits the data and the downstream experience, not by default. Make one recommendation with a one-sentence rationale; let the user override.
 
@@ -183,18 +187,28 @@ Pick the format that fits the data and the downstream experience, not by default
 |---|---|
 | **CSV** | Flat columns, short values, single writer at a time, want to open in Excel or grep from bash. Good default for ideation, flat decision logs, feedback collectors. Easy to chart later. |
 | **JSON Lines (.jsonl)** | Optional or nested fields, schema varies row to row. Still appendable and greppable. Weak if you want column CLI ops. |
-| **SQLite** | Need real queries (joins, aggregates, GROUP BY), row volume over a few thousand, multiple logbooks reference each other, concurrent writers. Loses plain-text inspectability. |
+| **SQLite** | Need real queries (joins, aggregates, GROUP BY), row volume over a few thousand, multiple logbooks reference each other, concurrent writers, or a multi-entity design from 3A. Loses plain-text inspectability. |
 | **Spreadsheet** (Google Sheets, Excel) | Humans are primary editors or reviewers. Visual sorting, filtering, comments. Ideal for human-in-the-loop review. |
 | **Markdown table** | Tiny (under ~20 rows), hand-maintained, read more than written. Rarely right for agent-written logbooks. |
 
 Narrow the table by the location picked in 2.1:
 
-- **Inside a shared git repo** → prefer plain CSV, JSONL, or Markdown. They are diffable and reviewable in PRs. Deprioritize SQLite (binary, review-hostile) and spreadsheets (not in the repo at all) — unless you have concurrent writers, in which case SQLite's transaction safety outweighs the diff cost.
+- **Inside a shared git repo** → prefer plain CSV, JSONL, or Markdown. They are diffable and reviewable in PRs. Deprioritize SQLite (binary, review-hostile) and spreadsheets (not in the repo at all) — unless you have concurrent writers or a multi-entity design, in which case SQLite's transaction safety and relational queries outweigh the diff cost.
 - **Under a home-dir or local-state path** → all formats in the table remain viable. Pick on motivation and data shape.
 
-The motivation biases the choice: staging and collection lean toward CSV or SQLite (diffable, chartable); human-review leans toward spreadsheet; multi-agent concurrent writers lean toward SQLite.
+The motivation biases the choice: staging and collection lean toward CSV or SQLite (diffable, chartable); human-review leans toward spreadsheet; multi-agent concurrent writers and anything multi-entity lean toward SQLite.
 
 Migration is always available — start simple, upgrade when the pain signals (nested fields → JSONL; need joins → SQLite; need human UI → spreadsheet). Tell the user this so they don't over-engineer up front.
+
+#### Projections (optional)
+
+A projection is a view derived from the authoritative store. Writes go to the authoritative store; projections are appended or regenerated alongside it. Each projection has one of three roles:
+
+- **run-trace** — append-only event log alongside the ledger (typically JSONL). Preserves the full execution record; not queryable relationally. Use this when the authoritative store holds mutable current state and the full stream of events still needs to be replayable.
+- **export-only** — read-only snapshot for human browsing (Google Sheets, Airtable, a rendered report). Regenerated from the authoritative store; never edited directly; never the source of truth.
+- **mirror** — editable copy. Almost always wrong — it creates the "second place to update" anti-pattern. Flag it and push back unless the user has a specific operational reason.
+
+If it is unclear which store is authoritative, the design is not finished. Ask again before moving on.
 
 ### Step 5 — Create the two artifacts
 

@@ -1,24 +1,22 @@
 {
   "skill_name": "deep-code-review",
-  "schema_version": 1,
+  "schema_version": 2,
   "evals": [
     {
       "id": 1,
       "eval_name": "eval-synthetic-auth-diff",
-      "description": "Fixed synthetic diff with multiple security issues — no network required, fully reproducible",
+      "description": "Fixed synthetic auth handler diff — must select a security hotspot and produce high/critical findings. No network required, fully reproducible.",
       "prompt": "Review this diff:\n\ndiff --git a/src/auth/handler.ts b/src/auth/handler.ts\nnew file mode 100644\nindex 0000000..a3f7c2d\n--- /dev/null\n+++ b/src/auth/handler.ts\n@@ -0,0 +1,52 @@\n+import { Request, Response } from 'express';\n+import { sign } from 'jsonwebtoken';\n+import { db } from '../database';\n+\n+const JWT_SECRET = 'sk-prod-a8f3k2m9x1p7z4';\n+\n+export async function loginUser(req: Request, res: Response) {\n+  const { username, password } = req.body;\n+\n+  const user = await db.query(\n+    `SELECT * FROM users WHERE username = '${username}'`\n+  );\n+\n+  if (!user) {\n+    return res.status(401).json({ error: 'Invalid credentials' });\n+  }\n+\n+  if (user.password === password) {\n+    const token = sign({ userId: user.id, role: user.role }, JWT_SECRET, {\n+      expiresIn: '30d',\n+    });\n+\n+    const permissions = [];\n+    for (const permId of user.permissionIds) {\n+      const perm = await db.query(`SELECT * FROM permissions WHERE id = ${permId}`);\n+      permissions.push(perm.name);\n+    }\n+\n+    console.log(`User ${username} logged in with token ${token}`);\n+\n+    return res.json({ token, permissions });\n+  }\n+\n+  return res.status(401).json({ error: 'Invalid credentials' });\n+}\n+\n+export async function getUser(req: Request, res: Response) {\n+  const userId = req.params.id;\n+  const user = await db.query(`SELECT * FROM users WHERE id = ${userId}`);\n+  return res.json(user);\n+}\n+\n+export async function updateProfile(req: Request, res: Response) {\n+  const { bio, avatar } = req.body;\n+  const userId = req.user.id;\n+\n+  await db.query(\n+    `UPDATE users SET bio = '${bio}', avatar = '${avatar}' WHERE id = ${userId}`\n+  );\n+\n+  return res.json({ success: true });\n+}\ndiff --git a/src/auth/routes.ts b/src/auth/routes.ts\nnew file mode 100644\nindex 0000000..b4e2f81\n--- /dev/null\n+++ b/src/auth/routes.ts\n@@ -0,0 +1,12 @@\n+import { Router } from 'express';\n+import { loginUser, getUser, updateProfile } from './handler';\n+\n+const router = Router();\n+\n+router.post('/login', loginUser);\n+router.get('/user/:id', getUser);\n+router.put('/user/:id/profile', updateProfile);\n+\n+export default router;",
       "expected_output": {
-        "angles_must_include": ["security", "maintainability", "correctness"],
-        "angles_must_not_include": ["test-quality"],
+        "hotspot_count_min": 1,
+        "hotspots_must_exist_for_file": "src/auth/handler.ts",
+        "hotspot_risk_tags_must_include": ["security"],
         "slug_pattern": "^paste-",
-        "findings_security_must_include": [
-          { "keyword": "JWT_SECRET", "severity_min": "critical" },
-          { "keyword": "sql injection", "severity_min": "critical", "count_min": 2 },
-          { "keyword": "token", "file": "src/auth/handler.ts" }
+        "surfaced_candidates_must_include": [
+          { "keyword": "JWT_SECRET", "severity_min": "high", "output_type": "finding" },
+          { "keyword": "sql", "severity_min": "high", "output_type": "finding" }
         ],
-        "findings_correctness_must_include": [
-          { "keyword": "null", "file": "src/auth/handler.ts" }
-        ],
+        "surfaced_count_max": 5,
         "logbook_written": true,
         "logbook_path_pattern": "~/logbooks/code-review/paste-*.sqlite"
       }
@@ -26,18 +24,19 @@
     {
       "id": 2,
       "eval_name": "eval-docs-only-diff",
-      "description": "Docs-majority diff must trigger docs-quality special rule regardless of diff size",
+      "description": "Docs-majority diff (under 100 lines) must cap hotspots at 3 and select docs-quality lens on the hotspot.",
       "prompt": "Review this diff:\n\ndiff --git a/README.md b/README.md\nindex abc..def 100644\n--- a/README.md\n+++ b/README.md\n@@ -1,3 +1,5 @@\n # My Project\n \n-Install with npm.\n+## Installation\n+\n+Install with `npm install my-project`. Run `npm start` to launch.\ndiff --git a/docs/guide.md b/docs/guide.md\nnew file mode 100644\n--- /dev/null\n+++ b/docs/guide.md\n@@ -0,0 +1,5 @@\n+# Guide\n+\n+See README for setup.\n+\n+Configuration options are listed below.",
       "expected_output": {
-        "angles_must_include": ["maintainability", "correctness", "docs-quality"],
-        "angles_must_not_include": ["security", "data-integrity"],
+        "hotspot_count_max": 3,
+        "hotspot_lenses_must_include": ["docs-quality"],
+        "surfaced_count_max": 5,
         "logbook_written": true
       }
     },
     {
       "id": 3,
       "eval_name": "eval-negative-vague-opinion",
-      "description": "Vague opinion request with no diff or code reference must NOT trigger the skill pipeline",
+      "description": "Vague opinion request with no diff or code reference must NOT trigger the skill pipeline.",
       "prompt": "What do you think of these changes?",
       "expected_output": {
         "skill_invoked": false,
@@ -47,25 +46,26 @@
     },
     {
       "id": 4,
-      "eval_name": "eval-dedup-cross-run",
-      "description": "Second run on same PR slug must mark findings that match existing logbook entries as duplicate-logbook rather than inserting fresh rows",
-      "prompt": "Review PR #42 [precondition: logbook ~/logbooks/code-review/pr-42.sqlite already contains a finding for src/auth.ts line 22 with status=new]",
+      "eval_name": "eval-dedup-intra-run",
+      "description": "Two hotspot subagents producing the same fingerprint must result in one surviving candidate (duplicate-in-run) not two selected candidates.",
+      "prompt": "Review PR #42 [precondition: two hotspot subagents both return a candidate with fingerprint 'auth-boundary-regression|updateUser|authorization-preserved|public-endpoint']",
       "expected_output": {
         "slug": "pr-42",
-        "has_status_duplicate_logbook": true,
-        "duplicate_ref_non_empty": true,
-        "no_duplicate_inserted_as_new": true
+        "candidates_with_same_fingerprint_count": 2,
+        "selected_candidates_with_fingerprint_count": 1,
+        "has_detection_state_duplicate_in_run": true,
+        "no_duplicate_surfaced": true
       }
     },
     {
       "id": 5,
-      "eval_name": "eval-angle-cap-short-diff",
-      "description": "A diff under 100 lines must produce at most 3 heuristic angles (plus always-on and applicable special-rule angles)",
+      "eval_name": "eval-hotspot-cap-short-diff",
+      "description": "A diff under 100 changed lines must produce at most 3 hotspots.",
       "prompt": "Review this diff:\n\ndiff --git a/config.yaml b/config.yaml\n--- a/config.yaml\n+++ b/config.yaml\n@@ -1,3 +1,5 @@\n database:\n   host: localhost\n+  password: secret123\n+  token: abc\n   port: 5432",
       "expected_output": {
-        "heuristic_angle_count_max": 3,
-        "angles_must_include": ["security"],
-        "total_angle_count_max": 6
+        "hotspot_count_max": 3,
+        "hotspot_risk_tags_must_include": ["security"],
+        "surfaced_count_max": 3
       }
     }
   ]

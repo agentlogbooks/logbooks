@@ -91,7 +91,7 @@ Present three common patterns tied back to the motivation from Step 1:
 | One file per problem/topic | Multi-agent or debugging work where each topic has its own arc | `{YYYY-MM-DD}-{slug}.{ext}` (date = file creation) | Cross-topic queries become `csvstack *.csv` or globs. Columns that name the topic (`problem_id`, `topic`) become redundant and should be dropped. |
 | One file per time window | High-volume or short-lived scopes (daily standup log, weekly retro) | `{YYYY-MM-DD}.{ext}` or `{YYYY-W##}.{ext}` | Similar effect on columns: drop `session` or `week`. |
 
-Decision rule: if the user answers "one file per X," the filename scheme AND the redundant-column list are decided **here**, not in Step 3. Step 3 reads these answers and drops the redundant columns from the schema, adding a one-line note below the table naming each dropped column and why.
+Decision rule: if the user answers "one file per X," the filename scheme AND the redundant-column list are decided **here**, not in Step 3. Step 3 reads these answers and drops the redundant columns from each record type's schema, adding a one-line note below each affected table naming each dropped column and why.
 
 Mixed partitioning (some entries shared, some personal; some per-topic, some global) is out of scope. Push the user to pick one, or to split into two logbooks with separate specs.
 

@@ -168,6 +168,19 @@ Naming columns in 30 seconds tells you the logbook is row-shaped. It does not te
 
 **Skill retro collector logbook.** Columns: run_id, skill_name, phase, observation, severity, category. One row per observed failure mode across every run of a skill. The schema is generic to any skill but the value is personalized — each skill's retro logbook accumulates its own patterns over time. The value shows up over many runs, when `filter category=scorer-collapse` surfaces a pattern invisible in any single retro.
 
+**Deep review / multi-phase agent workflow logbook.** A per-PR code review logbook with two physical stores.
+
+- **SQLite ledger** (`~/logbooks/code-review/{PR_REF}.sqlite`):
+  - `hotspots` — append-only, one row per risky unit selected for review; key: `hotspot_id`
+  - `candidate_findings` — append-only, one judgment per hotspot per run; key: `candidate_id`
+- **JSONL run-trace** (`~/logbooks/code-review/{PR_REF}.jsonl`):
+  - Append-only event log; `record_type` one of run/hotspot/candidate/decision/output
+  - Preserves full execution record; not queried relationally
+
+Identity has four layers: `run_id` (execution boundary), `hotspot_id` (planning unit within a run), `candidate_id` (one model judgment), `fingerprint` (root-cause hash for semantic dedup across runs). Both tables are append-only — corrections are never patched in place; a new run produces new rows. Cloud exports (Sheets, Airtable) are export-only projections — not authoritative, regenerated from the SQLite ledger.
+
+The value of the multi-entity design: `detection_state` + `surfacing_state` can be tracked separately per candidate, cross-run dedup works via fingerprint without touching earlier rows, and the run-trace preserves the full reasoning record independently of the current-state ledger.
+
 ### Actions
 
 A logbook that only gets queried is a reference. A logbook that drives execution is a coordination surface. Actions are the bridges from logbook state to external systems.

@@ -121,6 +121,27 @@ Proceed to Step 3 when both the append and query moments are concrete, or after 
 
 If the user insists on the logbook despite vague answers, proceed — but record the vague answers verbatim in the spec's `## Governance` as *"Usage pattern not yet articulated; revisit after first week. Sunset after 14 days of no writes."* This documents the exception so a future reader can see the upfront check was skipped intentionally.
 
+#### 2.4 State architecture
+
+Before picking columns or tables, decide what kinds of state this workflow actually produces. Serious agent workflows often need more than one record type — a raw trace layer, a mutable ledger, a feedback layer — with different mutability rules. Skipping this step locks you into one-table-fits-all and forces bad trade-offs in Step 3.
+
+Ask these seven questions in conversation (not as a form):
+
+1. **Stable nouns** — *"What are the stable nouns in this workflow? Things like runs, hotspots, issues, candidates, feedback events, sources, sections — whatever the user's vocabulary names."*
+2. **Append-only vs mutable** — *"Which of those are append-only (a new occurrence is a new row) and which hold mutable current state (the same thing gets updated as work progresses)?"*
+3. **Cross-session recurrence** — *"Does the same real-world thing recur across sessions? The same issue reappears across PRs; the same candidate comes back in another run. If yes, a domain fingerprint is needed alongside the row key."*
+4. **Raw vs surfaced outputs** — *"Are there raw model outputs and accepted/surfaced outputs? If so, do they need to live separately so dropped-but-reviewable candidates don't get thrown away?"*
+5. **Later annotation** — *"Will humans or agents later accept, fix, dismiss, or suppress entries? If yes, there's either a feedback record type or a state field on the existing record type."*
+6. **Smaller work units** — *"Is there a smaller meaningful work unit inside each artifact — a hotspot inside a run, a finding inside a hotspot, a claim inside a source? Nested hierarchies surface here."*
+7. **Identity layers** — *"What identity layers does this workflow need? The common four are row key (unique per row), domain fingerprint (semantic dedup across runs), run boundary (scopes rows to an execution), occurrence (same fingerprint seen again). Not every workflow needs all four."*
+
+**Output decision.** Name whether this job needs a **single-table logbook** or a **multi-entity logbook**:
+
+- **Single-table** → one record type dominates and the other questions collapse to "not really." Step 3 passes through 3A/3B trivially (one record type) and lands in 3C with a flat schema.
+- **Multi-entity** → several stable nouns with different mutability rules, or raw-vs-surfaced separation, or cross-session recurrence. Step 3A names several record types, 3B iterates per type, 3C produces per-table columns.
+
+Whether a multi-entity logbook also needs an append-only JSONL run-trace alongside its SQLite ledger is a Step 4 question (projections), not a separate branch here.
+
 ### Step 3 — Derive the schema
 
 Propose columns based on the motivation from Step 1, the partitioning choice from 2.2, and the specifics the user described. Don't make the user invent the columns cold — give them a starter set and let them refine.

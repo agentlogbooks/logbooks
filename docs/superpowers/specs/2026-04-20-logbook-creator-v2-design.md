@@ -45,11 +45,12 @@ Ask seven questions:
 6. Is there a smaller meaningful work unit inside each artifact? (hotspot inside a run, finding inside a hotspot, claim inside a source)
 7. What identity layers are needed? (row key / domain fingerprint / run boundary / occurrence)
 
-Output decision: does this job need a **single-table logbook**, a **relational bundle** (SQLite with multiple tables), or an **event-log-plus-ledger pair**?
+Output decision: does this job need a **single-table logbook** or a **multi-entity logbook**?
 
-- Single-table → proceed to Step 3 as before (entity-first framing still applies, but trivially resolves to one entity)
-- Multi-entity → Step 3 expands to 3A/3B/3C
-- Event-log-plus-ledger → multi-entity with one append-only JSONL trace alongside the SQLite ledger
+- Single-table → pass through 3A/3B trivially (one record type) and land in 3C with a flat schema.
+- Multi-entity → 3A names several record types, 3B iterates per type, 3C produces per-table columns.
+
+Whether a multi-entity logbook also needs an append-only JSONL run-trace alongside its SQLite ledger is a Step 4 question (projections), not a separate branch here.
 
 ### Replaced Step 3 — Entity-first schema design
 
@@ -65,6 +66,7 @@ List the tables or record kinds before naming any columns. Examples: `review_run
 - Partial-row convention: empty string, explicit null, or "unknown" — one per record type
 - Correction rule: append-only (new row supersedes) or patch-in-place — aligned with mutability
 - Relationships to other record types (foreign keys, hierarchies)
+- Suggested indexes based on the expected query patterns for this record type (for SQLite backends; skip for CSV/JSONL)
 
 The four schema questions from v1 (identity, partial rows, corrections, field semantics) move here — answered once per record type, not globally.
 
@@ -193,14 +195,35 @@ Currently entirely missing. Content:
 - **Conflict resolution:** SQLite transactions for the ledger; JSONL is append-only (no conflict possible)
 - **Sunset:** archive (move to `~/logbooks/code-review/archive/`) when the PR is closed and no further review runs are expected
 
-No structural changes to existing sections.
+### Placement
+
+The three new sections are inserted between the existing `## JSONL record types` section and the existing `## Cloud export` section, in this order: `## Corrections`, `## Partial rows`, `## Governance`. No existing sections are moved or rewritten.
+
+---
+
+## `plugin.json` version bump
+
+`plugins/logbook-creator/.claude-plugin/plugin.json` currently reads `"version": "1.1.0"`. Bump to `"2.0.0"` when shipping — this is a breaking change to the skill's conversation flow (new Step 2.4, restructured Steps 3 and 4) and to the spec template shape for multi-entity logbooks. The description field stays as-is.
+
+---
+
+## Validation
+
+Two lightweight checks before declaring v2 ready:
+
+1. **Dry-run the upgraded skill against the deep-code-review scenario.** Start a fresh conversation, run the v2 skill with the same inputs that originally produced the flat angles/findings design. Confirm Step 2.4 surfaces "multiple record types," Step 3A proposes `hotspots` + `candidate_findings` (and optionally `review_runs`), Step 4 proposes SQLite as the authoritative store with a JSONL run-trace projection, and the resulting spec has four identity layers. If any of those fail, the skill is still flattening — iterate.
+
+2. **Dry-run the upgraded skill against a known single-table scenario** (e.g., the ideation logbook from the concept.md worked examples). Confirm Step 2.4 outputs single-table, 3A/3B collapse trivially, and the spec comes out as a single flat schema — i.e., we haven't over-corrected and made every logbook multi-entity.
+
+No automated tests; these are manual dry-runs against representative scenarios.
 
 ---
 
 ## Out of scope
 
-- Feedback loops as a first-class pattern (change #7 from the original diagnosis) — the new Step 2.4 question 5 ("will humans or agents later accept, fix, or dismiss entries?") surfaces the need; generating a feedback table automatically is a judgment call left to the skill's conversation, not hardcoded
-- Canonicalization / dedup as a design question (change #8) — covered by Step 2.4 question 3 ("does the same real-world thing recur across sessions?") and the new identity-layers question in 3B
-- Index/view inference for SQLite (change #9) — the new 3B asks for relationships between record types, which naturally surfaces index candidates; explicit index inference guidance adds prescription without much gain since the DDL in the spec already captures this
+- Feedback loops as a first-class pattern (change #7 from the original diagnosis) — the new Step 2.4 question 5 ("will humans or agents later accept, fix, or dismiss entries?") surfaces the need; generating a feedback table automatically is a judgment call left to the skill's conversation, not hardcoded.
+- Canonicalization / dedup as a design question (change #8) — covered by Step 2.4 question 3 ("does the same real-world thing recur across sessions?") and the new identity-layers question in 3B.
 
-These are satisfied at the level of asking the right questions, not at the level of generating boilerplate automatically.
+Both are satisfied at the level of asking the right questions, not at the level of generating boilerplate automatically.
+
+Change #9 (index/view inference for SQLite) was re-scoped **in**: added to 3B as "suggested indexes based on expected query patterns."

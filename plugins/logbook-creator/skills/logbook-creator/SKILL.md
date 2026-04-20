@@ -320,7 +320,6 @@ If no actions are defined yet, state that explicitly.
 
 ## Governance
 
-- **Owner:** <person or role>
 - **Access:** <who can append, who can patch, who can read>
 - **Lifetime:** <sprint / quarter / indefinite>
 - **Conflict resolution:** <last-write-wins via git, spreadsheet native, SQLite transactions, etc.>

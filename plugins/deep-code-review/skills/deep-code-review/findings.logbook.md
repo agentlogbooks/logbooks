@@ -355,7 +355,6 @@ Nullable fields (`file_path`, `line_start`, `line_end`, `drop_reason`, `suggeste
 
 ## Governance
 
-- **Owner:** logbook-creator / deep-code-review skill author
 - **Access:** append by deep-code-review skill agents; read by humans and downstream agents
 - **Lifetime:** indefinite; one SQLite file and one JSONL file per PR_REF
 - **Conflict resolution:** SQLite transactions for the ledger; JSONL is append-only (no conflict possible)

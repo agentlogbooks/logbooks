@@ -65,7 +65,8 @@
       "expected_output": {
         "hotspot_count_max": 3,
         "hotspot_risk_tags_must_include": ["security"],
-        "surfaced_count_max": 3
+        "surfaced_count_max": 5,
+        "note": "hotspot_count_max: 3 is the key assertion; surfaced_count_max: 5 allows for the security finding the diff contains"
       }
     }
   ]

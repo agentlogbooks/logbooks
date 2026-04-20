@@ -110,7 +110,7 @@ Judgments produced by hotspot subagents. May be surfaced, dropped, or deduplicat
 | surfacing_state | enum NOT NULL | `pending / suppressed / posted / question-only` |
 | drop_reason | text | Nullable — reason if `detection_state = dropped` |
 | suggested_fix | text | Nullable — optional concise fix direction from subagent |
-| current_model | text | Model that produced this candidate |
+| current_model | text NOT NULL | Model that produced this candidate |
 | created_at | text | ISO 8601 datetime |
 
 ---
@@ -317,10 +317,12 @@ All JSONL writes use `jq -nc` with named `--arg`/`--argjson` parameters — neve
 | record_type | Written in phase | Key fields |
 |-------------|-----------------|------------|
 | `run` | Phase 0 | run_id, repo_slug, pr_ref, review_target_type, diff_hash, current_model, skill_version, started_at |
-| `hotspot` | Phase 2 + 3 | run_id, hotspot_id, hotspot_key, file_path, symbol, summary, change_archetypes, risk_tags, why_selected, lenses |
+| `hotspot` | Phase 2 | run_id, hotspot_id, hotspot_key, file_path, symbol, summary, change_archetypes, risk_tags, why_selected |
 | `candidate` | Phase 5 | run_id, candidate_id, hotspot_id, output_type, issue_class, fingerprint, summary, evidence, why_now, severity, confidence_local, confidence_context, actionability, blast_radius |
 | `decision` | Phase 9 | run_id, candidate_id, detection_state, surfacing_state, drop_reason, priority_score |
 | `output` | Phase 9 | run_id, candidate_id, pr_ref, output_type, severity, summary, file_path, line_start, line_end, priority_score |
+
+(Lenses are written to SQLite only — Phase 3 UPDATE sets `lenses_json`; no separate JSONL record is written for lens selection.)
 
 ---
 

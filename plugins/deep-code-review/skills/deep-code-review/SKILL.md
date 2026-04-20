@@ -506,11 +506,28 @@ For every candidate, ask:
 
 Update `detection_state` to `selected` or `dropped`. Record `drop_reason` for every dropped candidate.
 
+Track these state decisions in-memory. The actual SQLite UPDATE for `detection_state`, `surfacing_state`, and `drop_reason` is batched in Phase 9.
+
 ---
 
 # Phase 7 — Canonicalize and deduplicate
 
 **Before running dedup:** compute priority_score for every surviving candidate (use the Phase 8 formula below) so you can correctly select the strongest duplicate. Update SQLite with the computed scores. Then proceed with dedup.
+
+```bash
+sqlite3 ~/logbooks/code-review/${PR_REF}.sqlite \
+  "UPDATE candidate_findings
+   SET priority_score = min(100, max(0, cast(round(100.0 * (
+     CASE severity WHEN 'critical' THEN 1.0 WHEN 'high' THEN 0.8
+                   WHEN 'medium' THEN 0.5 WHEN 'low' THEN 0.2 ELSE 0.05 END * 0.45
+     + confidence_local * 0.25
+     + confidence_context * 0.10
+     + CASE actionability WHEN 'high' THEN 1.0 WHEN 'medium' THEN 0.6 ELSE 0.2 END * 0.10
+     + CASE blast_radius WHEN 'public-contract' THEN 1.0 WHEN 'service' THEN 0.8
+                         WHEN 'module' THEN 0.6 ELSE 0.3 END * 0.10
+   )) AS INTEGER)))
+   WHERE run_id = '${RUN_ID}' AND detection_state = 'selected';"
+```
 
 ## Fingerprint
 
@@ -579,7 +596,7 @@ Clamp to 0..100. Update `candidate_findings.priority_score` in SQLite.
 
 ## JSONL
 
-Use `jq -nc` with named `--arg` / `--argjson` parameters for all writes. Never use raw shell string interpolation on `summary`, `evidence`, `why_now`, or any other free-form text — these originate from subagent output that processed untrusted diff content.
+Use `jq -nc` with named `--arg` / `--argjson` parameters for all writes. Never use raw shell string interpolation on free-form text fields — these originate from subagent output that processed untrusted diff content. Fields requiring escaping: `summary`, `evidence`, `why_now`, `suggested_fix`, `drop_reason`. Escape single quotes (replace `'` with `''`) before embedding in SQL strings.
 
 ```bash
 # Decision record — write for every candidate after skeptic pass + dedup
@@ -613,7 +630,7 @@ jq -nc \
 
 ## SQLite
 
-Update `detection_state`, `surfacing_state`, `priority_score`, and `drop_reason` for all candidates. Hotspots were already inserted in Phase 2 — do not re-insert.
+Update `detection_state`, `surfacing_state`, `priority_score`, and `drop_reason` for all candidates. Hotspots were already inserted in Phase 2 — do not re-insert. (`priority_score` was already computed in Phase 7; this UPDATE re-writes the final value after any Phase 6 severity downgrades that happened after the Phase 7 scoring.)
 
 ```bash
 sqlite3 ~/logbooks/code-review/${PR_REF}.sqlite \

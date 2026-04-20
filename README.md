@@ -1,6 +1,8 @@
-# logbook-creator
+# logbooks
 
-A Claude plugin that helps you design and create a logbook — a shared, queryable, schema-stable working surface that agents and humans append to, annotate, and query across sessions.
+Logbooks are shared working state: structured entries that agents and humans can append, patch, annotate, query, and carry forward across sessions. Learn more at [agentlogbooks.com](https://agentlogbooks.com).
+
+This repo is a collection of Claude skills that use logbooks as their working surface.
 
 ## Setup
 

@@ -326,6 +326,40 @@ All JSONL writes use `jq -nc` with named `--arg`/`--argjson` parameters — neve
 
 ---
 
+## Corrections
+
+Rows are inserted once per run; specific lifecycle and scoring columns are patched in place by later phases within the same run. All other columns are immutable after insert. A new run never modifies rows from a prior run — it produces new rows.
+
+### hotspots
+INSERTed at Phase 2 (hotspot selection). `lenses_json` is patched in place at Phase 3 (lens selection). All other columns are immutable after insert.
+
+### candidate_findings
+INSERTed at Phase 5 with placeholder scoring/state (`priority_score = 0`, `detection_state = 'candidate'`, `surfacing_state = 'pending'`, `drop_reason = NULL`). The following columns are patched in place across later phases within the same run:
+
+- `priority_score` — set at Phase 7; re-written at Phase 9 (may shift if the Phase 6 skeptic pass downgraded the candidate's effective severity after the Phase 7 scoring)
+- `detection_state` — patched at Phase 9 from `'candidate'` to one of `'selected' / 'dropped' / 'duplicate-in-run' / 'already-on-pr'`
+- `surfacing_state` — patched at Phase 9 from `'pending'` to one of `'suppressed' / 'posted' / 'question-only'`
+- `drop_reason` — patched at Phase 9 (non-NULL iff `detection_state = 'dropped'`)
+
+Content fields — `summary`, `evidence`, `why_now`, `fingerprint`, `severity`, `confidence_local`, `confidence_context`, `actionability`, `blast_radius`, `issue_class`, `output_type`, file/line coords, `suggested_fix`, `current_model`, `created_at` — are immutable after insert.
+
+## Partial rows
+
+Convention per record type.
+
+### hotspots
+Nullable fields (`symbol`, `line_start`, `line_end`) use SQL NULL; all NOT NULL fields must be present at insert time.
+
+### candidate_findings
+Nullable fields (`file_path`, `line_start`, `line_end`, `drop_reason`, `suggested_fix`) use SQL NULL; no empty-string convention.
+
+## Governance
+
+- **Access:** append by deep-code-review skill agents; read by humans and downstream agents
+- **Lifetime:** indefinite; one SQLite file and one JSONL file per PR_REF
+- **Conflict resolution:** SQLite transactions for the ledger; JSONL is append-only (no conflict possible)
+- **Sunset:** archive (move to `~/logbooks/code-review/archive/`) when the PR is closed and no further review runs are expected
+
 ## Cloud export
 
 Airtable and Google Sheets may be used as human-facing views — **one-way exports only**.

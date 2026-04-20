@@ -91,7 +91,7 @@ Present three common patterns tied back to the motivation from Step 1:
 | One file per problem/topic | Multi-agent or debugging work where each topic has its own arc | `{YYYY-MM-DD}-{slug}.{ext}` (date = file creation) | Cross-topic queries become `csvstack *.csv` or globs. Columns that name the topic (`problem_id`, `topic`) become redundant and should be dropped. |
 | One file per time window | High-volume or short-lived scopes (daily standup log, weekly retro) | `{YYYY-MM-DD}.{ext}` or `{YYYY-W##}.{ext}` | Similar effect on columns: drop `session` or `week`. |
 
-Decision rule: if the user answers "one file per X," the filename scheme AND the redundant-column list are decided **here**, not in Step 3. Step 3 reads these answers and drops the redundant columns from the schema, adding a one-line note below the table naming each dropped column and why.
+Decision rule: if the user answers "one file per X," the filename scheme AND the redundant-column list are decided **here**, not in Step 3. Step 3 reads these answers and drops the redundant columns from each record type's schema, adding a one-line note below each affected table naming each dropped column and why.
 
 Mixed partitioning (some entries shared, some personal; some per-topic, some global) is out of scope. Push the user to pick one, or to split into two logbooks with separate specs.
 
@@ -121,27 +121,65 @@ Proceed to Step 3 when both the append and query moments are concrete, or after 
 
 If the user insists on the logbook despite vague answers, proceed — but record the vague answers verbatim in the spec's `## Governance` as *"Usage pattern not yet articulated; revisit after first week. Sunset after 14 days of no writes."* This documents the exception so a future reader can see the upfront check was skipped intentionally.
 
-### Step 3 — Derive the schema
+#### 2.4 State architecture
 
-Propose columns based on the motivation from Step 1, the partitioning choice from 2.2, and the specifics the user described. Don't make the user invent the columns cold — give them a starter set and let them refine.
+Before picking columns or tables, decide what kinds of state this workflow actually produces. Serious agent workflows often need more than one record type — a raw trace layer, a mutable ledger, a feedback layer — with different mutability rules. Skipping this step locks you into one-table-fits-all and forces bad trade-offs in Step 3.
 
-Two answers from Step 2 directly shape the schema:
+Ask these seven questions in conversation (not as a form):
 
-- **Partitioning (2.2).** If the user chose one file per X, drop columns whose values are encoded in the filename (`problem_id`, `session`, `topic`, `date`, `week`, etc.). Annotate those fields in the schema table — or rather, annotate their absence — by adding a one-line note under the table: *"Column `<name>` is encoded in the filename, not stored."* Keeping the column in the schema and the filename both is redundant and invites drift.
-- **Scope (2.1).** If the logbook is shared, `author` (or equivalent) is a required column. If personal, `author` can be optional and defaults to the single owner recorded in governance.
+1. **Stable nouns** — *"What are the stable nouns in this workflow? Things like runs, hotspots, issues, candidates, feedback events, sources, sections — whatever the user's vocabulary names."*
+2. **Append-only vs mutable** — *"Which of those are append-only (a new occurrence is a new row) and which hold mutable current state (the same thing gets updated as work progresses)?"*
+3. **Cross-session recurrence** — *"Does the same real-world thing recur across sessions? The same issue reappears across PRs; the same candidate comes back in another run. If yes, a domain fingerprint is needed alongside the row key."*
+4. **Raw vs surfaced outputs** — *"Are there raw model outputs and accepted/surfaced outputs? If so, do they need to live separately so dropped-but-reviewable candidates don't get thrown away?"*
+5. **Later annotation** — *"Will humans or agents later accept, fix, dismiss, or suppress entries? If yes, there's either a feedback record type or a state field on the existing record type."*
+6. **Smaller work units** — *"Is there a smaller meaningful work unit inside each artifact — a hotspot inside a run, a finding inside a hotspot, a claim inside a source? Nested hierarchies surface here."*
+7. **Identity layers** — *"What identity layers does this workflow need? The common four are row key (unique per row — often one per record type in multi-entity designs), run-boundary key (scopes rows to an execution), domain fingerprint (a hash of the root-cause concept — enables semantic dedup across runs), and occurrence (how often the same fingerprint has appeared — tracked by fingerprint-count queries, not a separate column). Not every workflow needs all four."*
 
-Then ask the four schema questions, grounded in the user's scenario rather than abstractly:
+**Output decision.** Name whether this job needs a **single-table logbook** or a **multi-entity logbook**:
 
-- **Identity** — *"How should rows be identified? Auto-increment IDs are simple. A natural key like `component + title` is readable but breaks if those fields change. A UUID is safest but meaningless outside the logbook."* Pick one and document it.
-- **Partial rows** — *"Not every contributor will know every field at write time. When a field is missing, should it be an empty string, an explicit null, or the literal text 'unknown'?"* One convention per logbook. Mixed conventions corrupt filters.
-- **Corrections** — *"When an entry is wrong, should we update it in place, or append a new row that marks the old one superseded? Patching is simpler; appending preserves history for audit-sensitive logbooks."* Align with the motivation — ideation scoring patches, retro decision logs usually append.
-- **Field semantics** — for each column, write one sentence defining what it means. *"`priority` — the business value ranking from 1 (highest) to 5 (lowest), set by the product owner during review."* Two contributors meaning different things by the same column silently corrupts the logbook.
+- **Single-table** → one record type dominates and the other questions collapse to "not really." Step 3 passes through 3A/3B trivially (one record type) and lands in 3C with a flat schema.
+- **Multi-entity** → several stable nouns with different mutability rules, or raw-vs-surfaced separation, or cross-session recurrence. Step 3A names several record types, 3B iterates per type, 3C produces per-table columns.
 
-End this step with a clear, small schema the user can look at and say "yes, that's it." If they can't describe the columns in under 30 seconds, the schema isn't ready yet — trim or reshape.
+Whether a multi-entity logbook also needs an append-only JSONL run-trace alongside its SQLite ledger is a Step 4 question (projections), not a separate branch here.
+
+### Step 3 — Entity-first schema design
+
+By this point Step 2.4 has decided whether this is a single-table or a multi-entity logbook. Both paths run through the same three sub-steps — single-table collapses them trivially (one record type) while multi-entity fans them out per record type.
+
+Two answers from earlier still shape what gets recorded:
+
+- **Partitioning (2.2).** If the user chose one file per X, drop columns whose values are encoded in the filename (`problem_id`, `session`, `topic`, `date`, `week`, etc.) from every record type that would otherwise include them. Annotate their absence with a one-line note under the affected table: *"Column `<name>` is encoded in the filename, not stored."* Keeping the column in a record type's schema and the filename both is redundant and invites drift.
+- **Scope (2.1).** If the logbook is shared, `author` (or equivalent) is a required column on any record type a human or external agent writes. If personal, `author` can be optional and defaults to the single owner recorded in governance.
+
+#### 3A — Derive record types
+
+List the tables or record kinds before naming any columns. Examples: `review_runs`, `hotspots`, `candidate_findings`, `issues`, `occurrences`, `feedback_events`. For single-table logbooks this is trivial — one record type — but ask the question anyway so the decision is recorded rather than assumed.
+
+#### 3B — For each record type, define
+
+Answer each of these once per record type, grounded in the user's scenario rather than abstractly:
+
+- **Purpose** — one sentence: what this record type is for.
+- **Identity key(s)** — the row key. If Step 2.4 surfaced cross-session recurrence, add a domain fingerprint. If the record type is run-scoped, add a run-boundary key as well.
+- **Mutability** — append-only or patchable current state. This usually falls out of the motivation: audit-sensitive record types append; refinement-heavy ones patch.
+- **Partial-row convention** — empty string, explicit null, or "unknown". One convention per record type. Mixed conventions corrupt filters.
+- **Correction rule** — append-only (new row supersedes) or patch-in-place. Must be consistent with mutability: append-only types correct by appending; patchable types correct by patching.
+- **Relationships** — foreign keys into other record types, parent/child hierarchies, any cross-table link.
+- **Suggested indexes** — for SQLite backends, propose indexes based on the expected query patterns for this record type (skip for CSV/JSONL).
+
+If two contributors might mean different things by the same column name (`priority`, `status`, `score`), write one sentence of field semantics so the meaning is explicit — define it now, before 3C drafts the columns.
+
+#### 3C — Columns
+
+Only after 3B is settled. Propose a starter set per record type; let the user refine. Include one sentence of field semantics per column. If the schema for any record type can't be described in under 30 seconds, trim or reshape before proceeding.
 
 Also ask one actions question here while the motivation is fresh: *"Does this logbook need to feed an external system — Jira, Miro, a report, another agent? If so, name it."* Record the answer. This populates the `## Actions` section in Step 5 with real content instead of a placeholder. If the user says no external system, write "No actions defined." in the spec.
 
-### Step 4 — Recommend storage
+### Step 4 — Primary store + projections
+
+First establish what is authoritative, then what views exist. One store is the source of truth; everything else is a derived view.
+
+#### Authoritative store
 
 Pick the format that fits the data and the downstream experience, not by default. Make one recommendation with a one-sentence rationale; let the user override.
 
@@ -149,18 +187,28 @@ Pick the format that fits the data and the downstream experience, not by default
 |---|---|
 | **CSV** | Flat columns, short values, single writer at a time, want to open in Excel or grep from bash. Good default for ideation, flat decision logs, feedback collectors. Easy to chart later. |
 | **JSON Lines (.jsonl)** | Optional or nested fields, schema varies row to row. Still appendable and greppable. Weak if you want column CLI ops. |
-| **SQLite** | Need real queries (joins, aggregates, GROUP BY), row volume over a few thousand, multiple logbooks reference each other, concurrent writers. Loses plain-text inspectability. |
+| **SQLite** | Need real queries (joins, aggregates, GROUP BY), row volume over a few thousand, multiple logbooks reference each other, concurrent writers, or a multi-entity design from 3A. Loses plain-text inspectability. |
 | **Spreadsheet** (Google Sheets, Excel) | Humans are primary editors or reviewers. Visual sorting, filtering, comments. Ideal for human-in-the-loop review. |
 | **Markdown table** | Tiny (under ~20 rows), hand-maintained, read more than written. Rarely right for agent-written logbooks. |
 
 Narrow the table by the location picked in 2.1:
 
-- **Inside a shared git repo** → prefer plain CSV, JSONL, or Markdown. They are diffable and reviewable in PRs. Deprioritize SQLite (binary, review-hostile) and spreadsheets (not in the repo at all) — unless you have concurrent writers, in which case SQLite's transaction safety outweighs the diff cost.
+- **Inside a shared git repo** → prefer plain CSV, JSONL, or Markdown. They are diffable and reviewable in PRs. Deprioritize SQLite (binary, review-hostile) and spreadsheets (not in the repo at all) — unless you have concurrent writers or a multi-entity design, in which case SQLite's transaction safety and relational queries outweigh the diff cost.
 - **Under a home-dir or local-state path** → all formats in the table remain viable. Pick on motivation and data shape.
 
-The motivation biases the choice: staging and collection lean toward CSV or SQLite (diffable, chartable); human-review leans toward spreadsheet; multi-agent concurrent writers lean toward SQLite.
+The motivation biases the choice: staging and collection lean toward CSV or SQLite (diffable, chartable); human-review leans toward spreadsheet; multi-agent concurrent writers and anything multi-entity lean toward SQLite.
 
 Migration is always available — start simple, upgrade when the pain signals (nested fields → JSONL; need joins → SQLite; need human UI → spreadsheet). Tell the user this so they don't over-engineer up front.
+
+#### Projections (optional)
+
+A projection is a view derived from the authoritative store. Writes go to the authoritative store; projections are appended or regenerated alongside it. Each projection has one of three roles:
+
+- **run-trace** — append-only event log alongside the ledger (typically JSONL). Preserves the full execution record; not queryable relationally. Use this when the skill needs to preserve intermediate reasoning or event-level detail that the authoritative ledger tables don't capture — even when the ledger itself is append-only.
+- **export-only** — read-only snapshot for human browsing (Google Sheets, Airtable, a rendered report). Regenerated from the authoritative store; never edited directly; never the source of truth.
+- **mirror** — editable copy. Almost always wrong — it creates the "second place to update" anti-pattern. Flag it and push back unless the user has a specific operational reason.
+
+If it is unclear which store is authoritative, the design is not finished. Ask again before moving on.
 
 ### Step 5 — Create the two artifacts
 
@@ -272,7 +320,6 @@ If no actions are defined yet, state that explicitly.
 
 ## Governance
 
-- **Owner:** <person or role>
 - **Access:** <who can append, who can patch, who can read>
 - **Lifetime:** <sprint / quarter / indefinite>
 - **Conflict resolution:** <last-write-wins via git, spreadsheet native, SQLite transactions, etc.>
@@ -280,6 +327,64 @@ If no actions are defined yet, state that explicitly.
 ```
 
 The query snippets must be the **actual commands** that work against the logbook as created — not abstract examples. If the logbook is at `/work/retro.csv`, the filter snippet should be a working `awk` or `python` call against that exact path. This is what makes the spec directly consumable by skill-creator.
+
+### Multi-entity variant
+
+When Step 2.4 decided this is a multi-entity logbook, extend the template above as follows. Sections not listed here stay identical to the single-table template.
+
+- **Storage** becomes **Physical stores** — lists the authoritative store first, then each projection with its role (`run-trace`, `export-only`, `mirror`) and address.
+- **Schema** becomes one `### <RecordType>` subsection per table, each with its own schema table.
+- **Identity**, **Partial rows**, **Corrections** each become per-record-type subsections, one block per record type — so a reader can see the full contract for one table without scanning the whole spec.
+- **Queries** remains flat but includes cross-table JOIN examples where relevant.
+
+No new YAML frontmatter fields. The `bindings` block remains the only structured frontmatter, present only when auth config is needed.
+
+Example skeleton for the expanded sections (record type names are illustrative — substitute the ones derived in 3A):
+
+````markdown
+## Physical stores
+
+- **Authoritative:** <format> at `<absolute path or address>` — <one-sentence rationale>
+- **Projection: <label>** — role: `run-trace` | `export-only` | `mirror` — at `<address>` — <purpose>
+
+## Schema
+
+### <record_type_1>
+
+| Column | Type | Required | Semantics |
+|---|---|---|---|
+| ... | ... | ... | ... |
+
+### <record_type_2>
+
+| Column | Type | Required | Semantics |
+|---|---|---|---|
+| ... | ... | ... | ... |
+
+## Identity
+
+### <record_type_1>
+<rule>
+
+### <record_type_2>
+<rule>
+
+## Partial rows
+
+### <record_type_1>
+<convention>
+
+### <record_type_2>
+<convention>
+
+## Corrections
+
+### <record_type_1>
+<rule>
+
+### <record_type_2>
+<rule>
+````
 
 ## Handoff to skill-creator
 

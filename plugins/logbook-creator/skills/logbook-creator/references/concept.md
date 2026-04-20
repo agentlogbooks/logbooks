@@ -6,7 +6,7 @@ A logbook is shared working state made of structured entries that multiple agent
 
 A logbook answers "what are we jointly working through right now?" — not what happened (log), not what we decided (decision record), not what's assigned (tracker). It is a specific collaborative state layer: specific because each logbook has one job with its own schema, collaborative because multiple actors write and read it, and a layer because it sits between prose and trackers, between agents and external systems.
 
-A logbook is not a log. A log is an append-only event stream — chronological, machine-written, rarely edited. A logbook is a live working document: entries get annotated and corrected, and the value comes from querying the structure, not replaying the stream.
+A logbook is not only a log. Advanced workflows often pair an append-only run trace with a mutable working ledger — the trace captures what happened, the ledger holds current state. What a logbook is not is a log alone: append-only, machine-written, optimized for replay rather than current-state query.
 
 **The trade.** A logbook converts repeated interpretation cost into up-front schema cost. Every time a different agent, a different human, or the same person in a different session touches the same state, they either re-interpret it from scratch or rely on the structure someone already defined. When that state is touched often enough across contributors and sessions, the schema pays for itself. When it isn't — when the state is short-lived, single-reader, or still figuring out its shape — the overhead isn't worth it.
 
@@ -91,7 +91,22 @@ In a **row-shaped logbook**, each entry is a row with named columns. Questions a
 
 **Queries via tools, not in-context scanning.** Once the logbook grows beyond trivial size, common questions should be answered by filtering, sorting, or aggregating columns rather than by loading the whole file into prompt context. The tool can be a CLI, a spreadsheet filter, or SQL. Building that query layer is part of building the logbook. Rereading a small logbook in full is fine; the rule is that the logbook should not *need* to be reread as it grows.
 
-**One logbook, one schema, one job.** Each logbook gets the columns its job needs. Shared columns across logbooks is coincidence, not a design goal. This rejects universal schemas, not shared tooling — small reusable helpers are fine. A universal logbook platform or shared ontology is the trap.
+**One job, one coherent memory design.** Sometimes that is one table; sometimes it is a small relational bundle with a few related record types. What to avoid is a universal domain schema — not multi-entity designs that genuinely need them. Reusable infrastructure (id formats, timestamp conventions, validation helpers) remains fine. A universal logbook platform or shared ontology is the trap.
+
+### Single-table vs multi-entity
+
+**Use a single table when:**
+- One row type dominates
+- Rows don't recur as stable entities across sessions
+- No separate trace vs. memory vs. feedback layer
+
+**Use a multi-entity logbook when:**
+- The workflow has repeated runs against the same artifact
+- Raw outputs differ from accepted/surfaced outputs and need to live separately
+- The same real-world thing recurs across sessions (same issue reappears across PRs, same candidate across runs)
+- Humans or agents annotate results in a later pass
+
+Rule of thumb: if you'd naturally say "a run has many hotspots, each hotspot has many candidates" — that's a relational bundle, not a flat table. If you'd say "each session has one entry" — it's probably single-table.
 
 ### Anti-patterns
 
@@ -119,6 +134,16 @@ Pick the format that fits the data, not by default.
 
 Migration is always available. A common starting point is CSV when no stronger signal exists, but spreadsheet-first or SQLite-first are equally valid when the workflow calls for them. Notice the pain (nested fields → jsonl; need joins → SQLite; need human UI → spreadsheet), and migrate that specific logbook. The concept and schema don't change — only the serialization does.
 
+### Authoritative store vs projections
+
+One store is authoritative; others are views. Three projection kinds:
+
+- **run-trace** — append-only event log alongside the ledger; preserves full execution record; not the source of truth for current state
+- **export-only** — read-only snapshot for human browsing (Sheets, Airtable); regenerated from the authoritative store; never edited directly
+- **mirror** — editable copy; almost always wrong; creates the "second place to update" anti-pattern
+
+If it's unclear which store is authoritative, the logbook isn't designed yet. The authoritative store is where writes happen; projections are derived from it.
+
 ### Operating the schema
 
 Naming columns in 30 seconds tells you the logbook is row-shaped. It does not tell you the schema is ready for contributors. The hard problems are below.
@@ -142,6 +167,19 @@ Naming columns in 30 seconds tells you the logbook is row-shaped. It does not te
 **Pre-tracker backlog shaping logbook.** Columns: candidate_id, epic, task_name, description, component, dependency, risk, estimate, priority, split_merge_action, commit_decision. Many agents and humans shape candidates: splitting epics, deduping, estimating, ranking. Cheap queries power review: "show unowned backend tasks," "group by component," "what depends on auth?" Once candidates pass review, selected rows export to Jira. The logbook is the shaping surface; the tracker is the execution surface.
 
 **Skill retro collector logbook.** Columns: run_id, skill_name, phase, observation, severity, category. One row per observed failure mode across every run of a skill. The schema is generic to any skill but the value is personalized — each skill's retro logbook accumulates its own patterns over time. The value shows up over many runs, when `filter category=scorer-collapse` surfaces a pattern invisible in any single retro.
+
+**Deep review / multi-phase agent workflow logbook.** A per-PR code review logbook with two physical stores.
+
+- **SQLite ledger** (`~/logbooks/code-review/{PR_REF}.sqlite`):
+  - `hotspots` — one row per risky unit selected for review per run; key: `hotspot_id`; inserted at selection time with `lenses_json` patched in place later in the same run
+  - `candidate_findings` — one judgment per hotspot per run; key: `candidate_id`; inserted at generation time; lifecycle and scoring columns (`priority_score`, `detection_state`, `surfacing_state`, `drop_reason`) are patched in place by later phases within the same run
+- **JSONL run-trace** (`~/logbooks/code-review/{PR_REF}.jsonl`):
+  - Append-only event log; `record_type` one of run/hotspot/candidate/decision/output
+  - Preserves full execution record; not queried relationally
+
+Identity has four layers: `run_id` (execution boundary), `hotspot_id` (planning unit within a run), `candidate_id` (one model judgment), `fingerprint` (root-cause hash for semantic dedup across runs). Both tables are insert-once-per-run — within a run, a handful of lifecycle and scoring columns get patched in place by later phases; all content fields are immutable after insert, and corrections across runs are made by appending new rows from a new run, not by modifying prior-run rows. Cloud exports (Sheets, Airtable) are export-only projections — not authoritative, regenerated from the SQLite ledger.
+
+The value of the multi-entity design: `detection_state` + `surfacing_state` can be tracked separately per candidate, cross-run dedup works via fingerprint without touching earlier rows, and the run-trace preserves the full reasoning record independently of the current-state ledger.
 
 ### Actions
 

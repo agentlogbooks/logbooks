@@ -65,11 +65,11 @@ Claude will walk you through the motivation, schema, and storage choice, then wr
 
 ### deep-code-review
 
-Run a deep multi-angle code review on a PR, branch, or diff:
+Run a hotspot-first code review on a PR, branch, or diff:
 
 ```
 /deep-code-review review PR #42
 /deep-code-review review current branch changes
 ```
 
-Findings are scored by severity × confidence and persisted to a per-PR SQLite + JSONL logbook at `~/logbooks/code-review/`.
+The skill maps behavior changes, selects risky hotspots, runs per-hotspot analysis, applies a skeptic pass, and surfaces at most 5 high-signal findings or questions. Results are persisted to a per-PR JSONL trace and SQLite ledger at `~/logbooks/code-review/`.

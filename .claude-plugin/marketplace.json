@@ -16,8 +16,8 @@
     {
       "name": "deep-code-review",
       "source": "./plugins/deep-code-review",
-      "version": "1.0.0",
-      "description": "Multi-phase deep code review that detects angles, researches best practices, runs parallel subagent review, deduplicates findings, and scores by severity × confidence."
+      "version": "2.0.0",
+      "description": "Hotspot-first deep code review: change map → risky hotspot selection → per-hotspot lens subagents → skeptic pass → comment budget. Surfaces at most 5 high-signal findings or questions per run."
     }
   ]
 }

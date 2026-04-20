@@ -61,7 +61,7 @@ Ask in three probes, conversationally — not as a form. These three decisions r
 
 **Location.** *"Given that, give me an absolute path where this logbook should live."*
 
-Validate the answer in conversation (not code):
+Validate the path pattern in conversation (save the filesystem check for Step 5):
 
 - Reject ephemeral-looking paths when lifetime is longer than the session. Patterns that indicate ephemerality: `/tmp/…`, `/private/var/folders/…`, `/sessions/…`, any path under a sandbox or working directory whose stability across sessions is not guaranteed. When detected: call it out and ask the user for a durable path.
 - Personal scope + path inside a git repo → warn: *"This will be committed unless gitignored. Do you want that? If not, either move to a home-dir path or plan to add a `.gitignore` rule right now."*

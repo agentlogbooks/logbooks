@@ -68,6 +68,29 @@
         "surfaced_count_max": 5,
         "note": "hotspot_count_max: 3 is the key assertion; surfaced_count_max: 5 allows for the security finding the diff contains"
       }
+    },
+    {
+      "id": 6,
+      "eval_name": "eval-confidence-gate-downgrade",
+      "description": "A candidate with severity=high but confidence_local=0.60 must be downgraded to medium by Phase 6 confidence gates (high requires confidence_local >= 0.70).",
+      "prompt": "Review this diff:\n\ndiff --git a/src/auth.ts b/src/auth.ts\n--- a/src/auth.ts\n+++ b/src/auth.ts\n@@ -10,7 +10,6 @@\n export async function updateUser(req, res) {\n-  if (!req.user.isAdmin) return res.status(403).json({ error: 'Forbidden' });\n   const { id } = req.params;\n   await db.query(`UPDATE users SET role = '${req.body.role}' WHERE id = ${id}`);\n   return res.json({ success: true });\n }",
+      "expected_output": {
+        "note": "Precondition: the auth-boundary hotspot subagent returns a finding with severity=high and confidence_local=0.60. Phase 6 confidence gate must downgrade it.",
+        "candidates_with_severity_high_and_confidence_below_0_70_must_be_downgraded": true,
+        "surfaced_severity_for_downgraded_candidate": "medium",
+        "logbook_written": true
+      }
+    },
+    {
+      "id": 7,
+      "eval_name": "eval-priority-score-nonzero-after-phase7",
+      "description": "All selected candidates must have priority_score > 0 in SQLite after Phase 7 completes. This catches the bug where the Phase 7 UPDATE filters on detection_state='selected' before that column is written to SQLite.",
+      "prompt": "Review this diff:\n\ndiff --git a/src/payments.ts b/src/payments.ts\n--- a/src/payments.ts\n+++ b/src/payments.ts\n@@ -5,7 +5,7 @@\n export async function chargeCard(req, res) {\n-  const amount = validateAmount(req.body.amount);\n+  const amount = req.body.amount;\n   await stripe.charges.create({ amount, currency: 'usd', source: req.body.token });\n   return res.json({ success: true });\n }",
+      "expected_output": {
+        "logbook_written": true,
+        "all_selected_candidates_priority_score_gt_0": true,
+        "note": "Query: SELECT count(*) FROM candidate_findings WHERE detection_state='selected' AND priority_score = 0; must return 0."
+      }
     }
   ]
 }

@@ -7,7 +7,8 @@ description: >
   generates candidate findings and questions, runs a skeptic pass and dedup, then surfaces at most
   5 high-signal outputs. Persists a per-run JSONL trace and per-PR SQLite ledger under
   ~/logbooks/code-review/. Invoke for any concrete review request: "review PR #123", "deep review",
-  "check this diff", "review current branch", "review staged changes". Do not invoke for vague
+  "check this diff", "review current branch", "review staged changes", "review codebase",
+  "audit this repo", "review this repo". Do not invoke for vague
   opinion requests that have no diff, code, or concrete review target ("what do you think of these
   changes?", "any concerns?", "thoughts on this?") — requests like "check this diff" or "feedback
   on this PR" are reviewing tasks even without the word "review".
@@ -78,6 +79,12 @@ Set `PR_REF = branch-{branch-name}` (lowercase, hyphens), `REVIEW_TARGET_TYPE = 
 
 **Current changes (no explicit target):** `git diff HEAD`. Set `PR_REF = wip-{YYYYMMDD-HHmmss}`, `REVIEW_TARGET_TYPE = wip`. For staged-only pre-commit review, use `git diff --cached` instead.
 
+**Full codebase review ("review codebase", "audit this repo", "review this repo"):**
+```bash
+find . -type f | grep -v node_modules | grep -v .git | sort
+```
+Set `PR_REF = repo-{YYYYMMDD-HHmmss}`, `REVIEW_TARGET_TYPE = repo`. There is no diff — treat the full file tree as the review surface. Phase 1 builds the change map by reading key files directly (entry points, auth, migrations, skill/instruction files, docs). Phase 2 selects hotspots from the highest-risk units in the repo rather than from changed hunks.
+
 ## Required run metadata
 
 Compute and store:
@@ -144,6 +151,8 @@ CREATE INDEX IF NOT EXISTS idx_candidates_fingerprint ON candidate_findings(fing
 CREATE INDEX IF NOT EXISTS idx_candidates_hotspot_id ON candidate_findings(hotspot_id);
 "
 ```
+
+**Note on FK enforcement:** `PRAGMA foreign_keys` is connection-scoped in SQLite — it resets to OFF on every new connection. The initialization above enables it for the schema-creation transaction only. Subsequent `sqlite3` calls in later phases open new connections and do not inherit this pragma. In practice the skill inserts hotspots before candidates and uses model-generated IDs it controls, so FK violations are unlikely; the constraint is a safety net, not a runtime guard. If you need FK enforcement on INSERT, prefix each `sqlite3` call with `-cmd "PRAGMA foreign_keys = ON;"`.
 
 Append `run` record to JSONL:
 ```bash
@@ -526,7 +535,7 @@ sqlite3 ~/logbooks/code-review/${PR_REF}.sqlite \
      + CASE blast_radius WHEN 'public-contract' THEN 1.0 WHEN 'service' THEN 0.8
                          WHEN 'module' THEN 0.6 ELSE 0.3 END * 0.10
    )) AS INTEGER)))
-   WHERE run_id = '${RUN_ID}' AND detection_state = 'selected';"
+   WHERE run_id = '${RUN_ID}';"
 ```
 
 ## Fingerprint
@@ -550,7 +559,6 @@ If `EXISTING_PR_COMMENTS` is non-empty, check whether an existing review comment
 sqlite3 ~/logbooks/code-review/${PR_REF}.sqlite \
   "SELECT candidate_id, summary, priority_score FROM candidate_findings
    WHERE run_id = '${RUN_ID}' AND fingerprint = '${ESCAPED_FINGERPRINT}'
-     AND detection_state = 'selected'
    ORDER BY priority_score DESC;"
 ```
 

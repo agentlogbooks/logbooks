@@ -6,7 +6,7 @@ A logbook is shared working state made of structured entries that multiple agent
 
 A logbook answers "what are we jointly working through right now?" — not what happened (log), not what we decided (decision record), not what's assigned (tracker). It is a specific collaborative state layer: specific because each logbook has one job with its own schema, collaborative because multiple actors write and read it, and a layer because it sits between prose and trackers, between agents and external systems.
 
-A logbook is not a log. A log is an append-only event stream — chronological, machine-written, rarely edited. A logbook is a live working document: entries get annotated and corrected, and the value comes from querying the structure, not replaying the stream.
+A logbook is not only a log. Advanced workflows often pair an append-only run trace with a mutable working ledger — the trace captures what happened, the ledger holds current state. What a logbook is not is a log alone: append-only, machine-written, optimized for replay rather than current-state query.
 
 **The trade.** A logbook converts repeated interpretation cost into up-front schema cost. Every time a different agent, a different human, or the same person in a different session touches the same state, they either re-interpret it from scratch or rely on the structure someone already defined. When that state is touched often enough across contributors and sessions, the schema pays for itself. When it isn't — when the state is short-lived, single-reader, or still figuring out its shape — the overhead isn't worth it.
 

@@ -94,6 +94,7 @@ Compute and store:
 ## Initialize stores
 
 ```bash
+mkdir -p ~/logbooks/code-review/
 sqlite3 ~/logbooks/code-review/${PR_REF}.sqlite "
 PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS hotspots (
@@ -133,6 +134,7 @@ CREATE TABLE IF NOT EXISTS candidate_findings (
   detection_state TEXT NOT NULL CHECK(detection_state IN ('candidate','selected','dropped','duplicate-in-run','already-on-pr')),
   surfacing_state TEXT NOT NULL CHECK(surfacing_state IN ('pending','suppressed','posted','question-only')),
   drop_reason TEXT,
+  suggested_fix TEXT,
   current_model TEXT NOT NULL,
   created_at TEXT NOT NULL
 );
@@ -178,7 +180,7 @@ Read the diff once. Extract:
 
 Use edit archetypes as the primary planning vocabulary:
 
-`guard-removed` / `guard-weakened` / `validation-moved` / `validation-removed` / `auth-boundary-moved` / `public-contract-changed` / `persistence-schema-changed` / `state-mutation-moved` / `error-path-changed` / `async-boundary-introduced` / `resource-lifetime-changed` / `cache-invalidation-changed` / `logging-sensitivity-changed` / `dependency-version-changed` / `docs-instructions-changed` / `test-gap-introduced`
+`guard-removed` / `guard-weakened` / `guard-moved` / `validation-moved` / `validation-removed` / `auth-boundary-moved` / `public-contract-changed` / `persistence-schema-changed` / `state-mutation-moved` / `error-path-changed` / `async-boundary-introduced` / `resource-lifetime-changed` / `cache-invalidation-changed` / `logging-sensitivity-changed` / `dependency-version-changed` / `docs-instructions-changed` / `test-gap-introduced`
 
 The change map is planning state only — not output to the user.
 
@@ -349,7 +351,11 @@ Look for: contradictory directives; ambiguous triggers; unhandled edge cases; br
 
 Triggered only when the diff **explicitly** references a versioned external dependency, deprecated API, or cited standard that may have changed. At most one search per run, against official/primary sources only. Not triggered by default.
 
-Store the final lens list in `hotspots.lenses_json` for this hotspot.
+Update `hotspots.lenses_json` with the selected lens list:
+```bash
+sqlite3 ~/logbooks/code-review/${PR_REF}.sqlite \
+  "UPDATE hotspots SET lenses_json = '${LENSES_JSON}' WHERE hotspot_id = '${HOTSPOT_ID}';"
+```
 
 ---
 
@@ -429,6 +435,12 @@ Hard rules:
 ]
 ```
 
+**Compute fingerprint** for each candidate before inserting:
+```
+fingerprint = "{issue_class}|{primary_symbol_or_path}|{violated_invariant_or_boundary}|{sink_or_side_effect}"
+```
+Where `primary_symbol_or_path` is the function/method/endpoint name or file path; `violated_invariant_or_boundary` is the condition being broken; `sink_or_side_effect` is the affected output (e.g. public-endpoint, log-output, db-write). Use empty segments for fields not applicable.
+
 Persist all raw candidates to SQLite and JSONL immediately:
 
 ```bash
@@ -437,12 +449,12 @@ sqlite3 ~/logbooks/code-review/${PR_REF}.sqlite \
    (candidate_id, run_id, hotspot_id, output_type, issue_class, fingerprint, summary,
     evidence, why_now, file_path, line_start, line_end, severity, confidence_local,
     confidence_context, actionability, blast_radius, priority_score, detection_state,
-    surfacing_state, current_model, created_at)
+    surfacing_state, drop_reason, suggested_fix, current_model, created_at)
    VALUES ('${CAND_ID}', '${RUN_ID}', '${HOTSPOT_ID}', '${OUTPUT_TYPE}', '${ISSUE_CLASS}',
     '${FINGERPRINT}', '${SUMMARY}', '${EVIDENCE}', '${WHY_NOW}', '${FILE_PATH}',
     ${LINE_START}, ${LINE_END}, '${SEVERITY}', ${CONF_LOCAL}, ${CONF_CTX},
     '${ACTIONABILITY}', '${BLAST_RADIUS}', 0, 'candidate', 'pending',
-    '${CURRENT_MODEL}', '$(date -Iseconds)');"
+    NULL, '${SUGGESTED_FIX}', '${CURRENT_MODEL}', '$(date -Iseconds)');"
 
 jq -nc \
   --arg record_type candidate \
@@ -463,7 +475,8 @@ jq -nc \
   --argjson confidence_context "$CONF_CTX" \
   --arg actionability "$ACTIONABILITY" \
   --arg blast_radius "$BLAST_RADIUS" \
-  '{record_type, run_id, candidate_id, hotspot_id, output_type, issue_class, fingerprint, summary, evidence, why_now, file_path, line_start, line_end, severity, confidence_local, confidence_context, actionability, blast_radius}' \
+  --arg suggested_fix "${SUGGESTED_FIX:-}" \
+  '{record_type, run_id, candidate_id, hotspot_id, output_type, issue_class, fingerprint, summary, evidence, why_now, file_path, line_start, line_end, severity, confidence_local, confidence_context, actionability, blast_radius, suggested_fix}' \
   >> ~/logbooks/code-review/${PR_REF}.jsonl
 ```
 
@@ -497,9 +510,11 @@ Update `detection_state` to `selected` or `dropped`. Record `drop_reason` for ev
 
 # Phase 7 — Canonicalize and deduplicate
 
+**Before running dedup:** compute priority_score for every surviving candidate (use the Phase 8 formula below) so you can correctly select the strongest duplicate. Update SQLite with the computed scores. Then proceed with dedup.
+
 ## Fingerprint
 
-Build a root-cause fingerprint:
+The fingerprint was computed in Phase 5 and stored with each candidate. Use it here for dedup:
 ```
 {issue_class}|{primary_symbol_or_path}|{violated_invariant_or_boundary}|{sink_or_side_effect}
 ```
@@ -606,7 +621,7 @@ sqlite3 ~/logbooks/code-review/${PR_REF}.sqlite \
    SET detection_state = '${DETECTION_STATE}',
        surfacing_state = '${SURFACING_STATE}',
        priority_score  = ${PRIORITY_SCORE},
-       drop_reason     = '${DROP_REASON}'
+       drop_reason     = NULLIF('${DROP_REASON}', '')
    WHERE candidate_id  = '${CAND_ID}';"
 ```
 
@@ -652,6 +667,6 @@ Logbook: ~/logbooks/code-review/{PR_REF}.sqlite
 
 ## Logbook spec
 
-Full schema, query examples, and cloud export setup: `findings.logbook.md` in this directory.
+Full schema, query examples, and cloud export setup: `plugins/deep-code-review/skills/deep-code-review/findings.logbook.md`.
 
 **Important:** `findings.logbook.md` is a shared repo artifact — permanently read-only. Never edit its `address_pattern` or binding fields. Store resolved IDs and credentials in a gitignored local override (e.g. `~/logbooks/code-review/bindings.local.yaml`) — never in the spec file.

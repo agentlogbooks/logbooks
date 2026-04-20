@@ -204,7 +204,7 @@ Migration is always available — start simple, upgrade when the pain signals (n
 
 A projection is a view derived from the authoritative store. Writes go to the authoritative store; projections are appended or regenerated alongside it. Each projection has one of three roles:
 
-- **run-trace** — append-only event log alongside the ledger (typically JSONL). Preserves the full execution record; not queryable relationally. Use this when the authoritative store holds mutable current state and the full stream of events still needs to be replayable.
+- **run-trace** — append-only event log alongside the ledger (typically JSONL). Preserves the full execution record; not queryable relationally. Use this when the skill needs to preserve intermediate reasoning or event-level detail that the authoritative ledger tables don't capture — even when the ledger itself is append-only.
 - **export-only** — read-only snapshot for human browsing (Google Sheets, Airtable, a rendered report). Regenerated from the authoritative store; never edited directly; never the source of truth.
 - **mirror** — editable copy. Almost always wrong — it creates the "second place to update" anti-pattern. Flag it and push back unless the user has a specific operational reason.
 

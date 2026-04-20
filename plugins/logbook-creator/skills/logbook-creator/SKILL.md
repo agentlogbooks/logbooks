@@ -133,7 +133,7 @@ Ask these seven questions in conversation (not as a form):
 4. **Raw vs surfaced outputs** — *"Are there raw model outputs and accepted/surfaced outputs? If so, do they need to live separately so dropped-but-reviewable candidates don't get thrown away?"*
 5. **Later annotation** — *"Will humans or agents later accept, fix, dismiss, or suppress entries? If yes, there's either a feedback record type or a state field on the existing record type."*
 6. **Smaller work units** — *"Is there a smaller meaningful work unit inside each artifact — a hotspot inside a run, a finding inside a hotspot, a claim inside a source? Nested hierarchies surface here."*
-7. **Identity layers** — *"What identity layers does this workflow need? The common four are row key (unique per row), domain fingerprint (semantic dedup across runs), run boundary (scopes rows to an execution), occurrence (same fingerprint seen again). Not every workflow needs all four."*
+7. **Identity layers** — *"What identity layers does this workflow need? The common four are row key (unique per row — often one per record type in multi-entity designs), run-boundary key (scopes rows to an execution), domain fingerprint (a hash of the root-cause concept — enables semantic dedup across runs), and occurrence (how often the same fingerprint has appeared — tracked by fingerprint-count queries, not a separate column). Not every workflow needs all four."*
 
 **Output decision.** Name whether this job needs a **single-table logbook** or a **multi-entity logbook**:
 

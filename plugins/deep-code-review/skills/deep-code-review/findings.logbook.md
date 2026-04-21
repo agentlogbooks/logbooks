@@ -17,7 +17,7 @@ bindings:
   - driver: jsonl
     label: run-log
     address_pattern: ~/logbooks/code-review/{slug}.jsonl
-    note: append-only trace; record_type one of run|hotspot|candidate|decision|output; {slug} = PR_REF
+    note: append-only trace; record_type one of run|hotspot|candidate|decision|output|pr_comment_dedup; {slug} = PR_REF
 
   # Optional human-facing exports — not authoritative
   - driver: airtable
@@ -321,6 +321,7 @@ All JSONL writes use `jq -nc` with named `--arg`/`--argjson` parameters — neve
 | `candidate` | Phase 5 | run_id, candidate_id, hotspot_id, output_type, issue_class, fingerprint, summary, evidence, why_now, severity, confidence_local, confidence_context, actionability, blast_radius |
 | `decision` | Phase 9 | run_id, candidate_id, detection_state, surfacing_state, drop_reason, priority_score |
 | `output` | Phase 9 | run_id, candidate_id, pr_ref, output_type, severity, summary, file_path, line_start, line_end, priority_score |
+| `pr_comment_dedup` | Phase 9 | run_id, dispatched (bool), decisions (when dispatched — array of {candidate_id, already_on_pr, matched_comment_ref, reason}), skip_reason (when not dispatched — one of `no-pr-comments` / `no-selected-candidates` / `target-type-not-pr`) |
 
 (Lenses are written to SQLite only — Phase 3 UPDATE sets `lenses_json`; no separate JSONL record is written for lens selection.)
 

@@ -6,3 +6,4 @@ plugins/deep-code-review/deep-code-review-workspace/
 .ideation/
 docs/superpowers/specs/
 docs/superpowers/plans/
+plugins/*/change-requests/

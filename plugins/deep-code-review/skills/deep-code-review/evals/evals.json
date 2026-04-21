@@ -91,6 +91,24 @@
         "all_selected_candidates_priority_score_gt_0": true,
         "note": "Query: SELECT count(*) FROM candidate_findings WHERE detection_state='selected' AND priority_score = 0; must return 0."
       }
+    },
+    {
+      "id": 8,
+      "eval_name": "eval-dedup-pr-comment-match",
+      "description": "A candidate that semantically matches an existing PR comment must be marked already-on-pr and suppressed. The Phase 7 dedup subagent must be dispatched and must return already_on_pr=true for the matching candidate. A pr_comment_dedup JSONL record with dispatched=true must be written.",
+      "prompt": "Review PR #99 [precondition: PR #99 has an existing review comment on src/auth.ts lines 40–60 flagging 'Authorization check removed in updateUser — any caller can now invoke this'. The Phase 5 subagent for the updateUser hotspot returns a candidate with summary 'Authorization guard removed from updateUser; no replacement check visible', file_path 'src/auth.ts', lines 42–57, output_type=finding, severity=high, confidence_local=0.85. The Phase 7 dedup subagent receives the candidate + PR_NUMBER=99 and must return already_on_pr=true for this candidate with a non-null matched_comment_ref.]",
+      "expected_output": {
+        "slug": "pr-99",
+        "pr_comment_dedup_record_dispatched": true,
+        "candidate_with_detection_state_already_on_pr_count_min": 1,
+        "drop_reason_prefix": "PR comment dup:",
+        "surfacing_state_for_matched_candidate": "suppressed",
+        "surfaced_candidates_must_not_include": [
+          { "keyword": "updateUser", "reason": "candidate was deduped against an existing PR comment" }
+        ],
+        "logbook_written": true,
+        "note": "Precondition drives Phase 5 candidate generation and Phase 7 subagent output. Assertion chain: dispatched=true in JSONL, detection_state='already-on-pr' in SQLite, drop_reason starts with the required prefix, candidate does NOT appear in surfaced items."
+      }
     }
   ]
 }

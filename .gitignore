@@ -4,3 +4,5 @@
 plugins/deep-code-review/deep-code-review-workspace/
 *.logbook.local.yaml
 .ideation/
+docs/superpowers/specs/
+docs/superpowers/plans/

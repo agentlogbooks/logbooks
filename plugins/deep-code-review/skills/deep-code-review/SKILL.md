@@ -96,7 +96,23 @@ Compute and store:
 - `DIFF`, `DIFF_HASH`
 - `TITLE`, `URL` — if available
 - `DEFAULT_BRANCH`, `BASE_SHA`, `HEAD_SHA` — if available
-- `EXISTING_PR_COMMENTS` — structured review threads if available, else plain comments
+- `PR_NUMBER` — PR number for `pr`-type targets (empty for `branch`/`paste`/`wip`/`repo` targets)
+- `PR_COMMENT_COUNT` — integer count of PR comments relevant to dedup (inline file-line review comments + issue-style conversation comments); 0 for non-PR targets. Note: `gh pr view --json` does NOT expose inline review-thread comments — those are the most dedup-worthy kind and require REST endpoints. Top-level review event bodies (approve/request-changes summaries) are excluded to avoid double-counting inline comments that accompany a review. Compute via:
+  ```bash
+  if [ -n "$PR_NUMBER" ]; then
+    # --paginate walks all pages; jq 'length' yields one integer per page; awk sums.
+    # Count is used only as a trigger gate (`> 0`), so undercounting is tolerable,
+    # but exact count is preferable for auditability.
+    INLINE=$(gh api --paginate "repos/{owner}/{repo}/pulls/$PR_NUMBER/comments" \
+      --jq 'length' 2>/dev/null | awk '{s+=$1} END {print s+0}')
+    ISSUE=$(gh api --paginate "repos/{owner}/{repo}/issues/$PR_NUMBER/comments" \
+      --jq 'length' 2>/dev/null | awk '{s+=$1} END {print s+0}')
+    PR_COMMENT_COUNT=$((INLINE + ISSUE))
+  else
+    PR_COMMENT_COUNT=0
+  fi
+  ```
+  `{owner}` and `{repo}` are resolved automatically by `gh` from the current repo context. The orchestrator never fetches comment bodies. Only Phase 5 and Phase 7 subagents do (on demand, via the same two endpoints).
 
 ## Initialize stores
 
@@ -172,7 +188,7 @@ jq -nc \
 
 **Note on `paste-`/`wip-` slugs:** these include timestamps that change each run — SQLite deduplication (Phase 7) will always return empty for these slugs. Only `pr-{N}` and `branch-{name}` slugs benefit from cross-run deduplication.
 
-Store: `DIFF`, `EXISTING_PR_COMMENTS` (or empty string), `PR_REF`, `RUN_ID`, `CURRENT_MODEL`, `SKILL_VERSION`.
+Store: `DIFF`, `PR_NUMBER` (or empty), `PR_COMMENT_COUNT`, `PR_REF`, `RUN_ID`, `CURRENT_MODEL`, `SKILL_VERSION`.
 
 ---
 

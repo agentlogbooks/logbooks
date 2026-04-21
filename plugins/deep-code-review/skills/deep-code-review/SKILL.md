@@ -742,6 +742,32 @@ jq -nc \
   --argjson priority_score "$PRIORITY_SCORE" \
   '{record_type, run_id, candidate_id, pr_ref, output_type, severity, summary, file_path, line_start, line_end, priority_score}' \
   >> ~/logbooks/code-review/${PR_REF}.jsonl
+
+# PR-comment dedup record — one per run, after the Phase 7 subagent call
+# (or once if dispatch was skipped). Closes the forward reference from Phase 7.
+#
+# $DECISIONS_JSON must be a valid JSON array (the subagent's return value);
+# pass it via --argjson (NOT --arg) so it's embedded as JSON, not a string.
+# $SKIP_REASON must be one of: "no-pr-comments", "no-selected-candidates",
+# "target-type-not-pr".
+
+# When dispatched:
+jq -nc \
+  --arg record_type pr_comment_dedup \
+  --arg run_id "$RUN_ID" \
+  --argjson dispatched true \
+  --argjson decisions "$DECISIONS_JSON" \
+  '{record_type, run_id, dispatched, decisions}' \
+  >> ~/logbooks/code-review/${PR_REF}.jsonl
+
+# When skipped:
+jq -nc \
+  --arg record_type pr_comment_dedup \
+  --arg run_id "$RUN_ID" \
+  --argjson dispatched false \
+  --arg skip_reason "$SKIP_REASON" \
+  '{record_type, run_id, dispatched, skip_reason}' \
+  >> ~/logbooks/code-review/${PR_REF}.jsonl
 ```
 
 ## SQLite

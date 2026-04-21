@@ -1,6 +1,6 @@
 {
   "name": "ideation",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Idea-centric brainstorming built on a persistent per-topic idea logbook. Operators (generate, transform, evaluate, validate, decide) read and write ideas across sessions; thin planner picks operators from a library and composes them into playbooks. Supersedes deep-ideation.",
   "source": "./skills",
   "author": {

@@ -1,6 +1,6 @@
 ---
 name: deep-code-review
-version: "2.0.0"
+version: "2.1.0"
 description: >
   Hotspot-first, multi-pass code review for pull requests, branches, pasted diffs, and work-in-
   progress changes. Models behavior changes, selects risky hotspots, acquires minimal local context,
@@ -92,7 +92,7 @@ Compute and store:
 - `REPO_SLUG` — sanitized remote or repo directory name
 - `RUN_ID` — `{YYYYMMDD-HHmmss}-{shortsha}`
 - `CURRENT_MODEL` — the model executing this skill; all candidate findings report this as `current_model` — it identifies the orchestrator model that configured the pipeline
-- `SKILL_VERSION = "2.0.0"`
+- `SKILL_VERSION = "2.1.0"`
 - `DIFF`, `DIFF_HASH`
 - `TITLE`, `URL` — if available
 - `DEFAULT_BRANCH`, `BASE_SHA`, `HEAD_SHA` — if available

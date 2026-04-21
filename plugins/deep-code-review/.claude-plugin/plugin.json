@@ -1,6 +1,6 @@
 {
   "name": "deep-code-review",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "description": "Hotspot-first deep code review: change map → risky hotspot selection → per-hotspot lens subagents → skeptic pass → comment budget. Surfaces at most 5 high-signal findings or questions per run.",
   "source": "./skills",
   "author": {

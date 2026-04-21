@@ -74,6 +74,7 @@ If any check fails, either run one more cycle (up to the `cycles` cap) or flag a
 ## Output discipline
 
 - Follow `references/output-rules.md`.
+- When writing descriptions, follow the **Description Writing Protocol** in `references/output-rules.md` — draft the mechanism internally, then rewrite as coffee-talk. The draft does not ship.
 - The user-facing description tells the resulting idea with a concrete example. It does not narrate "thesis / antithesis / synthesis" or name TRIZ principles. The ratchet is internal.
 - Record the ratchet audit (cycle count, locked constraints, TRIZ hint used, status) as an assessment so the history is queryable without polluting the idea description.
 

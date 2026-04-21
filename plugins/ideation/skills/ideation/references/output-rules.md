@@ -25,6 +25,28 @@ Every idea description — in seeds, variants, hybrids, and refinements alike �
 
 If you feel the urge to write "Week 1 / Week 2", a formula, or a step list in the `description` field — stop. Strip it out. Operation lineage lives in the `lineage` table (parent→child edges), not inside prose descriptions.
 
+## Description Writing Protocol
+
+Every operator that writes `ideas` rows (generators and transforms) follows this procedure when drafting each description. It exists because the subagent reasoning about an idea has to write that idea's description, and the reasoning context is jargon-rich. Without an explicit translation step, the vocabulary bleeds through.
+
+### Draft (internal; never committed)
+
+Write one or two sentences describing what the idea is and how it works, using whatever vocabulary comes naturally. Reuse terms from the frame, the facts, the parent ideas, the hint. Name the parts.
+
+This draft is for your own reasoning. It does not enter the `description` field.
+
+### Rewrite as coffee-talk (this is what you commit)
+
+Rewrite from the mechanism — not from the wording of the draft. Copying-then-polishing preserves jargon.
+
+Follow the rules in "Idea Description Rules" above: 2–3 sentences, concrete example mandatory, first sentence states what the idea IS.
+
+Before committing, apply the reader test:
+- If the reader has only this description and nothing else — no session, no frame, no parent idea, no hint — can they understand it?
+- Does the first sentence state the idea, rather than narrate how you arrived at it?
+
+If either fails, rewrite.
+
 ## Required Idea Fields
 
 Every row inserted into the `ideas` table must carry at minimum:

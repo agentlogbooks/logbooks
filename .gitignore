@@ -4,3 +4,4 @@
 plugins/deep-code-review/deep-code-review-workspace/
 *.logbook.local.yaml
 .ideation/
+plugins/*/change-requests/

@@ -112,7 +112,7 @@ Compute and store:
     PR_COMMENT_COUNT=0
   fi
   ```
-  `{owner}` and `{repo}` are resolved automatically by `gh` from the current repo context. The orchestrator never fetches comment bodies. Only Phase 5 and Phase 7 subagents do (on demand, via the same two endpoints).
+  NOTE: `{owner}` and `{repo}` in those commands are literal tokens the `gh` CLI resolves itself from the current git remote — they are NOT substitution placeholders like `{PR_NUMBER}`. Pass them through unchanged. The orchestrator never fetches comment bodies. Only Phase 5 and Phase 7 subagents do (on demand, via the same two endpoints with `--paginate`).
 
 ## Initialize stores
 
@@ -395,7 +395,6 @@ Per hotspot, fetch only what is needed to test the hotspot's likely failure mode
 - Direct callers/callees when signatures or invariants changed
 - Nearby tests or touched test helpers
 - Surrounding headings/sections for docs and instruction files
-- Existing PR review comments on the same path or nearby lines
 
 **Rules:**
 - No embeddings, no CI data required
@@ -587,7 +586,10 @@ Same fingerprint from multiple hotspot subagents → keep strongest (highest `pr
 - `PR_COMMENT_COUNT > 0`
 - ≥1 candidate is marked `selected` in the in-memory skeptic-pass decision map (SQLite `detection_state` is still `'candidate'` — Phase 9 batches the actual write)
 
-Otherwise skip and proceed to Phase 8. Record a skipped-dispatch JSONL entry (see Phase 9).
+Otherwise skip and proceed to Phase 8. Record a skipped-dispatch JSONL entry (see Phase 9) with `skip_reason` set by this precedence:
+1. If `REVIEW_TARGET_TYPE != 'pr'` → `"target-type-not-pr"` (preferred for auditability — non-PR targets can't have PR comments by construction).
+2. Else if `PR_COMMENT_COUNT == 0` → `"no-pr-comments"`.
+3. Else (no selected candidates) → `"no-selected-candidates"`.
 
 **Subagent input.** Pass only what dedup needs:
 

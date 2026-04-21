@@ -35,6 +35,7 @@ Works in both **Chat** and **Cowork** modes — the plugin installs once and is 
 /plugin marketplace add agentlogbooks/logbooks
 /plugin install logbook-creator@logbooks
 /plugin install deep-code-review@logbooks
+/plugin install ideation@logbooks
 ```
 
 Or from a local clone:
@@ -50,6 +51,7 @@ claude --plugin-dir ~/logbooks/plugins/logbook-creator
 |---|---|---|
 | `logbook-creator` | `/logbook-creator` | Design and create a logbook — a shared, queryable, schema-stable working surface for agents and humans to append, annotate, and query across sessions. |
 | `deep-code-review` | `/deep-code-review` | Hotspot-first deep code review: change map → risky hotspot selection → per-hotspot lens subagents → skeptic pass → comment budget. Surfaces at most 5 high-signal findings or questions per run. |
+| `ideation` | `/ideation` | Idea-centric brainstorming on a per-topic SQLite logbook. Atomic operators (generate, transform, evaluate, validate, decide) compose into playbooks. Covers brainstorming, naming, developing or combining ideas, stress-testing candidates, reframing, and picking final directions. Ideas persist across sessions — follow-up prompts resume where the last one ended. |
 
 ## Usage
 
@@ -73,3 +75,16 @@ Run a hotspot-first code review on a PR, branch, or diff:
 ```
 
 The skill maps behavior changes, selects risky hotspots, runs per-hotspot analysis, applies a skeptic pass, and surfaces at most 5 high-signal findings or questions. Results are persisted to a per-PR JSONL trace and SQLite ledger at `~/logbooks/code-review/`.
+
+### ideation
+
+Start or continue ideation on a topic:
+
+```
+/ideation coffee-shop-q2: brainstorm ways to grow afternoon revenue
+/ideation coffee-shop-q2: develop idea 17 further
+/ideation product: what should we call this product
+/ideation shortlist --playbook stress_test_shortlist: validate the top 3
+```
+
+Default for a fresh topic is a lightweight flow (frame + ~20 ideas + a compare report). Opt in to deeper shapes with explicit intent — "thorough" / "deep" for the full treatment, "score them" / "prioritize" for a scored pass, "name X" for the naming playbook. Logbooks live at `./.ideation/<slug>/logbook.sqlite` and persist across sessions, so follow-up prompts on the same slug pick up where the last one ended.

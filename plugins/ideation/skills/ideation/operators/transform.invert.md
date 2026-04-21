@@ -44,6 +44,7 @@ Inversions tend to surface hidden assumptions, so tags skew `BOLD` or `WILD`. If
 ## Output discipline
 
 - Follow `references/output-rules.md`.
+- When writing descriptions, follow the **Description Writing Protocol** in `references/output-rules.md` — draft the mechanism internally, then rewrite as coffee-talk. The draft does not ship.
 - Descriptions are coffee-talk prose — never narrate the flip ("I took the failure 'slow onboarding' and inverted it to…"). Just state the resulting idea with a concrete example.
 - No methodology name in user-facing text. No "inversion" or "reverse brainstorming" in titles or descriptions.
 - Each child has exactly one parent with `relation=derived_from`.

@@ -54,6 +54,7 @@ For each cohort idea:
 ## Output discipline
 
 - Follow `references/output-rules.md`.
+- When writing descriptions, follow the **Description Writing Protocol** in `references/output-rules.md` — draft the mechanism internally, then rewrite as coffee-talk. The draft does not ship.
 - Coffee-talk description: what the idea now is, with a concrete example, in 2–3 sentences. Do not narrate the operation ("I applied Substitute to…"). The lens is internal.
 - Every child must have a lineage row pointing to its single parent.
 - Prefer `add-ideas-batch` with inline `parents` and `relation` for efficiency.

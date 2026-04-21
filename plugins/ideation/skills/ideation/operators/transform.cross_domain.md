@@ -50,6 +50,7 @@ Synectics offers four types of analogy; use whichever produces the cleanest mech
 ## Output discipline
 
 - Follow `references/output-rules.md`.
+- When writing descriptions, follow the **Description Writing Protocol** in `references/output-rules.md` — draft the mechanism internally, then rewrite as coffee-talk. The draft does not ship.
 - Coffee-talk description, concrete example mandatory. The domain and mechanism must be named in plain language.
 - No "Synectics", "analogize", or "cross-domain" in user-facing text.
 - Each child has exactly one parent, `relation=derived_from`.

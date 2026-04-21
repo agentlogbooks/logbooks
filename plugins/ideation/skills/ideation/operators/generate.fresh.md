@@ -42,6 +42,7 @@ Produce `count` seeds. Each:
 ## Output discipline
 
 - Follow `references/output-rules.md`.
+- When writing descriptions, follow the **Description Writing Protocol** in `references/output-rules.md` — draft the mechanism internally, then rewrite as coffee-talk. The draft does not ship.
 - Coffee-talk descriptions, concrete examples mandatory.
 - Do not reference the hint itself in the description ("as requested by the user…"). The reader should never see the scaffolding.
 - No methodology names in idea text.

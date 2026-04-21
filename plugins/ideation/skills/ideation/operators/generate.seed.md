@@ -55,6 +55,7 @@ If `params.emphasis` is set, use it as a filter on which HMW questions to lean o
 ## Output discipline
 
 - Follow `references/output-rules.md`.
+- When writing descriptions, follow the **Description Writing Protocol** in `references/output-rules.md` — draft the mechanism internally, then rewrite as coffee-talk. The draft does not ship.
 - Coffee-talk descriptions: 2–3 sentences, concrete example mandatory. No jargon, no methodology names in the `description` field (readers never see "SCAMPER" or "TRIZ").
 - Titles are 3–80 chars, no numbering, no prefixes like "Idea #1:".
 - Seeds are independent atoms; no inline lineage for this operator.

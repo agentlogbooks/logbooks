@@ -45,6 +45,7 @@ If `preserve_tag=true`, inherit. If `false`, decide: a refinement that adds feas
 ## Output discipline
 
 - Follow `references/output-rules.md`.
+- When writing descriptions, follow the **Description Writing Protocol** in `references/output-rules.md` — draft the mechanism internally, then rewrite as coffee-talk. The draft does not ship.
 - Coffee-talk description, concrete example mandatory.
 - No "refinement of #X" or hint text inside the description — the reader sees a clean idea.
 - Exactly one lineage edge with `relation=refinement_of`.

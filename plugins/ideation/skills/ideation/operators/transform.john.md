@@ -60,6 +60,7 @@ For each child, silently mark whether the variant `resolves` the active-frame TR
 ## Output discipline
 
 - Follow `references/output-rules.md`.
+- When writing descriptions, follow the **Description Writing Protocol** in `references/output-rules.md` — draft the mechanism internally, then rewrite as coffee-talk. The draft does not ship.
 - Coffee-talk descriptions; never name the zone, the Disney spiral, Dreamer/Realist/Critic, or TRIZ in user-facing text. The description is just the idea.
 - `temperature_zone` column must be set to the zone param for every child.
 - Every child must have exactly one parent via `derived_from`.

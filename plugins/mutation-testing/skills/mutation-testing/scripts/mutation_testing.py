@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-AI-based mutation testing — Claude generates mutations, the native test runner executes them.
-Requires ANTHROPIC_API_KEY and a working test suite.
+Mutation testing runner — applies mutations from a JSON file and runs the project test suite.
+Call with --mutations-file pointing at pre-generated mutations (JSON array).
 """
 
 import subprocess
@@ -15,9 +15,6 @@ import secrets
 from datetime import datetime, timezone
 from pathlib import Path
 
-# anthropic is imported lazily inside _generate_for_file so that --mutations-file
-# and --help work without the SDK installed.
-
 # On Windows, .cmd wrappers (npx, jest, mocha, …) require shell=True to resolve
 _SHELL = platform.system() == "Windows"
 
@@ -25,50 +22,13 @@ _SHELL = platform.system() == "Windows"
 
 THRESHOLD_DEFAULT  = 70
 TIMEOUT_DEFAULT    = 60    # seconds per test run
-MAX_PER_FILE       = 10    # default max mutations Claude generates per source file
 MODEL_DEFAULT      = "claude-opus-4-7"
 LOGBOOK_DIR        = Path.home() / "logbooks" / "mutation-testing"
 
-SYSTEM_PROMPT = """\
-You are a mutation testing expert. Generate meaningful mutations that expose gaps in a test suite.
-
-Target mutations:
-- Flip conditional operators  (> → >=, == → !=, < → <=, and → or)
-- Negate boolean expressions  (x → not x, True → False)
-- Change arithmetic operators (+→-, *→/)
-- Replace return values       (return x+1 → return x, return value → return None)
-- Replace string literals     ("text" → "")
-- Alter boundary values       (0 → 1, -1 → 0, n → n+1)
-- Remove or swap arguments    (f(a, b) → f(a), f(a, b) → f(b, a))
-
-Skip: comments, imports, type annotations, docstrings, blank lines, logging statements.
-Only mutate lines that tests are likely to execute."""
-
-MUTATION_TOOL = {
-    "name": "report_mutations",
-    "description": "Report the mutations generated for the source file.",
-    "input_schema": {
-        "type": "object",
-        "properties": {
-            "mutations": {
-                "type": "array",
-                "items": {
-                    "type": "object",
-                    "properties": {
-                        "id":            {"type": "string",  "description": "Unique ID, e.g. 'm1'"},
-                        "mutator_name":  {"type": "string",  "description": "Operator name, e.g. 'FlipGreaterThan'"},
-                        "line":          {"type": "integer", "description": "1-based line number"},
-                        "original_line": {"type": "string",  "description": "Complete original line, leading whitespace preserved"},
-                        "mutated_line":  {"type": "string",  "description": "Complete mutated line, leading whitespace preserved"},
-                        "replacement":   {"type": "string",  "description": "Short change description, e.g. '> → >='"},
-                        "rationale":     {"type": "string",  "description": "Why this exposes a test gap"},
-                    },
-                    "required": ["id", "mutator_name", "line", "original_line", "mutated_line", "replacement"],
-                },
-            }
-        },
-        "required": ["mutations"],
-    },
+EXCLUDED_DIRS = {
+    ".venv", "venv", ".git", "dist", "build", "__pycache__",
+    ".tox", ".nox", "target", ".pytest_cache", ".mypy_cache",
+    "site-packages", "node_modules",
 }
 
 
@@ -96,7 +56,8 @@ def auto_discover_sources(cwd: Path) -> list[Path]:
         for base in bases:
             found = [
                 f for f in base.rglob(ext)
-                if not _is_test_file(f) and "node_modules" not in f.parts
+                if not _is_test_file(f)
+                and not any(p in EXCLUDED_DIRS for p in f.parts)
             ]
             if found:
                 return sorted(found)[:20]
@@ -183,101 +144,6 @@ def baseline_passes(test_command: list[str], timeout: int) -> bool:
         return False
 
 
-# ── Claude mutation generation ────────────────────────────────────────────────
-
-def _generate_for_file(
-    client,
-    file_path: Path,
-    rel_path: str,
-    model: str,
-    max_per_file: int,
-    known_gaps: list[dict] | None = None,
-) -> list[dict]:
-    import anthropic  # lazy — only needed when actually calling the API
-
-    try:
-        source = file_path.read_text(encoding="utf-8")
-    except Exception as exc:
-        print(f"  ⚠️  Cannot read {rel_path}: {exc}")
-        return []
-
-    numbered = "\n".join(f"{i+1:4}: {line}" for i, line in enumerate(source.splitlines()))
-
-    # Summarise already-known open gaps for this file so Claude generates novel mutations
-    gaps_for_file = [g for g in (known_gaps or []) if g["file"] == rel_path]
-    gap_context = ""
-    if gaps_for_file:
-        lines = ["Already-known open gaps for this file (do NOT regenerate these — find new ones):"]
-        for g in gaps_for_file:
-            lines.append(f"  - line {g['line']} [{g['mutator']}] {g['replacement']} "
-                         f"(survived {g['times_survived']} run(s))")
-        gap_context = "\n".join(lines) + "\n\n"
-
-    user_prompt = (
-        f"Generate up to {max_per_file} mutations for this file.\n\n"
-        f"{gap_context}"
-        f"File: {rel_path}\n\n"
-        f"```\n{numbered}\n```\n\n"
-        "Call report_mutations with your results."
-    )
-
-    try:
-        response = client.messages.create(
-            model=model,
-            max_tokens=4096,
-            system=[{
-                "type": "text",
-                "text": SYSTEM_PROMPT,
-                "cache_control": {"type": "ephemeral"},
-            }],
-            tools=[MUTATION_TOOL],
-            tool_choice={"type": "tool", "name": "report_mutations"},
-            messages=[{"role": "user", "content": user_prompt}],
-        )
-    except anthropic.APIError as exc:
-        print(f"  ⚠️  Claude API error for {rel_path}: {exc}")
-        return []
-
-    for block in response.content:
-        if block.type == "tool_use" and block.name == "report_mutations":
-            return [
-                {
-                    "id":            m.get("id", f"{rel_path}-{i}"),
-                    "file":          rel_path,
-                    "line":          m.get("line"),
-                    "col":           None,
-                    "mutatorName":   m.get("mutator_name", "Unknown"),
-                    "replacement":   m.get("replacement", ""),
-                    "original_line": m.get("original_line", ""),
-                    "mutated_line":  m.get("mutated_line", ""),
-                    "rationale":     m.get("rationale", ""),
-                }
-                for i, m in enumerate(block.input.get("mutations", []))
-            ]
-
-    return []
-
-
-def generate_all_mutations(
-    client,
-    source_files: list[Path],
-    cwd: Path,
-    model: str,
-    max_per_file: int,
-    known_gaps: list[dict] | None = None,
-    file_budgets: dict[str, int] | None = None,
-) -> list[dict]:
-    all_mutations: list[dict] = []
-    for file_path in source_files:
-        rel = str(file_path.relative_to(cwd))
-        budget = (file_budgets or {}).get(rel, max_per_file)
-        print(f"  Generating for {rel} (budget: {budget})…", end="", flush=True)
-        mutations = _generate_for_file(client, file_path, rel, model, budget, known_gaps)
-        print(f" {len(mutations)} mutation(s)")
-        all_mutations.extend(mutations)
-    return all_mutations
-
-
 # ── Apply / run / restore ─────────────────────────────────────────────────────
 
 def _apply(file_path: Path, mutation: dict) -> tuple[str | None, str | None]:
@@ -357,14 +223,17 @@ def run_mutation_loop(
 
         original, apply_err = _apply(file_path, mutation)
         if apply_err:
+            if original is not None:
+                _restore(file_path, original)
             print(f"  ⏭  skip ({apply_err})")
             mutation["status"] = "Skipped"
             results.append(mutation)
             continue
 
-        killed, run_err = _run_tests(test_command, timeout)
-
-        _restore(file_path, original)  # always restore before recording result
+        try:
+            killed, run_err = _run_tests(test_command, timeout)
+        finally:
+            _restore(file_path, original)
 
         if run_err and run_err != "timeout":
             mutation["status"] = "Error"
@@ -423,14 +292,18 @@ def print_summary(stats: dict, threshold: float) -> None:
     print()
 
 
-def print_gap_summary(gap_result: dict) -> None:
+def print_gap_summary(gap_result: dict, stats: dict | None = None) -> None:
     """Print new / persistent / fixed breakdown after a run."""
     new        = gap_result["new"]
     persistent = gap_result["persistent"]
     fixed      = gap_result["fixed"]
+    survived   = (stats or {}).get("survived", 0)
 
     if not new and not persistent and not fixed:
-        print("✅ No surviving mutants.")
+        if survived == 0:
+            print("✅ No surviving mutants.")
+        else:
+            print(f"🔕 {survived} survivor(s) acknowledged/wont_fix — no new or persistent gaps.")
         return
 
     print()
@@ -600,7 +473,7 @@ def init_logbook(db_path: Path) -> sqlite3.Connection:
 
 
 def query_open_gaps(conn: sqlite3.Connection, project: str) -> list[dict]:
-    """Return current open gaps from the ledger — used before generation to focus mutations."""
+    """Return current open gaps from the ledger — used to surface prior context at run start."""
     rows = conn.execute("""
         SELECT m.file, m.line, m.mutator, m.replacement, m.times_survived,
                m.original_line, m.mutated_line, m.rationale, g.opened_at
@@ -617,25 +490,6 @@ def query_open_gaps(conn: sqlite3.Connection, project: str) -> list[dict]:
         }
         for r in rows
     ]
-
-
-def compute_file_budgets(
-    source_files: list[Path],
-    cwd: Path,
-    known_gaps: list[dict],
-    base: int,
-) -> dict[str, int]:
-    """Return per-file mutation budget, scaled up for files with chronic open gaps."""
-    gap_weight: dict[str, int] = {}
-    for g in known_gaps:
-        gap_weight[g["file"]] = gap_weight.get(g["file"], 0) + g.get("times_survived", 1)
-
-    budgets: dict[str, int] = {}
-    for f in source_files:
-        rel = str(f.relative_to(cwd))
-        # Each accumulated survivor-run adds 2 extra mutations, capped at 2× base
-        budgets[rel] = min(base + gap_weight.get(rel, 0) * 2, base * 2)
-    return budgets
 
 
 def persist_run(
@@ -817,7 +671,7 @@ def append_jsonl(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="AI mutation testing: Claude generates mutations, native test runner executes them."
+        description="Mutation testing runner: applies pre-generated mutations and runs the test suite."
     )
     parser.add_argument("--sources", nargs="+", metavar="GLOB",
                         help="Source file globs (e.g. 'src/**/*.py'). Auto-detected if omitted.")
@@ -828,12 +682,10 @@ def main() -> None:
                         help=f"Minimum mutation score (default: {THRESHOLD_DEFAULT})")
     parser.add_argument("--timeout",      type=int,   default=TIMEOUT_DEFAULT,
                         help=f"Seconds per test run (default: {TIMEOUT_DEFAULT})")
-    parser.add_argument("--max-per-file", type=int,   default=MAX_PER_FILE,
-                        help=f"Max mutations per source file (default: {MAX_PER_FILE})")
     parser.add_argument("--model",        default=MODEL_DEFAULT,
-                        help=f"Claude model for mutation generation (default: {MODEL_DEFAULT})")
-    parser.add_argument("--mutations-file", metavar="PATH",
-                        help="JSON file of pre-generated mutations — skips Claude API call entirely.")
+                        help=f"Claude model used to generate the mutations — recorded in logbook only (default: {MODEL_DEFAULT})")
+    parser.add_argument("--mutations-file", metavar="PATH", required=True,
+                        help="JSON file of pre-generated mutations.")
     parser.add_argument("--skip-baseline", action="store_true",
                         help="Skip the baseline test-suite pass check.")
     parser.add_argument("--no-logbook",   action="store_true",
@@ -872,7 +724,6 @@ def main() -> None:
     slug        = resolve_slug()
     db_path     = LOGBOOK_DIR / f"{slug}.sqlite"
     jsonl_path  = LOGBOOK_DIR / f"{slug}.jsonl"
-    known_gaps: list[dict] = []
 
     if not args.no_logbook:
         conn = init_logbook(db_path)
@@ -885,45 +736,33 @@ def main() -> None:
                 print(f"  … and {len(known_gaps) - 5} more")
             print("──────────────────────────────────────────────────")
 
-    # ── Step 1: Generate or load mutations ───────────────────────────────────
-    if args.mutations_file:
-        print(f"\n📂 Loading pre-generated mutations from {args.mutations_file}…")
-        try:
-            mutations = json.loads(Path(args.mutations_file).read_text(encoding="utf-8"))
-        except Exception as exc:
-            print(f"❌ Failed to load mutations file: {exc}")
-            sys.exit(1)
-    else:
-        import anthropic  # lazy — skipped when using --mutations-file
-
-        file_budgets = compute_file_budgets(source_files, cwd, known_gaps, args.max_per_file)
-        if any(b > args.max_per_file for b in file_budgets.values()):
-            boosted = [f for f, b in file_budgets.items() if b > args.max_per_file]
-            print(f"\n📈 Budget boosted for {len(boosted)} file(s) with chronic gaps: {', '.join(boosted)}")
-
-        if known_gaps:
-            print(f"📖 Passing {len(known_gaps)} known gap(s) to Claude — will generate novel mutations only")
-
-        print(f"\n🤖 Generating mutations via {args.model}…")
-        client = anthropic.Anthropic()
-        mutations = generate_all_mutations(
-            client, source_files, cwd, args.model, args.max_per_file, known_gaps, file_budgets
-        )
+    # ── Load mutations ────────────────────────────────────────────────────────
+    print(f"\n📂 Loading mutations from {args.mutations_file}…")
+    try:
+        mutations = json.loads(Path(args.mutations_file).read_text(encoding="utf-8"))
+    except Exception as exc:
+        print(f"❌ Failed to load mutations file: {exc}")
+        sys.exit(1)
 
     if not mutations:
-        print("❌ No mutations generated. Check source files and ANTHROPIC_API_KEY.")
+        print("❌ No mutations in file.")
         sys.exit(1)
-    print(f"\n✅ {len(mutations)} mutation(s) across {len(source_files)} file(s)")
+    print(f"✅ {len(mutations)} mutation(s) loaded")
 
-    # ── Step 2: Apply / run / restore loop ───────────────────────────────────
+    # ── Apply / run / restore loop ────────────────────────────────────────────
     print(f"\n🏃 Running mutation tests (timeout: {args.timeout}s each)…\n")
     results = run_mutation_loop(mutations, test_command, cwd, args.timeout)
 
-    # ── Step 3: Summary ───────────────────────────────────────────────────────
+    # ── Summary ───────────────────────────────────────────────────────────────
     stats = compute_stats(results)
     print_summary(stats, args.threshold)
 
-    # ── Step 4: Persist + gap summary ────────────────────────────────────────
+    # ── All-skipped guard ─────────────────────────────────────────────────────
+    if stats["total"] == 0 and stats["skipped"] > 0:
+        print("⚠️  All mutations skipped — likely line-mismatch, not a test quality problem.")
+        sys.exit(1)
+
+    # ── Persist + gap summary ─────────────────────────────────────────────────
     gap_result: dict = {"new": [], "persistent": [], "fixed": [], "gap_updates": []}
     if conn is not None:
         now    = datetime.now(timezone.utc).isoformat()
@@ -932,9 +771,9 @@ def main() -> None:
         append_jsonl(jsonl_path, run_id, slug, stats, args.threshold, results, args.model, gap_result, now)
         print(f"📚 Logbook updated: {db_path}")
 
-    print_gap_summary(gap_result)
+    print_gap_summary(gap_result, stats)
 
-    # ── Step 5: Write mutation-todos.md from full gap ledger ──────────────────
+    # ── Write mutation-todos.md ───────────────────────────────────────────────
     write_todos(stats, args.threshold, gap_result=gap_result, conn=conn, project=slug)
     total_open = len(gap_result["new"]) + len(gap_result["persistent"])
     print(f"\n📝 mutation-todos.md written ({total_open} open gap(s) total)")
@@ -942,7 +781,7 @@ def main() -> None:
     if conn is not None:
         conn.close()
 
-    # ── Step 6: Threshold check ───────────────────────────────────────────────
+    # ── Threshold check ───────────────────────────────────────────────────────
     if stats["score"] < args.threshold:
         print(f"\n⚠️  Mutation score {stats['score']}% is below threshold {args.threshold}%")
         sys.exit(2)

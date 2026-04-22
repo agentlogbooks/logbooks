@@ -1,7 +1,7 @@
 {
   "name": "mutation-testing",
   "version": "1.0.0",
-  "description": "Validates test quality beyond coverage: uses Claude to generate intelligent mutations for source code, executes them via the project's native test runner, extracts survived mutants, generates mutation-todos.md with rationale, and persists run history to a SQLite logbook. Requires ANTHROPIC_API_KEY.",
+  "description": "Validates test quality beyond coverage: uses Claude subagents to generate intelligent mutations for source code, executes them via the project's native test runner, extracts survived mutants, generates mutation-todos.md with rationale, and persists run history to a SQLite logbook.",
   "source": "./skills",
   "author": {
     "name": "agentlogbooks"

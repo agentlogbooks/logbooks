@@ -62,7 +62,7 @@ For each source file to mutate, dispatch a subagent with this prompt template:
 > - `mutated_line` (string) — complete mutated line, leading whitespace preserved
 > - `replacement` (string) — short change description, e.g. `"> → >="`
 > - `rationale` (string) — why this exposes a test gap
-> - `file` (string) — relative path of the file
+> - `file` (string) — use exactly the path from the "File:" line above, with forward slashes
 >
 > Target: conditional flips (`>` → `>=`), boolean negation, arithmetic swaps, return value changes,
 > string literal blanking, boundary shifts, argument removal/swap.

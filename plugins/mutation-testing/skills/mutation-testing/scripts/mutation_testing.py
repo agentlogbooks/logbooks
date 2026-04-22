@@ -619,7 +619,7 @@ def append_jsonl(
     threshold: float,
     results: list[dict],
     model: str,
-    gap_updates: list[dict],
+    gap_result: dict,
     now: str,
 ) -> None:
     jsonl_path.parent.mkdir(parents=True, exist_ok=True)
@@ -655,7 +655,7 @@ def append_jsonl(
                 "status":      m["status"],
             }) + "\n")
 
-        for gu in gap_updates.get("gap_updates", gap_updates if isinstance(gap_updates, list) else []):
+        for gu in gap_result.get("gap_updates", []):
             f.write(json.dumps({
                 "record_type": "gap_update",
                 "mutant_key":  gu["mutant_key"],
@@ -694,12 +694,10 @@ def main() -> None:
 
     cwd = Path.cwd()
 
-    # ── Source files ──────────────────────────────────────────────────────────
+    # ── Source files (display only — mutations come from --mutations-file) ─────
     source_files = resolve_sources(args.sources, cwd) if args.sources else auto_discover_sources(cwd)
-    if not source_files:
-        print("❌ No source files found. Use --sources 'src/**/*.py' to specify them.")
-        sys.exit(1)
-    print(f"🔍 {len(source_files)} source file(s) to mutate")
+    if source_files:
+        print(f"🔍 {len(source_files)} source file(s) detected")
 
     # ── Test runner ───────────────────────────────────────────────────────────
     runner = args.runner or detect_test_runner(cwd)

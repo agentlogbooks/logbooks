@@ -1,3 +1,28 @@
+---
+name: evaluate.hats
+stage: evaluate
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid, refinement]
+  min_cohort: 1
+use_when:
+  - an idea wants a multi-perspective pass before deciding
+  - emotional, data, and process angles are all missing
+avoid_when:
+  - already hat-evaluated recently on this lineage
+produces:
+  ideas: false
+  assessments: true
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 1
+followups:
+  - transform.refine
+  - decide.compare
+---
+
 # Operator: evaluate.hats
 
 Run a six-hats evaluation on each idea in the cohort, persist one assessment per hat, and surface any bridge ideas the Green hat generates.

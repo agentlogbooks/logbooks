@@ -1,3 +1,28 @@
+---
+name: decide.shortlist
+stage: decide
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 2
+use_when:
+  - evaluation is complete and a narrowing step is needed
+  - user asks for "top N" or "best few"
+avoid_when:
+  - no scores or taste signals available yet
+produces:
+  ideas: false
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - decide.compare
+  - decide.converge
+---
+
 # Operator: decide.shortlist
 
 Promote the top-N cohort ideas to `status='shortlisted'` and record a one-sentence reason per promoted idea.

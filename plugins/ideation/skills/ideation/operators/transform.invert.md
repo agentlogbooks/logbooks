@@ -1,3 +1,30 @@
+---
+name: transform.invert
+stage: transform
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid]
+  min_cohort: 1
+use_when:
+  - promising but brittle
+  - obvious objections or failure modes
+  - assumptions look too cautious
+avoid_when:
+  - already inverted recently on this lineage
+  - idea too vague to invert meaningfully
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 1
+followups:
+  - transform.refine
+  - validate.proof_search
+---
+
 # Operator: transform.invert
 
 Reverse brainstorming on a cohort: for each idea, enumerate ways it could fail, then flip each failure into an improvement.

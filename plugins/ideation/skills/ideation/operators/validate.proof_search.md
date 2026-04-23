@@ -1,3 +1,28 @@
+---
+name: validate.proof_search
+stage: validate
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid, refinement]
+  min_cohort: 1
+use_when:
+  - idea makes a claim that wants supporting evidence
+  - user asks "does this exist elsewhere" or "has this been tried"
+avoid_when:
+  - already proof-searched recently on this lineage
+  - params.cheap is set
+produces:
+  ideas: false
+  assessments: true
+  facts: true
+cost:
+  web: true
+repeat_guard:
+  same_lineage_cooldown: 2
+followups:
+  - decide.converge
+---
+
 # Operator: validate.proof_search
 
 Narrow, targeted web-search validation of a specific claim embedded in an idea's description — not a full adversarial sweep. Use after `evaluate.score` or `evaluate.brilliance` when the user wants a lighter check on one or two candidates before promoting.

@@ -1,3 +1,30 @@
+---
+name: transform.refine
+stage: transform
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid, refinement]
+  min_cohort: 1
+use_when:
+  - idea is strong but the mechanism is vague
+  - user supplied a specific hint to apply
+  - prior pass left open questions on this idea
+avoid_when:
+  - already refined twice on this lineage
+  - idea is not yet stable enough to specify
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 1
+followups:
+  - validate.proof_search
+  - validate.web_stress
+---
+
 # Operator: transform.refine
 
 Canonical single-parent revision. Take one idea and a free-text revision hint, produce one child with `kind=refinement`.

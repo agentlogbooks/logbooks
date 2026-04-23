@@ -1,3 +1,29 @@
+---
+name: transform.cross_domain
+stage: transform
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid]
+  min_cohort: 1
+use_when:
+  - idea feels generic or on-domain
+  - analogies from other domains have not been explored yet
+avoid_when:
+  - already cross-domained recently on this lineage
+  - cohort is too large (run per-idea, not pool-wide)
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 1
+followups:
+  - transform.refine
+  - transform.hybridize
+---
+
 # Operator: transform.cross_domain
 
 Synectics-style analogize. For each cohort idea, transplant a mechanism from an unrelated domain and produce a child that explicitly carries the transplant.

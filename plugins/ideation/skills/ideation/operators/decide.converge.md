@@ -1,3 +1,27 @@
+---
+name: decide.converge
+stage: decide
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 2
+use_when:
+  - pool has been evaluated and validated
+  - user asks to "pick" or "decide" or "converge"
+avoid_when:
+  - evaluation incomplete (no scores)
+produces:
+  ideas: false
+  assessments: true
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - decide.export
+---
+
 # Operator: decide.converge
 
 Final-decision ceremony. Presents the shortlisted cohort to the user with all assessment context, spawns `AskUserQuestion` to let them choose which ideas become `status='selected'`, patches statuses accordingly, and writes a converge report capturing the rationale.

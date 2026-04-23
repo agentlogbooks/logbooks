@@ -1,3 +1,29 @@
+---
+name: transform.scamper
+stage: transform
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid, refinement]
+  min_cohort: 1
+use_when:
+  - a seed feels underdeveloped and structured mutation helps
+  - the user names "develop", "expand", or "build on" an idea
+avoid_when:
+  - already SCAMPERed recently on this lineage
+  - idea is highly abstract — transforms need a concrete mechanism to flex
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 1
+followups:
+  - transform.refine
+  - evaluate.taste_check
+---
+
 # Operator: transform.scamper
 
 Apply one or all SCAMPER operations to a cohort of ideas. Every child idea traces back to exactly one parent with `relation=derived_from`.

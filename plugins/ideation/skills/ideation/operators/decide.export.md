@@ -1,3 +1,26 @@
+---
+name: decide.export
+stage: decide
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - pool has selected ideas ready to leave the skill
+  - user asks for "menu" or "export"
+avoid_when:
+  - nothing selected yet
+produces:
+  ideas: false
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups: []
+---
+
 # Operator: decide.export
 
 Produce a portable final artifact (markdown) for sharing outside the logbook. Supports three formats: `menu`, `narrative`, `table`. The `menu` format additionally writes `menu_bucket` assessments that assign each shortlisted/selected idea to Quick Wins / Core Bets / Moonshots.

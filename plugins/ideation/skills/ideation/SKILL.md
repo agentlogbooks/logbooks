@@ -95,6 +95,10 @@ You are the planner for the `ideation` skill. Your job is to produce a plan — 
    - **Default (none of the above matched): `starter`.** Lightweight frame + 20 ideas + a compare report. One checkpoint. Pick this when the intent has no clear signal.
 
 4. Else (the topic has ideas but the intent doesn't match a playbook shape):
+
+   **4a.** If the intent mentions "route" / "iterate" / "keep developing" / "what should I try next" / "plan next moves" AND the topic has ≥5 active ideas: use the `route` playbook. This is the iterative follow-up shape — the router decides what to do with each idea based on current state, rather than applying a single operator to the whole batch.
+
+   **4b.** Otherwise:
    - Emit a custom 3–8 step plan using the operator library as vocabulary.
    - Example: intent "find weak ideas" → `evaluate.score cohort=all_active` + `decide.shortlist cohort=bottom-20%` + `decide.compare`.
    - Example: intent "what ideas haven't been stressed yet" → `decide.compare cohort=<ideas without web_stress_verdict>`.
@@ -308,6 +312,66 @@ Execute by spawning all sub-steps in **one message** using multiple `Agent` tool
 
 Do not proceed past the PARALLEL block until all its sub-steps have terminated.
 
+#### Step 5D — `decide.route` fragment expansion
+
+When the step you just executed is a `decide.route` call, the normal Step 5B flow changes: **defer the `op-finalize` on the `decide.route` row until after the fragment has been read and validated**, so the outcome summary records both the subagent's decisions and any validation drops in a single finalize.
+
+If `decide.route` itself fails (subagent returns an error, raises an exception, or fails twice under Step 5B's retry policy), do NOT enter this expansion flow — apply Step 5B's normal failure handling and stop. Step 5D only runs on a confirmed successful `decide.route` return.
+
+1. After the `decide.route` subagent returns its outcome summary, do NOT call `op-finalize` yet. Keep the summary in a local variable as `subagent_summary`.
+2. Read `./.ideation/<slug>/reports/<RUN_ID>-route.md` — the subagent wrote this during its operator work.
+3. Extract the `## Plan fragment` section. Its grammar is narrow:
+   - Exactly one `PARALLEL:` header line.
+   - Zero or more `- <operator.name> [key=value ...] cohort=[id, id, ...]` bullets.
+   - Parse each bullet: operator name, params (space-separated `key=value`), cohort (literal integer IDs).
+   - **Coerce each param value** before building the params JSON: if it matches `^-?\d+$` → integer; if it is exactly `true` or `false` → boolean; otherwise → string. Apply this before the JSON merge in step 8 so downstream operators receive typed params (e.g., `count=3` → `3`, `cheap=true` → `true`, `hint=x` → `"x"`).
+   - **On grammar violation** (missing `PARALLEL:` header, malformed `cohort=[...]` bracket, a bullet that does not match `- <operator.name> [key=value ...] cohort=[id, id, ...]`, or any other parse error): finalize the deferred `decide.route` row immediately with `ideation_db.py op-finalize <slug> <decide.route op_run_id> --status failed --error "malformed plan fragment: <one-line reason>"`, print the offending line to the user, and stop this step — skip validation (step 4) and expansion (step 8). Do not auto-retry `decide.route`; the subagent already returned "successfully", so re-prompting is a user-level decision. In `--loop` mode, treat this iteration as terminated and proceed to Step 5E's exit checks.
+4. **Validate every recommended operator call** against the operator catalog (reload via `ideation_db.py list-operators --format json` if you don't already have it cached for this session):
+   - Operator name exists in the catalog.
+   - `cohort size >= applies_to.min_cohort`.
+   - If `applies_to.kinds` is non-empty, every idea in the cohort has `kind` ∈ those kinds (read via `ideation_db.py idea <slug> <id>`).
+   - If the parent `decide.route` was invoked with `params.cheap=true`, drop any bullet whose operator has `cost.web: true`.
+   - For each idea in the bullet's cohort, query `ideation_db.py lineage-ops <slug> <id> --limit <cooldown + 1>` to retrieve the idea's lineage-ops history. If the bullet's operator name appears within the last `repeat_guard.same_lineage_cooldown` entries for ANY cohort idea, drop the bullet. Defense in depth — the subagent should already have respected this, but the orchestrator enforces it definitively.
+   - Collect dropped bullets + reasons in a local `drops` list; print a warning per drop.
+5. Compute the combined finalize summary:
+   - If `drops` is empty: `final_summary = subagent_summary`.
+   - Otherwise: `final_summary = subagent_summary + "; dropped during validation: " + "; ".join(drops)`.
+6. Call `op-finalize <slug> <decide.route op_run_id> --status succeeded --outcome-summary "<final_summary>"` — this is the first and only finalize of the `decide.route` row.
+7. If the validated fragment is empty or every bullet was dropped, proceed to the next plan step. Print "Fragment empty — nothing to expand" to the user.
+8. Otherwise, treat the validated bullets as a PARALLEL block and execute them using the normal Step 5C parallel-dispatch. Each bullet gets its own `operator_runs` row:
+   - Call `op-start` with `--run-id $RUN_ID` but **omit `--plan-step`** (so `plan_step_index` stores `NULL` — these are fragment-expanded, not in the planner's original plan).
+   - Construct a single JSON object containing BOTH the parent-linkage keys AND every `key=value` pair parsed from the bullet. For example, if the bullet was `transform.scamper count=3 cohort=[8]`, the params JSON is `{"parent_operator_run_id": <decide.route op_run_id>, "parent_plan_step_index": <decide.route plan_step>, "count": 3}`. Pass this as `--params-json`.
+   - Spawn each subagent per the normal Step 5B procedure.
+   - Finalize each row as subagents return.
+
+Fragment expansion shares the outer plan's `RUN_ID` — querying `operator_runs` filtered by `RUN_ID` reconstructs the full session.
+
+#### Step 5E — `--loop` re-entry (`route` playbook only)
+
+When the user invoked the `route` playbook with `--loop`, after the full plan body has executed (step 1's `decide.route` + Step 5D's fragment expansion), check whether to re-enter:
+
+**Iteration-1 stamping.** If the playbook was invoked with `--loop`, stamp the first pass too: when calling `op-start` for the initial `decide.route` (step 1 of the plan body) AND for every Step 5D expanded row, include `"loop_iteration": 1` in the `--params-json` object (alongside any parent-linkage keys for expanded rows). This way iteration 1 carries the same label as later iterations, and per-iteration queries over `operator_runs` are uniform.
+
+1. If this iteration's `decide.route` produced an empty fragment → exit the loop. Terminal state, proceed to Step 6.
+2. If `iterations_so_far >= --iterations N` (default `N = 3`, max `3`) → exit the loop.
+3. If `--no-checkpoints` is not set, call `AskUserQuestion`:
+   ```
+   Iteration <done>/<N> complete. <executed_count> operator runs completed this round across <idea_count> distinct ideas. Continue or stop?
+   Options: Continue / Stop
+   ```
+   Where `<executed_count>` is the number of operator_runs rows in this iteration (query: `params.loop_iteration = <done>` AND `status = 'succeeded'`, excluding the `decide.route` row itself), and `<idea_count>` is the count of distinct idea IDs appearing in any of those rows' `cohort_ids`.
+
+   On Stop → exit the loop.
+4. Otherwise, increment the iteration counter and re-execute **only the `decide.route` step**, not the full playbook body. Even if the original invocation used `--with-criteria` (which runs `evaluate.criteria` → criteria_lock checkpoint → `evaluate.score` before `decide.route` on iteration 1), iteration 2+ skips those setup steps — criteria derivation and scoring are one-shot setup per `--loop` session, not per iteration:
+   - Run `decide.route cohort=all_active_capped(50)` again. When calling `op-start`, omit `--plan-step` (so `plan_step_index` stores `NULL` — iteration-2+ routes are not in the planner's original plan) and pass `--params-json` as the **original invocation's playbook params augmented with `loop_iteration: <N>`**. Specifically: carry forward `cheap` (and any other playbook param the user passed at invocation time) into every iteration's `decide.route` row and add `"loop_iteration": <N>`. Do NOT replace the params with `{"loop_iteration": <N>}` alone — that would silently disengage Step 5D's `cheap` validation gate on iteration 2+.
+   - Expand the fresh plan fragment via Step 5D. Each expanded row's `params-json` includes `"loop_iteration": <N>` alongside the `parent_operator_run_id` and `parent_plan_step_index` keys.
+
+Critical invariants:
+
+- `RUN_ID` stays constant across all iterations.
+- Each `decide.route` call and each expanded operator run creates its own `operator_runs` row, all carrying the same `run_id`.
+- If any operator fails unrecoverably inside a loop iteration, the loop exits cleanly — do not retry the whole routing decision.
+
 ### Step 6 — Post-run summary
 
 After the last step, render a human-readable summary. Lead with what changed; keep counts tight; skip internal terminology.
@@ -329,6 +393,14 @@ Try next:
 - Stress-test the strongest: `ideation <slug>: stress-test the top 3`
 - Just peek at state: `ideation <slug> --show-state`
 ```
+
+**Followups from operators that ran this session.** After the default bullets, iterate over `operator_runs` for this `run_id`. For each distinct operator that ran and has a non-empty `followups` list in its frontmatter, emit one additional bullet per followup. Render each as a natural-language suggestion scoped to the ideas that operator just produced or touched. Example:
+
+    - Refine idea 8 further: `ideation <slug>: refine idea 8`        (from transform.invert.followups[0])
+    - Stress-test idea 8 for evidence: `ideation <slug>: stress-test idea 8`  (from transform.invert.followups[1])
+    - Refine ideas 8, 12 further: `ideation <slug>: refine ideas 8 and 12`  (deduped: transform.invert ran on 8, transform.cross_domain ran on 12, both have transform.refine as a followup)
+
+Read the catalog once at the start of Step 6 via `ideation_db.py list-operators --format json`, then index by operator name. Deduplicate suggestions — if two runs both suggest `transform.refine`, emit one bullet referencing both idea sets.
 
 Query the counts via:
 
@@ -364,6 +436,7 @@ See `playbooks/<name>.md` for full shapes. Summary:
 - `stress_test_shortlist` — validate a shortlist with web evidence
 - `reframe_and_regenerate` — mid-session pivot (new frame, regenerate)
 - `converge_existing` — no new ideas, just decide on the current pool
+- `route` — state-driven follow-up; router subagent decides per-idea operator assignments. Accepts `--loop`, `--cheap`, `--with-criteria`, `--iterations N`.
 
 ## Cohort query mapping
 
@@ -377,6 +450,7 @@ The planner emits cohort references; the orchestrator resolves them via the CLI:
 | `tension_cluster` | `ideation_db.py query <slug> tension-cluster` |
 | `all_seeds` | `ideation_db.py query <slug> all-seeds` |
 | `all_active` | `ideation_db.py query <slug> all-active` |
+| `all_active_capped(50)` | `ideation_db.py query <slug> all-active-capped --n 50` |
 | `diversity-top(5)` | `ideation_db.py query <slug> diversity-top --n 5` |
 | literal IDs `[17, 24]` | no CLI call needed; pass through |
 | `children_of(step N)` | for each idea produced by step N (from its operator_runs row's subsequent inserts), call `children-of` |

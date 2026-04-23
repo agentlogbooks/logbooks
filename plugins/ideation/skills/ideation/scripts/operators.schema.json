@@ -1,0 +1,70 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "ideation operator catalog",
+  "type": "object",
+  "required": ["operators"],
+  "additionalProperties": false,
+  "properties": {
+    "operators": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": [
+          "name",
+          "stage",
+          "scope",
+          "applies_to",
+          "use_when",
+          "avoid_when",
+          "produces",
+          "cost",
+          "repeat_guard",
+          "followups"
+        ],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "pattern": "^[a-z]+\\.[a-z_]+$"},
+          "stage": {"enum": ["frame", "generate", "transform", "evaluate", "validate", "decide"]},
+          "scope": {"enum": ["per_idea", "pair", "group", "pool"]},
+          "applies_to": {
+            "type": "object",
+            "required": ["kinds", "min_cohort"],
+            "additionalProperties": false,
+            "properties": {
+              "kinds": {
+                "type": "array",
+                "items": {"enum": ["seed", "variant", "hybrid", "refinement", "counter"]}
+              },
+              "min_cohort": {"type": "integer", "minimum": 1}
+            }
+          },
+          "use_when": {"type": "array", "items": {"type": "string"}},
+          "avoid_when": {"type": "array", "items": {"type": "string"}},
+          "produces": {
+            "type": "object",
+            "required": ["ideas", "assessments", "facts"],
+            "additionalProperties": false,
+            "properties": {
+              "ideas": {"type": "boolean"},
+              "assessments": {"type": "boolean"},
+              "facts": {"type": "boolean"}
+            }
+          },
+          "cost": {
+            "type": "object",
+            "required": ["web"],
+            "additionalProperties": false,
+            "properties": {"web": {"type": "boolean"}}
+          },
+          "repeat_guard": {
+            "type": "object",
+            "required": ["same_lineage_cooldown"],
+            "additionalProperties": false,
+            "properties": {"same_lineage_cooldown": {"type": "integer", "minimum": 0}}
+          },
+          "followups": {"type": "array", "items": {"type": "string", "pattern": "^[a-z]+\\.[a-z_]+$"}}
+        }
+      }
+    }
+  }
+}

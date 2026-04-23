@@ -344,6 +344,28 @@ If `decide.route` itself fails (subagent returns an error, raises an exception, 
 
 Fragment expansion shares the outer plan's `RUN_ID` — querying `operator_runs` filtered by `RUN_ID` reconstructs the full session.
 
+#### Step 5E — `--loop` re-entry (`route` playbook only)
+
+When the user invoked the `route` playbook with `--loop`, after the full plan body has executed (step 1's `decide.route` + Step 5D's fragment expansion), check whether to re-enter:
+
+1. If this iteration's `decide.route` produced an empty fragment → exit the loop. Terminal state, proceed to Step 6.
+2. If `iterations_so_far >= --iterations N` (default `N = 3`, max `3`) → exit the loop.
+3. If `--no-checkpoints` is not set, call `AskUserQuestion`:
+   ```
+   Iteration <done>/<N> complete. <count> ideas modified, <count> parked this round. Continue or stop?
+   Options: Continue / Stop
+   ```
+   On Stop → exit the loop.
+4. Otherwise, increment the iteration counter and re-execute the playbook body:
+   - Run `decide.route cohort=all_active_capped(50)` again. When calling `op-start`, omit `--plan-step` (so `plan_step_index` stores `NULL` — iteration-2+ routes are not in the planner's original plan) and pass `--params-json '{"loop_iteration": <N>}'`.
+   - Expand the fresh plan fragment via Step 5D. Each expanded row's `params-json` includes `"loop_iteration": <N>` alongside the `parent_operator_run_id` and `parent_plan_step_index` keys.
+
+Critical invariants:
+
+- `RUN_ID` stays constant across all iterations.
+- Each `decide.route` call and each expanded operator run creates its own `operator_runs` row, all carrying the same `run_id`.
+- If any operator fails unrecoverably inside a loop iteration, the loop exits cleanly — do not retry the whole routing decision.
+
 ### Step 6 — Post-run summary
 
 After the last step, render a human-readable summary. Lead with what changed; keep counts tight; skip internal terminology.
@@ -365,6 +387,13 @@ Try next:
 - Stress-test the strongest: `ideation <slug>: stress-test the top 3`
 - Just peek at state: `ideation <slug> --show-state`
 ```
+
+**Followups from operators that ran this session.** After the default bullets, iterate over `operator_runs` for this `run_id`. For each distinct operator that ran and has a non-empty `followups` list in its frontmatter, emit one additional bullet per followup. Render each as a natural-language suggestion scoped to the ideas that operator just produced or touched. Example:
+
+    - Refine idea 8 further: `ideation <slug>: refine idea 8`        (from transform.invert.followups[0])
+    - Stress-test idea 8 for evidence: `ideation <slug>: stress-test idea 8`  (from transform.invert.followups[1])
+
+Read the catalog once at the start of Step 6 via `ideation_db.py list-operators --format json`, then index by operator name. Deduplicate suggestions — if two runs both suggest `transform.refine`, emit one bullet referencing both idea sets.
 
 Query the counts via:
 

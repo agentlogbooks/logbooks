@@ -22,8 +22,7 @@ _SHELL = platform.system() == "Windows"
 
 THRESHOLD_DEFAULT  = 70
 TIMEOUT_DEFAULT    = 60    # seconds per test run
-MODEL_DEFAULT      = "claude-opus-4-7"
-LOGBOOK_DIR        = Path.home() / "logbooks" / "mutation-testing"
+LOGBOOK_DIR        = Path(".logbooks") / "mutation-testing"
 
 EXCLUDED_DIRS = {
     ".venv", "venv", ".git", "dist", "build", "__pycache__",
@@ -684,8 +683,8 @@ def main() -> None:
                         help=f"Minimum mutation score (default: {THRESHOLD_DEFAULT})")
     parser.add_argument("--timeout",      type=int,   default=TIMEOUT_DEFAULT,
                         help=f"Seconds per test run (default: {TIMEOUT_DEFAULT})")
-    parser.add_argument("--model",        default=MODEL_DEFAULT,
-                        help=f"Claude model used to generate the mutations — recorded in logbook only (default: {MODEL_DEFAULT})")
+    parser.add_argument("--model",        default=None,
+                        help="Claude model used to generate the mutations — recorded in logbook only (optional)")
     parser.add_argument("--mutations-file", metavar="PATH", required=True,
                         help="JSON file of pre-generated mutations.")
     parser.add_argument("--skip-baseline", action="store_true",

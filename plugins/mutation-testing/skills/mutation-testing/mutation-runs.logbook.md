@@ -4,13 +4,13 @@ scope: solo-cross-machine
 bindings:
   # GOVERNANCE: This file is a shared repo artifact — permanently read-only once committed.
   # Never edit address_pattern or binding fields here. Store credentials and active status
-  # in a local-only override (e.g. ~/logbooks/mutation-testing/bindings.local.yaml).
+  # in a local-only override (e.g. ./.logbooks/mutation-testing/bindings.local.yaml).
   # Agents must never write back to this file.
 
   # Per-project SQLite ledger — {slug} resolved to project name at runtime
   - driver: sqlite
     label: ledger
-    address_pattern: ~/logbooks/mutation-testing/{slug}.sqlite
+    address_pattern: ./.logbooks/mutation-testing/{slug}.sqlite
     note: >
       contains `runs`, `mutant_results`, `mutants`, `gap_ledger` tables;
       {slug} = sanitized git remote name or cwd name
@@ -18,7 +18,7 @@ bindings:
   # Per-project JSONL trace — append-only
   - driver: jsonl
     label: run-log
-    address_pattern: ~/logbooks/mutation-testing/{slug}.jsonl
+    address_pattern: ./.logbooks/mutation-testing/{slug}.jsonl
     note: record_type one of `run` | `mutant_result` | `gap_update`
 
   # Optional human-facing export
@@ -67,8 +67,8 @@ class operation, not just an absence of the mutant in the next run.
 
 ## Physical stores
 
-- **SQLite** — `~/logbooks/mutation-testing/{slug}.sqlite`
-- **JSONL** — `~/logbooks/mutation-testing/{slug}.jsonl` — append-only trace
+- **SQLite** — `./.logbooks/mutation-testing/{slug}.sqlite`
+- **JSONL** — `./.logbooks/mutation-testing/{slug}.jsonl` — append-only trace
 
 ## Design principles
 
@@ -337,7 +337,7 @@ WHERE mutant_key = '<key>';
 ## JSONL: recent gap updates
 
 ```bash
-grep '"record_type":"gap_update"' ~/logbooks/mutation-testing/myproject.jsonl \
+grep '"record_type":"gap_update"' ./.logbooks/mutation-testing/myproject.jsonl \
   | jq -s 'sort_by(.updated_at) | reverse | .[:10][] | {mutant_key, old_status, new_status, note, updated_at}'
 ```
 
@@ -377,4 +377,4 @@ FROM mutants;
 - **State layer** (`gap_ledger`): patched by humans and agents; mutation-testing skill updates `open`/`fixed` only
 - **Lifetime:** indefinite; one SQLite + one JSONL per project slug
 - **Conflict resolution:** JSONL is append-only; SQLite uses `INSERT OR REPLACE` / `UPDATE` per layer rules
-- **Sunset:** archive to `~/logbooks/mutation-testing/archive/` when the project is retired
+- **Sunset:** archive to `./.logbooks/mutation-testing/archive/` when the project is retired

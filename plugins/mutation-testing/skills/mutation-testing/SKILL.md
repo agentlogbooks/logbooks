@@ -6,7 +6,7 @@ description: >
   for source code, runs them via the project's native test runner (pytest, jest, vitest, mocha,
   go test), prints a structured summary, generates mutation-todos.md with per-mutant rationale,
   persists every run to a per-project SQLite ledger and JSONL trace under
-  ~/logbooks/mutation-testing/, and warns when the mutation score falls below 70%.
+  ./.logbooks/mutation-testing/, and warns when the mutation score falls below 70%.
   Invoke for: "run mutation tests", "check mutation score", "mutation testing", "are our tests
   actually testing anything?", "which tests are weak?", "test quality check".
   Do not invoke for plain unit test runs, coverage reports, linting, or type checking.
@@ -30,7 +30,7 @@ a real bug the suite would miss.
 6. **Runs the test suite** — records `Killed` (tests failed) vs. `Survived` (tests passed)
 7. **Restores each file** — always restores the original before the next mutation
 8. **Generates mutation-todos.md** — table of survivors with rationale for each gap
-9. **Persists to logbook** — SQLite + JSONL under `~/logbooks/mutation-testing/`
+9. **Persists to logbook** — SQLite + JSONL under `./.logbooks/mutation-testing/`
 10. **Warns if score < 70%** — exits with code 2
 
 ---
@@ -41,7 +41,20 @@ This skill follows a two-phase protocol: **generate** then **run**.
 
 ### Phase 1 — Generate mutations (caller's responsibility)
 
-For each source file to mutate, dispatch a subagent with this prompt template:
+Before dispatching subagents, the calling agent should:
+
+1. **Detect the test runner** by inspecting the project root:
+   - `pytest.ini` / `conftest.py` / `[tool.pytest]` in `pyproject.toml` → `pytest`
+   - `jest.config.*` or `"jest"` in `package.json` devDependencies → `jest`
+   - `"vitest"` in `package.json` devDependencies → `vitest`
+   - `"mocha"` in `package.json` devDependencies → `mocha`
+   - Any `*.go` file → `go_test`
+   - `"test"` script in `package.json` → `npm_test`
+   Pass the result as `--runner <runner>` in Phase 2 so no auto-detection heuristics run.
+2. **Discover source files** by reading the project structure (prefer `src/`, `lib/` directories;
+   skip test files, `.venv`, `.git`, `dist`, `build`, `node_modules`, `__pycache__`).
+
+Then, for each source file to mutate, dispatch a subagent with this prompt template:
 
 > You are a mutation testing expert. Generate up to `{max_per_file}` meaningful mutations for the
 > following source file that will expose gaps in the test suite.
@@ -109,7 +122,7 @@ python ... --mutations-file /tmp/mutations.json --no-logbook
 | `--runner` | auto | `pytest` \| `jest` \| `vitest` \| `mocha` \| `go_test` \| `npm_test` |
 | `--threshold` | `70` | Minimum acceptable mutation score |
 | `--timeout` | `60` | Seconds allowed per test run |
-| `--model` | `claude-opus-4-7` | Claude model used for generation — recorded in logbook as metadata |
+| `--model` | none | Claude model used for generation — recorded in logbook as metadata (optional) |
 | `--skip-baseline` | off | Skip the pre-mutation baseline pass check |
 | `--no-logbook` | off | Skip SQLite/JSONL logbook writes |
 
@@ -195,8 +208,8 @@ Skipped mutants are excluded from the denominator. If all mutants are skipped, t
 | Artifact | Location | Description |
 | -------- | -------- | ----------- |
 | `mutation-todos.md` | repo root | Survivors table with rationale |
-| SQLite ledger | `~/logbooks/mutation-testing/{slug}.sqlite` | Run history + survivors |
-| JSONL trace | `~/logbooks/mutation-testing/{slug}.jsonl` | Append-only run log |
+| SQLite ledger | `./.logbooks/mutation-testing/{slug}.sqlite` | Run history + survivors |
+| JSONL trace | `./.logbooks/mutation-testing/{slug}.jsonl` | Append-only run log |
 
 ---
 

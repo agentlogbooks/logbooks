@@ -58,7 +58,7 @@ For each idea in `cohort_ids`:
 
 ## Output — run-scoped report file
 
-Write `./.ideation/$SLUG/reports/$RUN_ID-route.md` with exactly two sections:
+Write `./.logbooks/ideation/$SLUG/reports/$RUN_ID-route.md` with exactly two sections:
 
 ```markdown
 ## Routing (batch of N ideas)

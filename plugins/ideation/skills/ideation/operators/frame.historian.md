@@ -30,7 +30,7 @@ Resurface relevant ideas and principles from prior ideation topics that could tr
 
 - `cohort_ids`: ignored — this operator takes no cohort (empty `[]`).
 - `params`:
-  - `scan_root` (string, default `./.ideation`) — directory to scan for prior topic logbooks.
+  - `scan_root` (string, default `./.logbooks/ideation`) — directory to scan for prior topic logbooks.
   - `max_transfers` (int, default `10`) — upper bound on facts/seeds written.
 
 ## Outputs
@@ -98,8 +98,8 @@ Scan prior topics:
 ```bash
 ls $scan_root
 # for each peer slug $OTHER:
-sqlite3 ./.ideation/$OTHER/logbook.sqlite "SELECT problem_statement, triz_contradiction FROM frames WHERE active=1;"
-sqlite3 ./.ideation/$OTHER/logbook.sqlite "SELECT idea_id, title, description, kind FROM ideas WHERE status IN ('shortlisted','selected') ORDER BY score_summary DESC;"
+sqlite3 ./.logbooks/ideation/$OTHER/logbook.sqlite "SELECT problem_statement, triz_contradiction FROM frames WHERE active=1;"
+sqlite3 ./.logbooks/ideation/$OTHER/logbook.sqlite "SELECT idea_id, title, description, kind FROM ideas WHERE status IN ('shortlisted','selected') ORDER BY score_summary DESC;"
 ```
 
 Write a transferred insight as a fact:

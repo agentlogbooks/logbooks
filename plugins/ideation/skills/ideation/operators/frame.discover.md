@@ -109,7 +109,7 @@ One sentence describing the problem solving itself — no effort, no cost, no tr
 
 Read prior facts:
 ```bash
-sqlite3 ./.ideation/$SLUG/logbook.sqlite \
+sqlite3 ./.logbooks/ideation/$SLUG/logbook.sqlite \
   "SELECT fact_id, claim, confidence, stance FROM facts ORDER BY created_at;"
 ```
 

@@ -3,6 +3,7 @@
 .worktrees/
 plugins/deep-code-review/deep-code-review-workspace/
 *.logbook.local.yaml
+.logbooks/
 .ideation/
 docs/superpowers/specs/
 docs/superpowers/plans/

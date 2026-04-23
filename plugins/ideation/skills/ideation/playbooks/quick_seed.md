@@ -30,7 +30,7 @@ Intermediate ideation — `starter`'s flow plus web grounding, criteria derivati
 ## Expected output
 
 - ~20–30 seed ideas in the logbook.
-- One comparison report under `./.ideation/<slug>/reports/<run_id>-compare.md` ranking the top 5.
+- One comparison report under `./.logbooks/ideation/<slug>/reports/<run_id>-compare.md` ranking the top 5.
 - No Johns, no ratchet, no web-stress, no brilliance — the cost of a quick pass is the absence of those signals.
 
 ## Notes

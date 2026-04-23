@@ -120,5 +120,115 @@ class TestParseFrontmatterStrictGrammar(unittest.TestCase):
             parse_frontmatter(text)
 
 
+def _meta(**overrides):
+    """Build a minimal valid meta dict; override to break specific rules."""
+    base = {
+        "name": "transform.invert",
+        "stage": "transform",
+        "scope": "per_idea",
+        "applies_to": {"kinds": ["seed", "variant", "hybrid"], "min_cohort": 1},
+        "use_when": ["a"],
+        "avoid_when": ["b"],
+        "produces": {"ideas": True, "assessments": False, "facts": False},
+        "cost": {"web": False},
+        "repeat_guard": {"same_lineage_cooldown": 1},
+        "followups": [],
+    }
+    for k, v in overrides.items():
+        base[k] = v
+    return base
+
+
+class TestLintOperator(unittest.TestCase):
+    def test_valid_meta_returns_no_errors(self):
+        errs = lint_operator(_meta(), filename="transform.invert.md")
+        self.assertEqual(errs, [])
+
+    def test_missing_required_field_fails(self):
+        meta = _meta()
+        del meta["use_when"]
+        errs = lint_operator(meta, filename="transform.invert.md")
+        self.assertTrue(any("use_when" in e for e in errs))
+
+    def test_name_must_match_filename(self):
+        errs = lint_operator(_meta(), filename="transform.hybridize.md")
+        self.assertTrue(any("filename" in e.lower() for e in errs))
+
+    def test_stage_must_match_name_prefix(self):
+        errs = lint_operator(_meta(stage="decide"), filename="transform.invert.md")
+        self.assertTrue(any("stage" in e.lower() for e in errs))
+
+    def test_scope_must_be_in_enum(self):
+        errs = lint_operator(_meta(scope="global"), filename="transform.invert.md")
+        self.assertTrue(any("scope" in e.lower() for e in errs))
+
+    def test_applies_to_kinds_must_be_valid(self):
+        errs = lint_operator(
+            _meta(applies_to={"kinds": ["fictional"], "min_cohort": 1}),
+            filename="transform.invert.md",
+        )
+        self.assertTrue(any("kinds" in e.lower() for e in errs))
+
+    def test_transform_must_produce_ideas(self):
+        errs = lint_operator(
+            _meta(produces={"ideas": False, "assessments": False, "facts": False}),
+            filename="transform.invert.md",
+        )
+        self.assertTrue(any("produces.ideas" in e for e in errs))
+
+    def test_validate_must_produce_facts_and_assessments(self):
+        errs = lint_operator(
+            _meta(
+                name="validate.web_stress",
+                stage="validate",
+                produces={"ideas": False, "assessments": False, "facts": False},
+            ),
+            filename="validate.web_stress.md",
+        )
+        self.assertTrue(any("facts" in e for e in errs))
+        self.assertTrue(any("assessments" in e for e in errs))
+
+    def test_evaluate_must_produce_assessments(self):
+        errs = lint_operator(
+            _meta(
+                name="evaluate.tension",
+                stage="evaluate",
+                produces={"ideas": False, "assessments": False, "facts": False},
+            ),
+            filename="evaluate.tension.md",
+        )
+        self.assertTrue(any("assessments" in e for e in errs))
+
+    def test_frame_must_not_produce_ideas(self):
+        errs = lint_operator(
+            _meta(
+                name="frame.discover",
+                stage="frame",
+                produces={"ideas": True, "assessments": False, "facts": False},
+            ),
+            filename="frame.discover.md",
+        )
+        self.assertTrue(any("frame" in e.lower() and "ideas" in e.lower() for e in errs))
+
+    def test_pool_scope_must_have_zero_cooldown(self):
+        errs = lint_operator(
+            _meta(
+                scope="pool",
+                repeat_guard={"same_lineage_cooldown": 3},
+                applies_to={"kinds": [], "min_cohort": 1},
+            ),
+            filename="transform.invert.md",
+        )
+        self.assertTrue(any("cooldown" in e.lower() for e in errs))
+
+    def test_followups_must_exist_in_catalog(self):
+        errs = lint_operator(
+            _meta(followups=["transform.refine", "nonexistent.op"]),
+            filename="transform.invert.md",
+            known_operator_names={"transform.refine", "transform.invert"},
+        )
+        self.assertTrue(any("nonexistent.op" in e for e in errs))
+
+
 if __name__ == "__main__":
     unittest.main()

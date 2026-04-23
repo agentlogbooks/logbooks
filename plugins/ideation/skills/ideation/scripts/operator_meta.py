@@ -137,10 +137,106 @@ def _parse_scalar(text: str) -> Any:
     return text
 
 
-def lint_operator(meta: dict[str, Any], filename: str) -> list[str]:
+_REQUIRED_TOP_LEVEL = (
+    "name",
+    "stage",
+    "scope",
+    "applies_to",
+    "use_when",
+    "avoid_when",
+    "produces",
+    "cost",
+    "repeat_guard",
+    "followups",
+)
+
+
+def lint_operator(
+    meta: dict[str, Any],
+    filename: str,
+    known_operator_names: set[str] | None = None,
+) -> list[str]:
     """Return a list of human-readable lint errors; empty list means clean."""
-    # Implemented in Task 3.
-    return []
+    errors: list[str] = []
+
+    # Check required fields first; subsequent checks depend on them.
+    for field in _REQUIRED_TOP_LEVEL:
+        if field not in meta:
+            errors.append(f"missing required field: {field}")
+    if errors:
+        return errors
+
+    name = meta["name"]
+    expected_filename = f"{name}.md"
+    if filename != expected_filename:
+        errors.append(f"filename {filename!r} does not match name.md {expected_filename!r}")
+
+    stage = meta["stage"]
+    if stage not in VALID_STAGES:
+        errors.append(f"stage {stage!r} not in {VALID_STAGES}")
+    else:
+        prefix = name.split(".", 1)[0] if "." in name else ""
+        if prefix != stage:
+            errors.append(f"stage {stage!r} does not match name prefix {prefix!r}")
+
+    scope = meta["scope"]
+    if scope not in VALID_SCOPES:
+        errors.append(f"scope {scope!r} not in {VALID_SCOPES}")
+
+    applies_to = meta["applies_to"]
+    if not isinstance(applies_to, dict):
+        errors.append("applies_to must be a mapping")
+    else:
+        kinds = applies_to.get("kinds")
+        if not isinstance(kinds, list):
+            errors.append("applies_to.kinds must be a list")
+        else:
+            for k in kinds:
+                if k not in VALID_KINDS:
+                    errors.append(f"applies_to.kinds has invalid kind {k!r}")
+        min_cohort = applies_to.get("min_cohort")
+        if not isinstance(min_cohort, int) or min_cohort < 1:
+            errors.append("applies_to.min_cohort must be an integer >= 1")
+
+    for field in ("use_when", "avoid_when", "followups"):
+        if not isinstance(meta[field], list):
+            errors.append(f"{field} must be a list of strings")
+
+    produces = meta["produces"]
+    if not isinstance(produces, dict) or not all(
+        isinstance(produces.get(k), bool) for k in ("ideas", "assessments", "facts")
+    ):
+        errors.append("produces must be {ideas: bool, assessments: bool, facts: bool}")
+    else:
+        if stage == "transform" and not produces["ideas"]:
+            errors.append("transform.* operators must have produces.ideas: true")
+        if stage == "validate":
+            if not produces["facts"]:
+                errors.append("validate.* operators must have produces.facts: true")
+            if not produces["assessments"]:
+                errors.append("validate.* operators must have produces.assessments: true")
+        if stage == "evaluate" and not produces["assessments"]:
+            errors.append("evaluate.* operators must have produces.assessments: true")
+        if stage == "frame" and produces["ideas"]:
+            errors.append("frame.* operators must have produces.ideas: false")
+
+    cost = meta["cost"]
+    if not isinstance(cost, dict) or not isinstance(cost.get("web"), bool):
+        errors.append("cost must be {web: bool}")
+
+    repeat_guard = meta["repeat_guard"]
+    cooldown = repeat_guard.get("same_lineage_cooldown") if isinstance(repeat_guard, dict) else None
+    if not isinstance(cooldown, int) or cooldown < 0:
+        errors.append("repeat_guard.same_lineage_cooldown must be an integer >= 0")
+    elif scope == "pool" and cooldown != 0:
+        errors.append("scope: pool requires repeat_guard.same_lineage_cooldown: 0")
+
+    if known_operator_names is not None:
+        for fn in meta["followups"]:
+            if fn not in known_operator_names:
+                errors.append(f"followups references unknown operator: {fn}")
+
+    return errors
 
 
 def load_catalog(operators_dir: Path) -> list[dict[str, Any]]:

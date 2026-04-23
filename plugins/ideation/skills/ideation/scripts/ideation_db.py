@@ -1259,6 +1259,17 @@ def _query_all_active(conn: sqlite3.Connection) -> list[int]:
     ]
 
 
+def _query_all_active_capped(conn: sqlite3.Connection, n: int) -> list[int]:
+    return [
+        r["idea_id"]
+        for r in conn.execute(
+            "SELECT idea_id FROM ideas WHERE status = 'active' "
+            "ORDER BY idea_id ASC LIMIT ?",
+            (n,),
+        ).fetchall()
+    ]
+
+
 def _query_diversity_top(conn: sqlite3.Connection, n: int) -> list[int]:
     """
     Spread across (tag, temperature_zone) buckets weighted by recency.
@@ -1304,6 +1315,9 @@ def cmd_query(args: argparse.Namespace) -> None:
             ids = _query_all_seeds(conn)
         elif args.query == "all-active":
             ids = _query_all_active(conn)
+        elif args.query == "all-active-capped":
+            n = args.n or 50
+            ids = _query_all_active_capped(conn, n)
         elif args.query == "diversity-top":
             n = args.n or 5
             ids = _query_diversity_top(conn, n)
@@ -1863,6 +1877,7 @@ def build_parser() -> argparse.ArgumentParser:
             "tension-cluster",
             "all-seeds",
             "all-active",
+            "all-active-capped",
             "diversity-top",
         ),
     )

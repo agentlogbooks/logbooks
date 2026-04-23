@@ -320,6 +320,18 @@ Generated from operator frontmatter. Grouped by stage. For each operator, the **
 - **Avoid when:**
   - nothing selected yet
 
+### decide.route
+
+- **scope:** pool
+- **applies to kinds:** —
+- **min cohort:** 1
+- **Use when:**
+  - pool has a mix of idea states and next moves are not obvious
+  - mid-flow decision on what to do with each of a batch of ideas
+- **Avoid when:**
+  - pool is too small to warrant routing (fewer than 5 ideas)
+  - intent is a single-shape bulk operation (use the direct playbook instead)
+
 ### decide.shortlist
 
 - **scope:** pool

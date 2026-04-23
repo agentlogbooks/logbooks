@@ -7,3 +7,6 @@ plugins/deep-code-review/deep-code-review-workspace/
 docs/superpowers/specs/
 docs/superpowers/plans/
 plugins/*/change-requests/
+__pycache__/
+*.pyc
+.idea/

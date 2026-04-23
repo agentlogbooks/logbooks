@@ -5,13 +5,13 @@ Decide what to do next with the active pool, idea-by-idea. The router (a `decide
 ## When to pick
 
 - User says "route", "iterate", "keep going", "what should I try next", "plan next moves on the current pool".
-- Topic already has at least 3 active ideas in a mixed state (no single-shape follow-up would cover the batch usefully).
+- Topic already has at least 5 active ideas in a mixed state (no single-shape follow-up would cover the batch usefully).
 - You've done a first-pass generate + transform burst and want a state-driven next step rather than another blanket operator.
 
 ## When NOT to pick
 
 - User names specific idea IDs — use `followup_develop`, `hybridize_pair`, or `stress_test_shortlist` instead.
-- Fewer than 3 active ideas — generate or seed more first.
+- Fewer than 5 active ideas — generate or seed more first.
 - No active frame — run `starter` or `frame.discover` first.
 - Bulk single-shape operation is what the user wants ("hybridize everything", "score everything") — use the direct playbook.
 
@@ -37,7 +37,7 @@ The orchestrator expands the plan fragment emitted by step 1 inline — no separ
 
 ## Loop behavior (--loop)
 
-When `--loop` is set, the orchestrator re-enters the playbook body after the fragment finishes executing. Termination conditions (any one terminates the loop):
+When `--loop` is set, the orchestrator re-runs **only `decide.route`** (plus its Step 5D fragment expansion) on iterations 2 through `--iterations`. The `--with-criteria` setup steps (`evaluate.criteria`, the `criteria_lock` checkpoint, and `evaluate.score`) are one-shot per session — they run in iteration 1 only. Termination conditions (any one terminates the loop):
 
 - The latest `decide.route` produced an empty plan fragment (no operator calls emitted) — nothing more to route.
 - Iteration count reaches `--iterations N` (default 3).
@@ -45,12 +45,14 @@ When `--loop` is set, the orchestrator re-enters the playbook body after the fra
 
 The `run_id` stays the same across all iterations. Every operator run inside the loop shares that `run_id`, so post-run aggregation sees the whole session.
 
+Ideas that `decide.route` parks in iteration N have their `status` patched to `parked` during that iteration (see `operators/decide.route.md`), so they drop out of `all_active_capped(50)` on iterations N+1 through `--iterations`. The loop therefore converges instead of re-deciding the same pool every pass.
+
 ## Preconditions
 
 Checked by the playbook before invoking the planner. Pre-flight, not an operator step:
 
 1. Active frame exists — else error: "No active frame. Run `ideation <slug>: <intent>` with the `starter` playbook or `frame.discover` first."
-2. At least 3 active ideas — else error: "Pool has fewer than 3 active ideas. Run `generate.seed` or the `starter` playbook first."
+2. At least 5 active ideas — else error: "Pool has fewer than 5 active ideas. Run `generate.seed` or the `starter` playbook first."
 
 ## Expected output
 

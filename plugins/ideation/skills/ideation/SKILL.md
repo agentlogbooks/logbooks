@@ -324,6 +324,8 @@ If `decide.route` itself fails (subagent returns an error, raises an exception, 
    - Exactly one `PARALLEL:` header line.
    - Zero or more `- <operator.name> [key=value ...] cohort=[id, id, ...]` bullets.
    - Parse each bullet: operator name, params (space-separated `key=value`), cohort (literal integer IDs).
+   - **Coerce each param value** before building the params JSON: if it matches `^-?\d+$` → integer; if it is exactly `true` or `false` → boolean; otherwise → string. Apply this before the JSON merge in step 8 so downstream operators receive typed params (e.g., `count=3` → `3`, `cheap=true` → `true`, `hint=x` → `"x"`).
+   - **On grammar violation** (missing `PARALLEL:` header, malformed `cohort=[...]` bracket, a bullet that does not match `- <operator.name> [key=value ...] cohort=[id, id, ...]`, or any other parse error): finalize the deferred `decide.route` row immediately with `ideation_db.py op-finalize <slug> <decide.route op_run_id> --status failed --error "malformed plan fragment: <one-line reason>"`, print the offending line to the user, and stop this step — skip validation (step 4) and expansion (step 8). Do not auto-retry `decide.route`; the subagent already returned "successfully", so re-prompting is a user-level decision. In `--loop` mode, treat this iteration as terminated and proceed to Step 5E's exit checks.
 4. **Validate every recommended operator call** against the operator catalog (reload via `ideation_db.py list-operators --format json` if you don't already have it cached for this session):
    - Operator name exists in the catalog.
    - `cohort size >= applies_to.min_cohort`.
@@ -360,7 +362,7 @@ When the user invoked the `route` playbook with `--loop`, after the full plan bo
    Where `<executed_count>` is the number of operator_runs rows in this iteration (query: `params.loop_iteration = <done>` AND `status = 'succeeded'`, excluding the `decide.route` row itself), and `<idea_count>` is the count of distinct idea IDs appearing in any of those rows' `cohort_ids`.
 
    On Stop → exit the loop.
-4. Otherwise, increment the iteration counter and re-execute the playbook body:
+4. Otherwise, increment the iteration counter and re-execute **only the `decide.route` step**, not the full playbook body. Even if the original invocation used `--with-criteria` (which runs `evaluate.criteria` → criteria_lock checkpoint → `evaluate.score` before `decide.route` on iteration 1), iteration 2+ skips those setup steps — criteria derivation and scoring are one-shot setup per `--loop` session, not per iteration:
    - Run `decide.route cohort=all_active_capped(50)` again. When calling `op-start`, omit `--plan-step` (so `plan_step_index` stores `NULL` — iteration-2+ routes are not in the planner's original plan) and pass `--params-json` as the **original invocation's playbook params augmented with `loop_iteration: <N>`**. Specifically: carry forward `cheap` (and any other playbook param the user passed at invocation time) into every iteration's `decide.route` row and add `"loop_iteration": <N>`. Do NOT replace the params with `{"loop_iteration": <N>}` alone — that would silently disengage Step 5D's `cheap` validation gate on iteration 2+.
    - Expand the fresh plan fragment via Step 5D. Each expanded row's `params-json` includes `"loop_iteration": <N>` alongside the `parent_operator_run_id` and `parent_plan_step_index` keys.
 

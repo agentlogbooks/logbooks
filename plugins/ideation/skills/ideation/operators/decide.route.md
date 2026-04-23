@@ -54,7 +54,7 @@ For each idea in `cohort_ids`:
    - The operator's `repeat_guard.same_lineage_cooldown` is not violated — an operator is on cooldown for this idea if it appears in the `same_lineage_cooldown` most-recent entries returned by `lineage-ops`. If `same_lineage_cooldown` is 0, the operator is never on cooldown. Note: `lineage-ops` is queried with `--limit 5`, so cooldowns above 5 are effectively capped at 5 — currently no operator has a cooldown above 2, but revisit this limit if one is added.
 3. Among the candidates, use `use_when` / `avoid_when` as soft judgment cues. Pick the single best operator, or one of:
    - **Pair this idea with another** — if two ideas in the cohort have complementary mechanisms or sit in tension, recommend `transform.hybridize cohort=[i,j]` (scope=group, min_cohort=2). Emit this as a single fragment line covering both ideas, not two separate recommendations. Before emitting a hybridize line, verify that `transform.hybridize` clears the cooldown gate on **both** ideas' lineage histories — if it's on cooldown for either one, skip the pair.
-   - **Park** — with a one-line reason, for ideas that are too vague or already exhausted.
+   - **Park** — with a one-line reason, for ideas that are too vague, already exhausted, or left with no viable operator. Parking is a *lifecycle* decision, not just a per-run label: for every parked idea, patch its status to `parked` by calling `ideation_db.py patch-idea $SLUG <idea_id> status parked` before writing the report. This removes the idea from `all_active_capped(50)` on future `--loop` iterations so the router does not re-decide the same pool every pass. Users reactivate a parked idea by hand with `ideation_db.py patch-idea $SLUG <idea_id> status active`.
 
 ## Output — run-scoped report file
 
@@ -91,13 +91,14 @@ Rules:
 - Each subsequent non-blank line is a `- operator.name ...` bullet.
 - `cohort=[...]` is mandatory, literal integer IDs only.
 - Params are space-separated `key=value`; no quotes, no spaces in values.
+- The orchestrator coerces each value: `^-?\d+$` → integer, `true`/`false` → boolean, otherwise string. Keep integer and boolean params unquoted; otherwise downstream operators receive a string.
 - Parked ideas are listed in the `## Routing` table only, never in the plan fragment.
 
 ## Edge cases
 
 - **Empty cohort** → write an empty `## Plan fragment` section (header with no bullets). Outcome summary: "nothing to route."
 - **No active frame** → fail fast; this should have been caught by the `route` playbook's preconditions.
-- **All ideas parked** → empty plan fragment. In `--loop` mode, this terminates the loop.
+- **All ideas parked** → empty plan fragment. All cohort ideas also get their status patched to `parked` per the Decision procedure, so the next iteration's `all_active_capped(50)` will return an empty cohort — in `--loop` mode, that terminates the loop via the empty-fragment exit.
 
 ## Commands
 
@@ -108,6 +109,9 @@ python scripts/ideation_db.py active-frame $SLUG
 # For each idea:
 python scripts/ideation_db.py idea $SLUG $IDEA_ID
 python scripts/ideation_db.py lineage-ops $SLUG $IDEA_ID --limit 5
+
+# Park an idea (lifecycle transition — apply to every idea listed with "park" in the routing table):
+python scripts/ideation_db.py patch-idea $SLUG $IDEA_ID status parked
 ```
 
 ## Return

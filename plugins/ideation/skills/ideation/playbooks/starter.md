@@ -27,7 +27,7 @@ Lightweight default. Frame the problem in one step, generate ~20 ideas in parall
 
 - One frame row capturing root causes + HMW.
 - ~20 seed ideas in the logbook.
-- One markdown report under `./logbooks/ideation/<slug>/reports/<run_id>-compare.md` rendering all ideas with their tags and one-line descriptions.
+- One markdown report under `./.logbooks/ideation/<slug>/reports/<run_id>-compare.md` rendering all ideas with their tags and one-line descriptions.
 
 ## Notes
 

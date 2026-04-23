@@ -9,7 +9,7 @@ You are a lightweight orchestrator for the `ideation` skill. You do NOT generate
 
 ## Three concepts
 
-- **Idea logbook** — per-topic SQLite database at `./logbooks/ideation/<topic-slug>/logbook.sqlite`. Multi-entity: `topic_meta`, `frames`, `facts`, `ideas`, `lineage`, `assessments`, `operator_runs`. Authoritative across sessions. Schema and rules in `ideation.logbook.md`.
+- **Idea logbook** — per-topic SQLite database at `./.logbooks/ideation/<topic-slug>/logbook.sqlite`. Multi-entity: `topic_meta`, `frames`, `facts`, `ideas`, `lineage`, `assessments`, `operator_runs`. Authoritative across sessions. Schema and rules in `ideation.logbook.md`.
 - **Operator** — a single atomic subagent procedure that reads a cohort of idea IDs, applies one transformation, writes results via the CLI. Every operator is a markdown file in `operators/`.
 - **Plan** — an ordered list of operator calls (sometimes wrapped in `PARALLEL:` blocks, with `CHECKPOINT:` lines between them). Produced by the planner subagent from the user's intent + topic state.
 
@@ -27,7 +27,7 @@ ideation --list-topics                               # list existing topics
 ideation <topic-slug> --show-state                   # dump topic state (no plan, no ops)
 ```
 
-Topic slug is lowercase alphanumeric with dashes or underscores. It resolves to `./logbooks/ideation/<slug>/` under the current git repo root (or cwd if not in a repo).
+Topic slug is lowercase alphanumeric with dashes or underscores. It resolves to `./.logbooks/ideation/<slug>/` under the current git repo root (or cwd if not in a repo).
 
 ## Session lifecycle
 
@@ -37,7 +37,7 @@ Run these steps in order. The CLI you use throughout is `python plugins/ideation
 
 - If the user passed `--list-topics`: run `ideation_db.py list-topics` and render results. Stop.
 - If the user passed `--show-state`: run `ideation_db.py show-state <slug>` and render. Stop.
-- Otherwise: check whether `./logbooks/ideation/<slug>/logbook.sqlite` exists.
+- Otherwise: check whether `./.logbooks/ideation/<slug>/logbook.sqlite` exists.
   - **Exists** — note the topic exists and proceed.
   - **Missing** — call `AskUserQuestion` to confirm creation:
     ```
@@ -245,7 +245,7 @@ Do NOT spawn a subagent. Identify which built-in checkpoint this is by the human
 
 - **framing** — show the active frame (root causes, framing questions, and the trade-off if present). Read via `ideation_db.py active-frame <slug>` and render in plain prose, not as JSON. Options: "Looks right, proceed" / "Let me edit (Other)".
 - **taste** — delegate to `evaluate.taste_check` as a real operator invocation; the orchestrator replaces this checkpoint line with a regular operator execution over a diverse slate of recent seeds + transforms.
-- **criteria_lock** — read the latest `./logbooks/ideation/<slug>/criteria-<run_id>.json` file and render the criteria + weights as a plain list. Options: "Accept criteria" / "Adjust (Other)". On Adjust, rewrite the criteria file with user edits before proceeding.
+- **criteria_lock** — read the latest `./.logbooks/ideation/<slug>/criteria-<run_id>.json` file and render the criteria + weights as a plain list. Options: "Accept criteria" / "Adjust (Other)". On Adjust, rewrite the criteria file with user edits before proceeding.
 - **before_validation** — show how many ideas are about to be validated + a short sample of their titles. Options: "Proceed" / "Narrow the list (Other)" / "Skip validation".
 - **before_decide** — show the current top N ideas (titles + evidence posture). Options: "Proceed to decide" / "Run one more pass (Other)" / "Skip".
 - **custom** — the step carries its own `question` and `options` params; present them.
@@ -319,7 +319,7 @@ When the step you just executed is a `decide.route` call, the normal Step 5B flo
 If `decide.route` itself fails (subagent returns an error, raises an exception, or fails twice under Step 5B's retry policy), do NOT enter this expansion flow — apply Step 5B's normal failure handling and stop. Step 5D only runs on a confirmed successful `decide.route` return.
 
 1. After the `decide.route` subagent returns its outcome summary, do NOT call `op-finalize` yet. Keep the summary in a local variable as `subagent_summary`.
-2. Read `./logbooks/ideation/<slug>/reports/<RUN_ID>-route.md` — the subagent wrote this during its operator work.
+2. Read `./.logbooks/ideation/<slug>/reports/<RUN_ID>-route.md` — the subagent wrote this during its operator work.
 3. Extract the `## Plan fragment` section. Its grammar is narrow:
    - Exactly one `PARALLEL:` header line.
    - Zero or more `- <operator.name> [key=value ...] cohort=[id, id, ...]` bullets.
@@ -384,7 +384,7 @@ Done. Here's what this session produced:
 - Made <Z> judgments across <K> different metrics
 - <count> ideas shortlisted, <count> selected, <count> rejected
 - Reports:
-    · ./logbooks/ideation/<slug>/reports/<run_id>-<report>.md
+    · ./.logbooks/ideation/<slug>/reports/<run_id>-<report>.md
     · ...
 
 Try next:
@@ -407,7 +407,7 @@ Query the counts via:
 ```bash
 ideation_db.py op-runs <slug> --run-id $RUN_ID
 ideation_db.py ideas <slug> --status active
-ls ./logbooks/ideation/<slug>/reports/
+ls ./.logbooks/ideation/<slug>/reports/
 ```
 
 Omit zero-count lines. If no ideas were generated (e.g., a decide-only session), say so explicitly — "No new ideas this session; the work was evaluation and decision."

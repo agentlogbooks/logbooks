@@ -34,7 +34,7 @@ Produce a portable final artifact (markdown) for sharing outside the logbook. Su
 
 ## Outputs
 
-- **External file:** `./logbooks/ideation/$SLUG/reports/$RUN_ID-<format>.md`.
+- **External file:** `./.logbooks/ideation/$SLUG/reports/$RUN_ID-<format>.md`.
 - For `format=menu` only: one `assessments` row per bucketed idea, `metric=menu_bucket`, `value` one of `quick_win|core_bet|moonshot`, `rationale` = one sentence naming the bucket criterion (see buckets below). Most ideas receive no bucket — 3-5 per bucket maximum.
 - No other logbook mutations.
 
@@ -106,7 +106,7 @@ What to check first: <one sentence, drawn from web_stress strongest objection or
 - CRITICAL: the report must NOT include "6-week MVP", "Week 1 / Week 2", "ship in Q2", "90-day metrics", or invented timelines. These estimates are fabrications — the agent has no knowledge of team, scope, or prior work.
 - Bucket assignment is sparse — most ideas remain unbucketed. Assigning every idea to a bucket defeats the signal.
 - The table format is the least prose-heavy — use it when the user wants to paste into an issue tracker.
-- File path is `./logbooks/ideation/$SLUG/reports/$RUN_ID-<format>.md`. Overwrite if exists.
+- File path is `./.logbooks/ideation/$SLUG/reports/$RUN_ID-<format>.md`. Overwrite if exists.
 
 ## Commands
 
@@ -136,8 +136,8 @@ python scripts/ideation_db.py add-assessments-batch $SLUG /tmp/export-menu-$OPER
 rm -f /tmp/export-menu-$OPERATOR_RUN_ID.json
 
 # Ensure reports dir and write the report
-mkdir -p "./logbooks/ideation/$SLUG/reports"
-# Path: ./logbooks/ideation/$SLUG/reports/$RUN_ID-<format>.md
+mkdir -p "./.logbooks/ideation/$SLUG/reports"
+# Path: ./.logbooks/ideation/$SLUG/reports/$RUN_ID-<format>.md
 ```
 
 **Do not** call `add-assessment` per bucketed idea. The batch form is strictly faster and preserves transactional atomicity.

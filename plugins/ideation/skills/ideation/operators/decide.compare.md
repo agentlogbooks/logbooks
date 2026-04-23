@@ -36,7 +36,7 @@ Render a side-by-side comparison report of the cohort for human review. One row 
 
 ## Outputs
 
-- **External file:** `./logbooks/ideation/$SLUG/reports/$RUN_ID-compare.md` — a markdown report containing:
+- **External file:** `./.logbooks/ideation/$SLUG/reports/$RUN_ID-compare.md` — a markdown report containing:
   - One-line header naming the cohort + run ID.
   - A table with columns: `#`, `Title`, `Kind`, `Evidence state`, `Status`, plus one column per metric in `params.metrics`.
   - Below the table, one paragraph per idea with the full `description` plus the latest-assessment rationales that matter most (taste, brilliance pitch, web-stress strongest objection).
@@ -70,7 +70,7 @@ Render a side-by-side comparison report of the cohort for human review. One row 
 - Any `shortlist_reason` → include the rationale.
 - Any `taste='picked'` → one line noting the user picked this idea in taste check.
 
-**Step 6 — Write the report file** to `./logbooks/ideation/$SLUG/reports/$RUN_ID-compare.md`. Create the directory if needed.
+**Step 6 — Write the report file** to `./.logbooks/ideation/$SLUG/reports/$RUN_ID-compare.md`. Create the directory if needed.
 
 ## Output discipline
 
@@ -87,10 +87,10 @@ python scripts/ideation_db.py idea $SLUG $IDEA_ID
 python scripts/ideation_db.py latest-assessment $SLUG --idea-id $IDEA_ID --metric feasibility
 
 # Ensure reports dir
-mkdir -p "./logbooks/ideation/$SLUG/reports"
+mkdir -p "./.logbooks/ideation/$SLUG/reports"
 
 # Write the markdown report (pseudo — the operator generates content and writes to this path)
-# Path: ./logbooks/ideation/$SLUG/reports/$RUN_ID-compare.md
+# Path: ./.logbooks/ideation/$SLUG/reports/$RUN_ID-compare.md
 ```
 
 Example report skeleton the operator produces:

@@ -34,7 +34,7 @@ Derive 5-7 session-specific evaluation criteria (with weights summing to 100) fr
 
 ## Outputs
 
-- **External file:** `./logbooks/ideation/$SLUG/criteria-$RUN_ID.json` — the criteria set and weights. Shape:
+- **External file:** `./.logbooks/ideation/$SLUG/criteria-$RUN_ID.json` — the criteria set and weights. Shape:
   ```json
   {
     "run_id": "<uuid>",
@@ -75,7 +75,7 @@ Derive criteria from THIS session, not a generic menu. The point is: two session
 - Each criterion `name` is snake_case, a valid Python identifier, and matches the pattern used in `assessments.metric`.
 - Write a one-sentence `description` per criterion that tells the downstream scorer what to look for. No jargon.
 
-Write the file to `./logbooks/ideation/$SLUG/criteria-$RUN_ID.json`. The path uses the session `run_id` (UUID). This ties the criteria to a specific session — a later `evaluate.score` call in a different session must derive its own criteria.
+Write the file to `./.logbooks/ideation/$SLUG/criteria-$RUN_ID.json`. The path uses the session `run_id` (UUID). This ties the criteria to a specific session — a later `evaluate.score` call in a different session must derive its own criteria.
 
 ## Output discipline
 
@@ -92,8 +92,8 @@ python scripts/ideation_db.py ideas $SLUG --status active
 python scripts/ideation_db.py assessments $SLUG --metric-prefix tension.
 
 # Write the criteria file
-mkdir -p "./logbooks/ideation/$SLUG"
-cat > "./logbooks/ideation/$SLUG/criteria-$RUN_ID.json" <<'JSON'
+mkdir -p "./.logbooks/ideation/$SLUG"
+cat > "./.logbooks/ideation/$SLUG/criteria-$RUN_ID.json" <<'JSON'
 {
   "run_id": "$RUN_ID",
   "criteria": [

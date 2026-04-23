@@ -56,7 +56,7 @@ Checked by the playbook before invoking the planner. Pre-flight, not an operator
 
 ## Expected output
 
-- Zero or one `## Routing` report at `./logbooks/ideation/<slug>/reports/<run_id>-route.md`.
+- Zero or one `## Routing` report at `./.logbooks/ideation/<slug>/reports/<run_id>-route.md`.
 - Zero or more operator runs from the expanded fragment (each a normal `operator_runs` row under the same `run_id`).
 - In `--loop` mode, multiple `decide.route` runs (one per iteration) plus their expansions.
 

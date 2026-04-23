@@ -77,7 +77,7 @@ Produce `count` seeds. Each:
 Read active frame + facts:
 ```bash
 python scripts/ideation_db.py active-frame $SLUG
-sqlite3 ./logbooks/ideation/$SLUG/logbook.sqlite \
+sqlite3 ./.logbooks/ideation/$SLUG/logbook.sqlite \
   "SELECT fact_id, claim, confidence FROM facts ORDER BY confidence DESC;"
 ```
 

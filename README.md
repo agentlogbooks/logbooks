@@ -74,7 +74,7 @@ Run a hotspot-first code review on a PR, branch, or diff:
 /deep-code-review review current branch changes
 ```
 
-The skill maps behavior changes, selects risky hotspots, runs per-hotspot analysis, applies a skeptic pass, and surfaces at most 5 high-signal findings or questions. Results are persisted to a per-PR JSONL trace and SQLite ledger at `./logbooks/code-review/` in the reviewed repo.
+The skill maps behavior changes, selects risky hotspots, runs per-hotspot analysis, applies a skeptic pass, and surfaces at most 5 high-signal findings or questions. Results are persisted to a per-PR JSONL trace and SQLite ledger at `./.logbooks/code-review/` in the reviewed repo.
 
 ### ideation
 
@@ -87,4 +87,4 @@ Start or continue ideation on a topic:
 /ideation shortlist --playbook stress_test_shortlist: validate the top 3
 ```
 
-Default for a fresh topic is a lightweight flow (frame + ~20 ideas + a compare report). Opt in to deeper shapes with explicit intent — "thorough" / "deep" for the full treatment, "score them" / "prioritize" for a scored pass, "name X" for the naming playbook. Logbooks live at `./logbooks/ideation/<slug>/logbook.sqlite` and persist across sessions, so follow-up prompts on the same slug pick up where the last one ended.
+Default for a fresh topic is a lightweight flow (frame + ~20 ideas + a compare report). Opt in to deeper shapes with explicit intent — "thorough" / "deep" for the full treatment, "score them" / "prioritize" for a scored pass, "name X" for the naming playbook. Logbooks live at `./.logbooks/ideation/<slug>/logbook.sqlite` and persist across sessions, so follow-up prompts on the same slug pick up where the last one ended.

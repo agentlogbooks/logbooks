@@ -5,18 +5,18 @@ scope: solo-cross-machine
 bindings:
   # GOVERNANCE: This file is a shared repo artifact — permanently read-only once committed.
   # Never edit any address_pattern or binding status here. Store resolved IDs, auth, and
-  # active status in a local-only override (e.g. ./logbooks/code-review/bindings.local.yaml
+  # active status in a local-only override (e.g. ./.logbooks/code-review/bindings.local.yaml
   # or env vars). Agents must never write back to this file.
 
   # Per-PR/session file backends — {slug} resolved to PR_REF at runtime
   - driver: sqlite
     label: ledger
-    address_pattern: ./logbooks/code-review/{slug}.sqlite
+    address_pattern: ./.logbooks/code-review/{slug}.sqlite
     note: contains hotspots + candidate_findings tables; {slug} = PR_REF resolved at runtime
 
   - driver: jsonl
     label: run-log
-    address_pattern: ./logbooks/code-review/{slug}.jsonl
+    address_pattern: ./.logbooks/code-review/{slug}.jsonl
     note: append-only trace; record_type one of run|hotspot|candidate|decision|output|pr_comment_dedup; {slug} = PR_REF
 
   # Optional human-facing exports — not authoritative
@@ -44,8 +44,8 @@ Per-PR structured store for deep code review runs. Separates four concerns that 
 
 ## Physical stores
 
-- **Per-PR SQLite** — `./logbooks/code-review/{PR_REF}.sqlite` — `hotspots` + `candidate_findings`
-- **Per-run JSONL** — `./logbooks/code-review/{PR_REF}.jsonl` — append-only trace
+- **Per-PR SQLite** — `./.logbooks/code-review/{PR_REF}.sqlite` — `hotspots` + `candidate_findings`
+- **Per-run JSONL** — `./.logbooks/code-review/{PR_REF}.jsonl` — append-only trace
 
 Airtable and Google Sheets are optional **export-only** views. They are not the source of truth.
 
@@ -196,7 +196,7 @@ Clamp to 0..100.
 ## SQLite initialization
 
 ```bash
-sqlite3 ./logbooks/code-review/pr-123.sqlite "
+sqlite3 ./.logbooks/code-review/pr-123.sqlite "
 PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS hotspots (
   hotspot_id TEXT PRIMARY KEY,
@@ -253,7 +253,7 @@ CREATE INDEX IF NOT EXISTS idx_candidates_hotspot_id ON candidate_findings(hotsp
 ### Hotspots for a run
 
 ```bash
-sqlite3 ./logbooks/code-review/pr-123.sqlite \
+sqlite3 ./.logbooks/code-review/pr-123.sqlite \
   "SELECT hotspot_key, file_path, symbol, summary, risk_tags_json, lenses_json
    FROM hotspots
    WHERE run_id = '20260420-101530-a1b2c3';"
@@ -262,7 +262,7 @@ sqlite3 ./logbooks/code-review/pr-123.sqlite \
 ### Surviving candidates sorted by priority
 
 ```bash
-sqlite3 ./logbooks/code-review/pr-123.sqlite \
+sqlite3 ./.logbooks/code-review/pr-123.sqlite \
   "SELECT candidate_id, output_type, issue_class, summary, severity, priority_score,
           surfacing_state
    FROM candidate_findings
@@ -274,7 +274,7 @@ sqlite3 ./logbooks/code-review/pr-123.sqlite \
 ### Full audit trail (all candidates including dropped)
 
 ```bash
-sqlite3 ./logbooks/code-review/pr-123.sqlite \
+sqlite3 ./.logbooks/code-review/pr-123.sqlite \
   "SELECT c.candidate_id, c.output_type, c.severity, c.detection_state,
           c.surfacing_state, c.drop_reason, c.priority_score, c.summary,
           h.hotspot_key
@@ -287,7 +287,7 @@ sqlite3 ./logbooks/code-review/pr-123.sqlite \
 ### Find by fingerprint (dedup check)
 
 ```bash
-sqlite3 ./logbooks/code-review/pr-123.sqlite \
+sqlite3 ./.logbooks/code-review/pr-123.sqlite \
   "SELECT candidate_id, summary, detection_state, priority_score
    FROM candidate_findings
    WHERE fingerprint = 'auth-boundary-regression|updateUser|authorization-preserved|public-endpoint'
@@ -297,14 +297,14 @@ sqlite3 ./logbooks/code-review/pr-123.sqlite \
 ### JSONL: top surfaced items by priority
 
 ```bash
-grep '"record_type":"output"' ./logbooks/code-review/pr-123.jsonl \
+grep '"record_type":"output"' ./.logbooks/code-review/pr-123.jsonl \
   | jq -s 'sort_by(-.priority_score) | .[] | {priority_score, output_type, severity, summary, file_path}'
 ```
 
 ### JSONL: all decisions for a run
 
 ```bash
-grep '"record_type":"decision"' ./logbooks/code-review/pr-123.jsonl \
+grep '"record_type":"decision"' ./.logbooks/code-review/pr-123.jsonl \
   | jq -s '.[] | select(.run_id == "20260420-101530-a1b2c3") | {candidate_id, detection_state, surfacing_state, drop_reason, priority_score}'
 ```
 
@@ -359,7 +359,7 @@ Nullable fields (`file_path`, `line_start`, `line_end`, `drop_reason`, `suggeste
 - **Access:** append by deep-code-review skill agents; read by humans and downstream agents
 - **Lifetime:** indefinite; one SQLite file and one JSONL file per PR_REF
 - **Conflict resolution:** SQLite transactions for the ledger; JSONL is append-only (no conflict possible)
-- **Sunset:** archive (move to `./logbooks/code-review/archive/`) when the PR is closed and no further review runs are expected
+- **Sunset:** archive (move to `./.logbooks/code-review/archive/`) when the PR is closed and no further review runs are expected
 
 ## Cloud export
 

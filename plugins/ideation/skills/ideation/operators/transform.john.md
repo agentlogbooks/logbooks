@@ -106,7 +106,7 @@ done
 
 For MIRROR zone, also read peer John outputs:
 ```bash
-sqlite3 ./logbooks/ideation/$SLUG/logbook.sqlite \
+sqlite3 ./.logbooks/ideation/$SLUG/logbook.sqlite \
   "SELECT i.idea_id, i.title, i.description FROM ideas i
    JOIN operator_runs r ON r.operator_run_id = i.origin_operator_run_id
    WHERE r.operator_name = 'transform.john' AND r.run_id = '$RUN_ID'

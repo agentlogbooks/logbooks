@@ -1024,7 +1024,7 @@ def cmd_lineage_ops(args: argparse.Namespace) -> None:
                     "operator_name": row["operator_name"],
                     "operator_persona": row["operator_persona"],
                     "started_at": row["started_at"],
-                    "idea_ids_touched": cohort,
+                    "cohort_ids": cohort,
                 })
             if len(matched) >= args.limit:
                 break

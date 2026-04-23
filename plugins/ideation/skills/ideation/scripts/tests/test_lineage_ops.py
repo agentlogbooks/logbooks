@@ -100,6 +100,9 @@ class TestLineageOpsCli(unittest.TestCase):
         op_names = [row["operator_name"] for row in rows]
         self.assertIn("transform.invert", op_names)
         self.assertIn("transform.scamper", op_names)
+        # Sort order matters for cooldown: newest first
+        started_ats = [row["started_at"] for row in rows]
+        self.assertEqual(started_ats, sorted(started_ats, reverse=True))
 
     def test_lineage_ops_respects_limit(self):
         r = _cli(self.env, "lineage-ops", self.slug, str(self.child_id), "--limit", "1")
@@ -123,6 +126,28 @@ class TestLineageOpsCli(unittest.TestCase):
         rows = json.loads(r.stdout)
         op_names = [row["operator_name"] for row in rows]
         self.assertIn("evaluate.hats", op_names)
+
+    def test_lineage_ops_standalone_idea(self):
+        """Idea with no lineage edges — closure is just {idea_id}, origin run is returned."""
+        op = _cli(
+            self.env, "op-start", self.slug,
+            "--run-id", self.rid,
+            "--operator", "generate.seed",
+            "--cohort-ids-json", "[]",
+        ).stdout.strip()
+        _cli(
+            self.env, "op-finalize", self.slug, op,
+            "--status", "succeeded", "--outcome-summary", "ok",
+        )
+        standalone_id = int(_cli(
+            self.env, "add-idea", self.slug,
+            "--title", "standalone", "--description", "d", "--kind", "seed",
+            "--origin-operator-run-id", op,
+        ).stdout.strip())
+        r = _cli(self.env, "lineage-ops", self.slug, str(standalone_id), "--limit", "10")
+        rows = json.loads(r.stdout)
+        op_names = [row["operator_name"] for row in rows]
+        self.assertIn("generate.seed", op_names)
 
 
 if __name__ == "__main__":

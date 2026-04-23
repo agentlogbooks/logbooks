@@ -229,6 +229,49 @@ class TestLintOperator(unittest.TestCase):
         )
         self.assertTrue(any("nonexistent.op" in e for e in errs))
 
+    def test_followups_skip_when_known_names_is_none(self):
+        errs = lint_operator(
+            _meta(followups=["nonexistent.op"]),
+            filename="transform.invert.md",
+            known_operator_names=None,
+        )
+        self.assertEqual(errs, [])
+
+    def test_min_cohort_zero_fails(self):
+        errs = lint_operator(
+            _meta(applies_to={"kinds": ["seed"], "min_cohort": 0}),
+            filename="transform.invert.md",
+        )
+        self.assertTrue(any("min_cohort" in e for e in errs))
+
+    def test_same_lineage_cooldown_negative_fails(self):
+        errs = lint_operator(
+            _meta(repeat_guard={"same_lineage_cooldown": -1}),
+            filename="transform.invert.md",
+        )
+        self.assertTrue(any("cooldown" in e.lower() for e in errs))
+
+    def test_cost_web_must_be_bool(self):
+        errs = lint_operator(
+            _meta(cost={"web": "false"}),
+            filename="transform.invert.md",
+        )
+        self.assertTrue(any("cost" in e.lower() for e in errs))
+
+    def test_multiple_errors_accumulate(self):
+        errs = lint_operator(
+            _meta(
+                name="decide.export",
+                stage="transform",
+                scope="global",
+            ),
+            filename="transform.invert.md",
+        )
+        # Three distinct rule violations expected
+        self.assertTrue(any("filename" in e.lower() for e in errs))
+        self.assertTrue(any("stage" in e.lower() for e in errs))
+        self.assertTrue(any("scope" in e.lower() for e in errs))
+
 
 if __name__ == "__main__":
     unittest.main()

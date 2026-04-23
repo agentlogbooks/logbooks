@@ -1,3 +1,27 @@
+---
+name: frame.context_scout
+stage: frame
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - problem needs external grounding facts before framing
+  - user asks for "thorough" or "deep" framing
+avoid_when:
+  - topic is already framed and facts have been gathered
+produces:
+  ideas: false
+  assessments: false
+  facts: true
+cost:
+  web: true
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - frame.discover
+---
+
 # Operator: frame.context_scout
 
 Gather citable, disagreement-worthy facts about the problem so downstream operators reason against reality rather than shared priors.

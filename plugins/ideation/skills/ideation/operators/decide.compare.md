@@ -1,3 +1,28 @@
+---
+name: decide.compare
+stage: decide
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 2
+use_when:
+  - user wants side-by-side readout of a cohort
+  - after generate or transform bursts
+avoid_when:
+  - single idea (no comparison possible)
+produces:
+  ideas: false
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - decide.shortlist
+  - decide.converge
+---
+
 # Operator: decide.compare
 
 Render a side-by-side comparison report of the cohort for human review. One row per idea; columns show title, a short description, key latest assessments, and current `evidence_state`. Output is a markdown file — not a logbook row.

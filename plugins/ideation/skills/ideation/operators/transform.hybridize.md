@@ -1,3 +1,30 @@
+---
+name: transform.hybridize
+stage: transform
+scope: group
+applies_to:
+  kinds: [seed, variant, hybrid]
+  min_cohort: 2
+use_when:
+  - two or three ideas have complementary mechanisms
+  - a tension cluster wants synthesis
+  - FIRE and ICE ideas could combine ambition with ship-ability
+avoid_when:
+  - only one idea in the cohort
+  - candidates are near-duplicates (hybridizing adds nothing)
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 2
+followups:
+  - transform.refine
+  - validate.proof_search
+---
+
 # Operator: transform.hybridize
 
 Merge two or more cohort ideas into a child that is stronger than any parent alone. Multi-parent lineage.

@@ -1,3 +1,28 @@
+---
+name: evaluate.taste_check
+stage: evaluate
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 2
+use_when:
+  - a batch of seeds or variants needs a user-taste filter
+  - upcoming step will narrow the pool (before converge/score)
+avoid_when:
+  - pool is tiny (fewer than 2 ideas)
+produces:
+  ideas: false
+  assessments: true
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - decide.shortlist
+  - evaluate.score
+---
+
 # Operator: evaluate.taste_check
 
 Ask the user to pick their favorite ideas from a diverse slate, then record a binary `taste` assessment per presented idea. This is the single operator permitted to spawn `AskUserQuestion` during evaluation — its whole purpose is a lightweight human gate.

@@ -1,3 +1,29 @@
+---
+name: transform.ratchet
+stage: transform
+scope: group
+applies_to:
+  kinds: [seed, variant, hybrid]
+  min_cohort: 2
+use_when:
+  - tension cluster surfaced by evaluate.tension wants synthesis
+  - a small hot shortlist needs cross-idea pressure
+avoid_when:
+  - already ratcheted recently on this lineage
+  - cohort is a single idea — use transform.refine
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 2
+followups:
+  - evaluate.brilliance
+  - decide.compare
+---
+
 # Operator: transform.ratchet
 
 Resolve a tension cluster through structured thesis → antithesis → synthesis cycles. Every cycle locks constraints from the prior one; the ratchet only moves forward.

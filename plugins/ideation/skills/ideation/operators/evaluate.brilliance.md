@@ -1,3 +1,27 @@
+---
+name: evaluate.brilliance
+stage: evaluate
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid, refinement]
+  min_cohort: 1
+use_when:
+  - an idea is shortlist-worthy but its signal is unclear
+  - user asks "what's actually brilliant here"
+avoid_when:
+  - already brilliance-checked recently on this lineage
+produces:
+  ideas: false
+  assessments: true
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 1
+followups:
+  - decide.converge
+---
+
 # Operator: evaluate.brilliance
 
 Qualitative judgment pass on the top-scored cohort. Writes a brilliance scorecard and, where warranted, patches `evidence_state` to reflect that an idea has structural weight beyond its composite score.

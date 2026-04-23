@@ -1,3 +1,27 @@
+---
+name: frame.historian
+stage: frame
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - prior attempts exist and their lessons are relevant
+  - user references "what did we try before"
+avoid_when:
+  - no prior history to surface
+produces:
+  ideas: false
+  assessments: false
+  facts: true
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - frame.discover
+---
+
 # Operator: frame.historian
 
 Resurface relevant ideas and principles from prior ideation topics that could transfer to the current problem.

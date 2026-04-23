@@ -1,3 +1,27 @@
+---
+name: evaluate.criteria
+stage: evaluate
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - pool is ready for ranking but criteria are not yet locked
+  - user asks to "score" or "prioritize"
+avoid_when:
+  - criteria already locked for this session
+produces:
+  ideas: false
+  assessments: true
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - evaluate.score
+---
+
 # Operator: evaluate.criteria
 
 Derive 5-7 session-specific evaluation criteria (with weights summing to 100) from the active frame and the cohort, then write them to a JSON side-car file. This operator does NOT score ideas — `evaluate.score` consumes the file it produces.

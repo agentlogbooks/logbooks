@@ -348,13 +348,17 @@ Fragment expansion shares the outer plan's `RUN_ID` — querying `operator_runs`
 
 When the user invoked the `route` playbook with `--loop`, after the full plan body has executed (step 1's `decide.route` + Step 5D's fragment expansion), check whether to re-enter:
 
+**Iteration-1 stamping.** If the playbook was invoked with `--loop`, stamp the first pass too: when calling `op-start` for the initial `decide.route` (step 1 of the plan body) AND for every Step 5D expanded row, include `"loop_iteration": 1` in the `--params-json` object (alongside any parent-linkage keys for expanded rows). This way iteration 1 carries the same label as later iterations, and per-iteration queries over `operator_runs` are uniform.
+
 1. If this iteration's `decide.route` produced an empty fragment → exit the loop. Terminal state, proceed to Step 6.
 2. If `iterations_so_far >= --iterations N` (default `N = 3`, max `3`) → exit the loop.
 3. If `--no-checkpoints` is not set, call `AskUserQuestion`:
    ```
-   Iteration <done>/<N> complete. <count> ideas modified, <count> parked this round. Continue or stop?
+   Iteration <done>/<N> complete. <executed_count> operator runs completed this round across <idea_count> distinct ideas. Continue or stop?
    Options: Continue / Stop
    ```
+   Where `<executed_count>` is the number of operator_runs rows in this iteration (query: `params.loop_iteration = <done>` AND `status = 'succeeded'`, excluding the `decide.route` row itself), and `<idea_count>` is the count of distinct idea IDs appearing in any of those rows' `cohort_ids`.
+
    On Stop → exit the loop.
 4. Otherwise, increment the iteration counter and re-execute the playbook body:
    - Run `decide.route cohort=all_active_capped(50)` again. When calling `op-start`, omit `--plan-step` (so `plan_step_index` stores `NULL` — iteration-2+ routes are not in the planner's original plan) and pass `--params-json '{"loop_iteration": <N>}'`.
@@ -392,6 +396,7 @@ Try next:
 
     - Refine idea 8 further: `ideation <slug>: refine idea 8`        (from transform.invert.followups[0])
     - Stress-test idea 8 for evidence: `ideation <slug>: stress-test idea 8`  (from transform.invert.followups[1])
+    - Refine ideas 8, 12 further: `ideation <slug>: refine ideas 8 and 12`  (deduped: transform.invert ran on 8, transform.cross_domain ran on 12, both have transform.refine as a followup)
 
 Read the catalog once at the start of Step 6 via `ideation_db.py list-operators --format json`, then index by operator name. Deduplicate suggestions — if two runs both suggest `transform.refine`, emit one bullet referencing both idea sets.
 

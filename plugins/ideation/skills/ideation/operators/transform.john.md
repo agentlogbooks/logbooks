@@ -1,3 +1,29 @@
+---
+name: transform.john
+stage: transform
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid]
+  min_cohort: 1
+use_when:
+  - seed needs to be pushed to a specific temperature zone
+  - want a dreamer/realist/critic pass on this idea
+avoid_when:
+  - already johned recently on this lineage
+  - required zone/stance context is missing
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 1
+followups:
+  - transform.ratchet
+  - evaluate.taste_check
+---
+
 # Operator: transform.john
 
 Disney-spiral refinement over a cohort of seeds, constrained by a temperature zone and a starting stance. Produces variants that carry the zone's signature.
@@ -80,7 +106,7 @@ done
 
 For MIRROR zone, also read peer John outputs:
 ```bash
-sqlite3 ./.ideation/$SLUG/logbook.sqlite \
+sqlite3 ./.logbooks/ideation/$SLUG/logbook.sqlite \
   "SELECT i.idea_id, i.title, i.description FROM ideas i
    JOIN operator_runs r ON r.operator_run_id = i.origin_operator_run_id
    WHERE r.operator_name = 'transform.john' AND r.run_id = '$RUN_ID'

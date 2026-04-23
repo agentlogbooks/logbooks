@@ -1,3 +1,28 @@
+---
+name: generate.seed
+stage: generate
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - pool is empty or needs a fresh persona injection
+  - user asks for a specific persona's take
+avoid_when:
+  - pool is already saturated with seeds — transform or evaluate instead
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - evaluate.taste_check
+  - decide.compare
+---
+
 # Operator: generate.seed
 
 Produce a batch of raw seed ideas, parameterized by a specialist persona voice.
@@ -66,7 +91,7 @@ If `params.emphasis` is set, use it as a filter on which HMW questions to lean o
 Read active frame + facts:
 ```bash
 python scripts/ideation_db.py active-frame $SLUG
-sqlite3 ./.ideation/$SLUG/logbook.sqlite \
+sqlite3 ./.logbooks/ideation/$SLUG/logbook.sqlite \
   "SELECT fact_id, claim, confidence, stance FROM facts ORDER BY confidence DESC;"
 ```
 

@@ -1,3 +1,28 @@
+---
+name: evaluate.tension
+stage: evaluate
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 3
+use_when:
+  - the pool has multiple ideas and internal conflicts are not yet visible
+  - you want to surface candidate pairs for hybridize
+avoid_when:
+  - pool has fewer than 3 ideas
+produces:
+  ideas: false
+  assessments: true
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - transform.hybridize
+  - transform.ratchet
+---
+
 # Operator: evaluate.tension
 
 Find 3-5 structural contradictions among ideas in the cohort, produce a PMI per tension, and optionally write bridge ideas that honor both sides.

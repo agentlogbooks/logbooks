@@ -1,3 +1,28 @@
+---
+name: frame.discover
+stage: frame
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - no active frame exists
+  - topic needs root causes, HMW, trade-off surfaced
+avoid_when:
+  - active frame already covers the problem
+produces:
+  ideas: false
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - generate.seed
+  - frame.context_scout
+---
+
 # Operator: frame.discover
 
 Drill beneath the surface problem to uncover multiple independent root causes, reframe each as "How Might We" questions, and surface the core TRIZ trade-off.
@@ -84,7 +109,7 @@ One sentence describing the problem solving itself — no effort, no cost, no tr
 
 Read prior facts:
 ```bash
-sqlite3 ./.ideation/$SLUG/logbook.sqlite \
+sqlite3 ./.logbooks/ideation/$SLUG/logbook.sqlite \
   "SELECT fact_id, claim, confidence, stance FROM facts ORDER BY created_at;"
 ```
 

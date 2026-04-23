@@ -1,3 +1,28 @@
+---
+name: validate.web_stress
+stage: validate
+scope: per_idea
+applies_to:
+  kinds: [seed, variant, hybrid, refinement]
+  min_cohort: 1
+use_when:
+  - idea is strong on its own but lacks external evidence
+  - user asks for "stress test" or "validate"
+avoid_when:
+  - already stress-tested recently on this lineage
+  - params.cheap is set
+produces:
+  ideas: false
+  assessments: true
+  facts: true
+cost:
+  web: true
+repeat_guard:
+  same_lineage_cooldown: 2
+followups:
+  - decide.converge
+---
+
 # Operator: validate.web_stress
 
 Adversarial validation via web research. For each cohort idea, search for supporting AND refuting real-world evidence, write new `facts` rows for what you find, and record a per-idea `web_stress_verdict`. This operator is the primary source of adversarial facts in the logbook.

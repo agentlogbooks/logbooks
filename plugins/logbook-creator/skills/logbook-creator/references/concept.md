@@ -170,10 +170,10 @@ Naming columns in 30 seconds tells you the logbook is row-shaped. It does not te
 
 **Deep review / multi-phase agent workflow logbook.** A per-PR code review logbook with two physical stores.
 
-- **SQLite ledger** (`~/logbooks/code-review/{PR_REF}.sqlite`):
+- **SQLite ledger** (`./.logbooks/code-review/{PR_REF}.sqlite`):
   - `hotspots` — one row per risky unit selected for review per run; key: `hotspot_id`; inserted at selection time with `lenses_json` patched in place later in the same run
   - `candidate_findings` — one judgment per hotspot per run; key: `candidate_id`; inserted at generation time; lifecycle and scoring columns (`priority_score`, `detection_state`, `surfacing_state`, `drop_reason`) are patched in place by later phases within the same run
-- **JSONL run-trace** (`~/logbooks/code-review/{PR_REF}.jsonl`):
+- **JSONL run-trace** (`./.logbooks/code-review/{PR_REF}.jsonl`):
   - Append-only event log; `record_type` one of run/hotspot/candidate/decision/output
   - Preserves full execution record; not queried relationally
 

@@ -1,3 +1,27 @@
+---
+name: frame.reframe
+stage: frame
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - existing frame feels wrong — root causes miss the point
+  - user explicitly asks to reframe
+avoid_when:
+  - no prior frame (use frame.discover)
+produces:
+  ideas: false
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - generate.seed
+---
+
 # Operator: frame.reframe
 
 Mid-session pivot: take fresh user input and produce a revised frame that supersedes the current active one.

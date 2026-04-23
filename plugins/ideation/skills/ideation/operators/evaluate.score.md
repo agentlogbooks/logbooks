@@ -1,3 +1,28 @@
+---
+name: evaluate.score
+stage: evaluate
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - criteria are locked and ideas need composite scores
+  - user wants ranking before converge
+avoid_when:
+  - no criteria yet (run evaluate.criteria first)
+produces:
+  ideas: false
+  assessments: true
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - decide.shortlist
+  - decide.compare
+---
+
 # Operator: evaluate.score
 
 Apply a previously-derived criteria set to every idea in the cohort, write one assessment per (idea, criterion), compute a weighted composite, and patch `ideas.score_summary`. Does NOT invent criteria — consumes the JSON file produced by `evaluate.criteria`.

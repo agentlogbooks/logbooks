@@ -1,3 +1,27 @@
+---
+name: decide.converge
+stage: decide
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 2
+use_when:
+  - pool has been evaluated and validated
+  - user asks to "pick" or "decide" or "converge"
+avoid_when:
+  - evaluation incomplete (no scores)
+produces:
+  ideas: false
+  assessments: true
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - decide.export
+---
+
 # Operator: decide.converge
 
 Final-decision ceremony. Presents the shortlisted cohort to the user with all assessment context, spawns `AskUserQuestion` to let them choose which ideas become `status='selected'`, patches statuses accordingly, and writes a converge report capturing the rationale.
@@ -16,7 +40,7 @@ Final-decision ceremony. Presents the shortlisted cohort to the user with all as
   - Ideas explicitly declined by the user in this converge run → `status='rejected'`.
   - Shortlisted ideas the user neither picked nor rejected stay `status='shortlisted'` (the user may revisit).
 - `assessments` rows: one per selected idea, `metric=converge_reason`, `value` = short label (e.g. `user_selected`, `strong_evidence`, `brilliant_and_validated`), `rationale` = the user's stated reason or a paraphrase.
-- **External file:** `./.ideation/$SLUG/reports/$RUN_ID-converge.md` — captures the decision tree, the shortlist with evidence, the user's choices, and the reasoning.
+- **External file:** `./.logbooks/ideation/$SLUG/reports/$RUN_ID-converge.md` — captures the decision tree, the shortlist with evidence, the user's choices, and the reasoning.
 
 ## Reads
 
@@ -60,7 +84,7 @@ Allow multiple rounds if more than 4 options. Collect up to `max_selected` picks
 
 **Step 4 — Write `converge_reason` assessments** on each selected idea. The `rationale` quotes or paraphrases the user's reason ("User picked because the evidence on competitor pricing matched their own data.").
 
-**Step 5 — Write the converge report** to `./.ideation/$SLUG/reports/$RUN_ID-converge.md`:
+**Step 5 — Write the converge report** to `./.logbooks/ideation/$SLUG/reports/$RUN_ID-converge.md`:
 
 ```markdown
 # Converge — run $RUN_ID
@@ -140,8 +164,8 @@ python scripts/ideation_db.py add-assessments-batch $SLUG /tmp/converge-reasons-
 rm -f /tmp/converge-reasons-$OPERATOR_RUN_ID.json
 
 # Write the report file
-mkdir -p "./.ideation/$SLUG/reports"
-# Path: ./.ideation/$SLUG/reports/$RUN_ID-converge.md
+mkdir -p "./.logbooks/ideation/$SLUG/reports"
+# Path: ./.logbooks/ideation/$SLUG/reports/$RUN_ID-converge.md
 ```
 
 **Do not** call `patch-idea` or `add-assessment` per idea. The batch form is strictly faster and preserves transactional atomicity — either the whole converge lands or none of it does.

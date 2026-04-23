@@ -2,7 +2,7 @@
 """
 ideation_db.py — SQLite multi-entity CLI for the ideation skill.
 
-One database per topic at `./.ideation/<slug>/logbook.sqlite`.
+One database per topic at `./.logbooks/ideation/<slug>/logbook.sqlite`.
 Schema, semantics, and correction rules are documented in `ideation.logbook.md`.
 
 Conventions:
@@ -29,11 +29,13 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 # ----------------------------------------------------------------------------
 # Path resolution
 # ----------------------------------------------------------------------------
 
-IDEATION_DIR = ".ideation"
+IDEATION_DIR = ".logbooks/ideation"
 
 
 def _git_root(start: Path) -> Path | None:
@@ -54,7 +56,10 @@ def _git_root(start: Path) -> Path | None:
 
 
 def _ideation_root() -> Path:
-    """Resolve the `./.ideation/` root: git repo root if inside one, else cwd."""
+    """Resolve the `./.logbooks/ideation/` root: env override > git repo root > cwd."""
+    override = os.environ.get("IDEATION_ROOT_OVERRIDE")
+    if override:
+        return Path(override)
     cwd = Path.cwd().resolve()
     root = _git_root(cwd) or cwd
     return root / IDEATION_DIR
@@ -948,6 +953,84 @@ def cmd_lineage_tree(args: argparse.Namespace) -> None:
         _print_json(_rows_to_list(rows))
 
 
+def _lineage_closure(conn: sqlite3.Connection, start_id: int) -> set[int]:
+    """Return the set of ancestor + descendant + self idea_ids, via lineage table."""
+    seen: set[int] = {start_id}
+    frontier = [start_id]
+    while frontier:
+        cur = frontier.pop()
+        rows = conn.execute(
+            "SELECT parent_idea_id AS other FROM lineage WHERE child_idea_id = ?"
+            " UNION "
+            "SELECT child_idea_id AS other FROM lineage WHERE parent_idea_id = ?",
+            (cur, cur),
+        ).fetchall()
+        for r in rows:
+            if r["other"] not in seen:
+                seen.add(r["other"])
+                frontier.append(r["other"])
+    return seen
+
+
+def cmd_lineage_ops(args: argparse.Namespace) -> None:
+    with _connect(args.slug) as conn:
+        closure = _lineage_closure(conn, args.idea_id)
+        if not closure:
+            _print_json([])
+            return
+
+        # Runs reachable via idea origin (transforms / generators).
+        placeholders = ",".join("?" * len(closure))
+        origin_run_ids = {
+            r["origin_operator_run_id"]
+            for r in conn.execute(
+                f"SELECT DISTINCT origin_operator_run_id FROM ideas "
+                f"WHERE idea_id IN ({placeholders})",
+                tuple(closure),
+            ).fetchall()
+        }
+
+        # Runs reachable via lineage edges (hybridize / derive operators).
+        lineage_run_ids = {
+            r["operator_run_id"]
+            for r in conn.execute(
+                f"SELECT DISTINCT operator_run_id FROM lineage "
+                f"WHERE child_idea_id IN ({placeholders}) "
+                f"OR parent_idea_id IN ({placeholders})",
+                tuple(closure) * 2,
+            ).fetchall()
+        }
+
+        # All remaining runs — filter in Python on cohort_ids intersection.
+        # operator_runs is small per topic; --limit is the caller's cap anyway.
+        all_runs = conn.execute(
+            "SELECT operator_run_id, operator_name, operator_persona, started_at, cohort_ids "
+            "FROM operator_runs WHERE status = 'succeeded' "
+            "ORDER BY started_at DESC"
+        ).fetchall()
+
+        matched: list[dict[str, Any]] = []
+        for row in all_runs:
+            cohort = _json_load_safe(row["cohort_ids"], [])
+            cohort_ids_set = {int(x) for x in cohort if isinstance(x, int)}
+            touched_by_cohort = bool(cohort_ids_set & closure)
+            if (
+                row["operator_run_id"] in origin_run_ids
+                or row["operator_run_id"] in lineage_run_ids
+                or touched_by_cohort
+            ):
+                matched.append({
+                    "operator_run_id": row["operator_run_id"],
+                    "operator_name": row["operator_name"],
+                    "operator_persona": row["operator_persona"],
+                    "started_at": row["started_at"],
+                    "cohort_ids": cohort,
+                })
+            if len(matched) >= args.limit:
+                break
+        _print_json(matched)
+
+
 # ----------------------------------------------------------------------------
 # Assessments
 # ----------------------------------------------------------------------------
@@ -1176,6 +1259,17 @@ def _query_all_active(conn: sqlite3.Connection) -> list[int]:
     ]
 
 
+def _query_all_active_capped(conn: sqlite3.Connection, n: int) -> list[int]:
+    return [
+        r["idea_id"]
+        for r in conn.execute(
+            "SELECT idea_id FROM ideas WHERE status = 'active' "
+            "ORDER BY idea_id ASC LIMIT ?",
+            (n,),
+        ).fetchall()
+    ]
+
+
 def _query_diversity_top(conn: sqlite3.Connection, n: int) -> list[int]:
     """
     Spread across (tag, temperature_zone) buckets weighted by recency.
@@ -1221,6 +1315,9 @@ def cmd_query(args: argparse.Namespace) -> None:
             ids = _query_all_seeds(conn)
         elif args.query == "all-active":
             ids = _query_all_active(conn)
+        elif args.query == "all-active-capped":
+            n = args.n or 50
+            ids = _query_all_active_capped(conn, n)
         elif args.query == "diversity-top":
             n = args.n or 5
             ids = _query_diversity_top(conn, n)
@@ -1319,12 +1416,208 @@ def cmd_new_run_id(args: argparse.Namespace) -> None:
 
 
 # ----------------------------------------------------------------------------
+# Operator catalog
+# ----------------------------------------------------------------------------
+
+
+def _resolve_operators_dir() -> "Path":
+    env = os.environ.get("IDEATION_OPERATORS_DIR")
+    if env:
+        return Path(env)
+    return Path(__file__).resolve().parent.parent / "operators"
+
+
+def cmd_list_operators(args: argparse.Namespace) -> None:
+    import operator_meta
+
+    ops_dir = _resolve_operators_dir()
+    try:
+        catalog = operator_meta.load_catalog(ops_dir)
+    except (operator_meta.FrontmatterError, operator_meta.LintError) as e:
+        sys.exit(f"ERROR: {e}")
+
+    payload = {"operators": catalog}
+    if args.format == "json":
+        _print_json(payload)
+    else:
+        # Deterministic YAML-ish rendering — mirrors the input grammar.
+        print(_render_catalog_yaml(payload))
+
+
+def cmd_lint_operators(args: argparse.Namespace) -> None:
+    import operator_meta
+
+    ops_dir = _resolve_operators_dir()
+    errors_total = 0
+    per_file: list[tuple[str, list[str]]] = []
+
+    raw: list[tuple[str, dict[str, Any]]] = []
+    for path in sorted(ops_dir.glob("*.md")):
+        try:
+            text = path.read_text()
+            meta = operator_meta.parse_frontmatter(text)
+        except operator_meta.FrontmatterError as e:
+            per_file.append((path.name, [f"frontmatter parse: {e}"]))
+            errors_total += 1
+            continue
+        except (OSError, UnicodeDecodeError) as e:
+            per_file.append((path.name, [f"read error: {e}"]))
+            errors_total += 1
+            continue
+        raw.append((path.name, meta))
+
+    known_names = {m["name"] for _, m in raw if "name" in m}
+    for filename, meta in raw:
+        errs = operator_meta.lint_operator(meta, filename, known_operator_names=known_names)
+        if errs:
+            per_file.append((filename, errs))
+            errors_total += len(errs)
+
+    if per_file:
+        for filename, errs in per_file:
+            print(f"{filename}:")
+            for e in errs:
+                print(f"  - {e}")
+        err_word = "error" if errors_total == 1 else "errors"
+        file_word = "file" if len(per_file) == 1 else "files"
+        print(f"\n{errors_total} {err_word} across {len(per_file)} operator {file_word}.")
+        sys.exit(1)
+
+    file_word = "file" if len(raw) == 1 else "files"
+    print(f"0 errors across {len(raw)} operator {file_word}.")
+
+
+_REFERENCE_BANNER = (
+    "<!--\n"
+    "This file is generated from operator frontmatter.\n"
+    "Regenerate with: `python plugins/ideation/skills/ideation/scripts/ideation_db.py generate-reference`\n"
+    "Do not edit by hand — your changes will be overwritten.\n"
+    "-->\n"
+)
+
+_STAGE_TITLES = {
+    "frame": "Frame operators",
+    "generate": "Generate operators",
+    "transform": "Transform operators",
+    "evaluate": "Evaluate operators",
+    "validate": "Validate operators",
+    "decide": "Decide operators",
+}
+
+_STAGE_ORDER = ("frame", "generate", "transform", "evaluate", "validate", "decide")
+
+
+def _render_reference(catalog: list[dict[str, Any]]) -> str:
+    by_stage: dict[str, list[dict[str, Any]]] = {s: [] for s in _STAGE_ORDER}
+    for entry in catalog:
+        by_stage[entry["stage"]].append(entry)  # lint rejects unknown stages, so KeyError here is a bug
+
+    out: list[str] = [_REFERENCE_BANNER, "# When to use which operator", ""]
+    out.append(
+        "Generated from operator frontmatter. Grouped by stage. "
+        "For each operator, the **scope** line tells the router how it consumes ideas; "
+        "**Use when** and **Avoid when** are the judgment cues."
+    )
+    out.append("")
+
+    for stage in _STAGE_ORDER:
+        entries = sorted(by_stage.get(stage, []), key=lambda e: e["name"])
+        if not entries:
+            continue
+        out.append(f"## {_STAGE_TITLES[stage]}")
+        out.append("")
+        for e in entries:
+            out.append(f"### {e['name']}")
+            out.append("")
+            out.append(f"- **scope:** {e['scope']}")
+            kinds = e["applies_to"]["kinds"]
+            kinds_str = ", ".join(kinds) if kinds else "—"
+            out.append(f"- **applies to kinds:** {kinds_str}")
+            out.append(f"- **min cohort:** {e['applies_to']['min_cohort']}")
+            out.append("- **Use when:**")
+            for cue in e["use_when"]:
+                out.append(f"  - {cue}")
+            out.append("- **Avoid when:**")
+            for cue in e["avoid_when"]:
+                out.append(f"  - {cue}")
+            if e["followups"]:
+                out.append("- **Typical followups:** " + ", ".join(e["followups"]))
+            out.append("")
+
+    rendered = "\n".join(out)
+    if not rendered.endswith("\n"):
+        rendered += "\n"
+    return rendered
+
+
+def cmd_generate_reference(args: argparse.Namespace) -> None:
+    import operator_meta
+
+    ops_dir = _resolve_operators_dir()
+    try:
+        catalog = operator_meta.load_catalog(ops_dir)
+    except (operator_meta.FrontmatterError, operator_meta.LintError) as e:
+        sys.exit(f"ERROR: {e}")
+
+    rendered = _render_reference(catalog)
+    output = Path(args.output) if args.output else (
+        Path(__file__).resolve().parent.parent / "references" / "when-to-use-which-operator.md"
+    )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(rendered, encoding="utf-8")
+    print(str(output))
+
+
+def _render_catalog_yaml(payload: dict[str, Any]) -> str:
+    """Render the catalog as a YAML-ish text block for display only.
+
+    Output uses inline-dict syntax (e.g. produces: {ideas: true, ...}) which
+    the operator_meta frontmatter parser does not round-trip. Do not feed
+    this output back into parse_frontmatter.
+    """
+    lines: list[str] = ["operators:"]
+    for entry in payload["operators"]:
+        lines.append(f"  - name: {entry['name']}")
+        lines.append(f"    stage: {entry['stage']}")
+        lines.append(f"    scope: {entry['scope']}")
+        lines.append("    applies_to:")
+        kinds = entry["applies_to"]["kinds"]
+        lines.append(f"      kinds: [{', '.join(kinds)}]")
+        lines.append(f"      min_cohort: {entry['applies_to']['min_cohort']}")
+        lines.append("    use_when:")
+        for cue in entry["use_when"]:
+            lines.append(f"      - {cue}")
+        lines.append("    avoid_when:")
+        for cue in entry["avoid_when"]:
+            lines.append(f"      - {cue}")
+        produces = entry["produces"]
+        lines.append(
+            "    produces: {"
+            f"ideas: {str(produces['ideas']).lower()}, "
+            f"assessments: {str(produces['assessments']).lower()}, "
+            f"facts: {str(produces['facts']).lower()}"
+            "}"
+        )
+        lines.append("    cost: {web: " + str(entry["cost"]["web"]).lower() + "}")
+        lines.append(
+            f"    repeat_guard: {{same_lineage_cooldown: {entry['repeat_guard']['same_lineage_cooldown']}}}"
+        )
+        if entry["followups"]:
+            lines.append("    followups:")
+            for fn in entry["followups"]:
+                lines.append(f"      - {fn}")
+        else:
+            lines.append("    followups: []")
+    return "\n".join(lines) + "\n"
+
+
+# ----------------------------------------------------------------------------
 # argparse
 # ----------------------------------------------------------------------------
 
 
 def _add_slug(p: argparse.ArgumentParser) -> None:
-    p.add_argument("slug", help="Topic slug (directory name under .ideation/)")
+    p.add_argument("slug", help="Topic slug (directory name under .logbooks/ideation/)")
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -1522,6 +1815,15 @@ def build_parser() -> argparse.ArgumentParser:
     p.add_argument("idea_id", type=int)
     p.set_defaults(func=cmd_lineage_tree)
 
+    p = sub.add_parser(
+        "lineage-ops",
+        help="Operator runs that touched an idea's lineage closure (ancestors + descendants + self)",
+    )
+    _add_slug(p)
+    p.add_argument("idea_id", type=int)
+    p.add_argument("--limit", type=int, default=10)
+    p.set_defaults(func=cmd_lineage_ops)
+
     # Assessments
     p = sub.add_parser("add-assessment", help="Append an assessment row")
     _add_slug(p)
@@ -1575,6 +1877,7 @@ def build_parser() -> argparse.ArgumentParser:
             "tension-cluster",
             "all-seeds",
             "all-active",
+            "all-active-capped",
             "diversity-top",
         ),
     )
@@ -1594,6 +1897,21 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("export-menu", help="Render the idea menu (quick wins / core bets / moonshots)")
     _add_slug(p)
     p.set_defaults(func=cmd_export_menu)
+
+    # Operator catalog
+    p = sub.add_parser("list-operators", help="Print the operator frontmatter catalog")
+    p.add_argument("--format", choices=("yaml", "json"), default="yaml")
+    p.set_defaults(func=cmd_list_operators)
+
+    p = sub.add_parser("lint-operators", help="Validate operator frontmatter across the catalog")
+    p.set_defaults(func=cmd_lint_operators)
+
+    p = sub.add_parser(
+        "generate-reference",
+        help="Render the when-to-use-which-operator.md doc from frontmatter",
+    )
+    p.add_argument("--output", help="Output path (default: references/when-to-use-which-operator.md)")
+    p.set_defaults(func=cmd_generate_reference)
 
     # Utility
     p = sub.add_parser("new-run-id", help="Print a fresh UUID to use as run_id")

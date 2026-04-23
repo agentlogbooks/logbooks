@@ -1,3 +1,28 @@
+---
+name: generate.fresh
+stage: generate
+scope: pool
+applies_to:
+  kinds: []
+  min_cohort: 1
+use_when:
+  - user gives a concrete hint and wants ideas shaped around it
+  - prior seeds are stale and a hint-driven reset is warranted
+avoid_when:
+  - no clear hint — use generate.seed with a persona instead
+produces:
+  ideas: true
+  assessments: false
+  facts: false
+cost:
+  web: false
+repeat_guard:
+  same_lineage_cooldown: 0
+followups:
+  - transform.refine
+  - evaluate.taste_check
+---
+
 # Operator: generate.fresh
 
 Targeted seed generation to fill a specific gap the orchestrator or user has identified. No specialist persona — just the hint.
@@ -52,7 +77,7 @@ Produce `count` seeds. Each:
 Read active frame + facts:
 ```bash
 python scripts/ideation_db.py active-frame $SLUG
-sqlite3 ./.ideation/$SLUG/logbook.sqlite \
+sqlite3 ./.logbooks/ideation/$SLUG/logbook.sqlite \
   "SELECT fact_id, claim, confidence FROM facts ORDER BY confidence DESC;"
 ```
 

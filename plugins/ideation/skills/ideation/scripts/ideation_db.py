@@ -1415,7 +1415,7 @@ _STAGE_ORDER = ("frame", "generate", "transform", "evaluate", "validate", "decid
 def _render_reference(catalog: list[dict[str, Any]]) -> str:
     by_stage: dict[str, list[dict[str, Any]]] = {s: [] for s in _STAGE_ORDER}
     for entry in catalog:
-        by_stage.setdefault(entry["stage"], []).append(entry)
+        by_stage[entry["stage"]].append(entry)  # lint rejects unknown stages, so KeyError here is a bug
 
     out: list[str] = [_REFERENCE_BANNER, "# When to use which operator", ""]
     out.append(
@@ -1449,7 +1449,10 @@ def _render_reference(catalog: list[dict[str, Any]]) -> str:
                 out.append("- **Typical followups:** " + ", ".join(e["followups"]))
             out.append("")
 
-    return "\n".join(out) + "\n" if not out[-1].endswith("\n") else "\n".join(out)
+    rendered = "\n".join(out)
+    if not rendered.endswith("\n"):
+        rendered += "\n"
+    return rendered
 
 
 def cmd_generate_reference(args: argparse.Namespace) -> None:
@@ -1466,7 +1469,7 @@ def cmd_generate_reference(args: argparse.Namespace) -> None:
         Path(__file__).resolve().parent.parent / "references" / "when-to-use-which-operator.md"
     )
     output.parent.mkdir(parents=True, exist_ok=True)
-    output.write_text(rendered)
+    output.write_text(rendered, encoding="utf-8")
     print(str(output))
 
 

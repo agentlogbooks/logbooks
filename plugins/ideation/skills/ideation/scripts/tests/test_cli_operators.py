@@ -187,6 +187,7 @@ class TestGenerateReferenceCli(unittest.TestCase):
             self.assertIn("## Transform operators", content)
             self.assertIn("### transform.invert", content)
             self.assertIn("promising but brittle", content)
+            self.assertNotIn("Typical followups", content)
 
     def test_regenerating_is_byte_identical(self):
         with tempfile.TemporaryDirectory() as td:
@@ -198,6 +199,52 @@ class TestGenerateReferenceCli(unittest.TestCase):
             _run_cli("generate-reference", "--output", str(a), operators_dir=ops)
             _run_cli("generate-reference", "--output", str(b), operators_dir=ops)
             self.assertEqual(a.read_bytes(), b.read_bytes())
+
+    def test_reference_honors_stage_and_alphabetical_order(self):
+        # Two different stages + two operators in one stage — verify ordering:
+        # 1. transform stage appears BEFORE decide stage in output (stage order: frame/generate/transform/evaluate/validate/decide)
+        # 2. Within transform, alphabetical: transform.apple < transform.banana.
+        file_transform_apple = VALID_OP_FILE.replace(
+            "name: transform.invert", "name: transform.apple"
+        )
+        file_transform_banana = VALID_OP_FILE.replace(
+            "name: transform.invert", "name: transform.banana"
+        )
+        file_decide_early = VALID_OP_FILE.replace(
+            "name: transform.invert", "name: decide.early"
+        ).replace("stage: transform", "stage: decide").replace(
+            "scope: per_idea", "scope: pool"
+        ).replace(
+            "kinds: [seed, variant, hybrid]", "kinds: []"
+        ).replace(
+            "same_lineage_cooldown: 1", "same_lineage_cooldown: 0"
+        )
+
+        with tempfile.TemporaryDirectory() as td:
+            ops = Path(td) / "operators"
+            ops.mkdir()
+            (ops / "transform.apple.md").write_text(file_transform_apple)
+            (ops / "transform.banana.md").write_text(file_transform_banana)
+            (ops / "decide.early.md").write_text(file_decide_early)
+            out_path = Path(td) / "ref.md"
+            result = _run_cli(
+                "generate-reference",
+                "--output",
+                str(out_path),
+                operators_dir=ops,
+            )
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            content = out_path.read_text()
+
+            # Stage order: Transform operators must appear before Decide operators.
+            t_pos = content.index("## Transform operators")
+            d_pos = content.index("## Decide operators")
+            self.assertLess(t_pos, d_pos, "Transform stage should precede Decide stage")
+
+            # Alphabetical within stage: transform.apple before transform.banana.
+            apple_pos = content.index("### transform.apple")
+            banana_pos = content.index("### transform.banana")
+            self.assertLess(apple_pos, banana_pos)
 
 
 if __name__ == "__main__":

@@ -95,6 +95,10 @@ You are the planner for the `ideation` skill. Your job is to produce a plan — 
    - **Default (none of the above matched): `starter`.** Lightweight frame + 20 ideas + a compare report. One checkpoint. Pick this when the intent has no clear signal.
 
 4. Else (the topic has ideas but the intent doesn't match a playbook shape):
+
+   **4a.** If the intent mentions "route" / "iterate" / "keep developing" / "what should I try next" / "plan next moves" AND the topic has ≥5 active ideas: use the `route` playbook. This is the iterative follow-up shape — the router decides what to do with each idea based on current state, rather than applying a single operator to the whole batch.
+
+   **4b.** Otherwise:
    - Emit a custom 3–8 step plan using the operator library as vocabulary.
    - Example: intent "find weak ideas" → `evaluate.score cohort=all_active` + `decide.shortlist cohort=bottom-20%` + `decide.compare`.
    - Example: intent "what ideas haven't been stressed yet" → `decide.compare cohort=<ideas without web_stress_verdict>`.
@@ -364,6 +368,7 @@ See `playbooks/<name>.md` for full shapes. Summary:
 - `stress_test_shortlist` — validate a shortlist with web evidence
 - `reframe_and_regenerate` — mid-session pivot (new frame, regenerate)
 - `converge_existing` — no new ideas, just decide on the current pool
+- `route` — state-driven follow-up; router subagent decides per-idea operator assignments. Accepts `--loop`, `--cheap`, `--with-criteria`, `--iterations N`.
 
 ## Cohort query mapping
 
@@ -377,6 +382,7 @@ The planner emits cohort references; the orchestrator resolves them via the CLI:
 | `tension_cluster` | `ideation_db.py query <slug> tension-cluster` |
 | `all_seeds` | `ideation_db.py query <slug> all-seeds` |
 | `all_active` | `ideation_db.py query <slug> all-active` |
+| `all_active_capped(50)` | `ideation_db.py query <slug> all-active-capped --n 50` |
 | `diversity-top(5)` | `ideation_db.py query <slug> diversity-top --n 5` |
 | literal IDs `[17, 24]` | no CLI call needed; pass through |
 | `children_of(step N)` | for each idea produced by step N (from its operator_runs row's subsequent inserts), call `children-of` |

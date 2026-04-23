@@ -1392,6 +1392,84 @@ def cmd_lint_operators(args: argparse.Namespace) -> None:
     print(f"0 errors across {len(raw)} operator {file_word}.")
 
 
+_REFERENCE_BANNER = (
+    "<!--\n"
+    "This file is generated from operator frontmatter.\n"
+    "Regenerate with: `python plugins/ideation/skills/ideation/scripts/ideation_db.py generate-reference`\n"
+    "Do not edit by hand — your changes will be overwritten.\n"
+    "-->\n"
+)
+
+_STAGE_TITLES = {
+    "frame": "Frame operators",
+    "generate": "Generate operators",
+    "transform": "Transform operators",
+    "evaluate": "Evaluate operators",
+    "validate": "Validate operators",
+    "decide": "Decide operators",
+}
+
+_STAGE_ORDER = ("frame", "generate", "transform", "evaluate", "validate", "decide")
+
+
+def _render_reference(catalog: list[dict[str, Any]]) -> str:
+    by_stage: dict[str, list[dict[str, Any]]] = {s: [] for s in _STAGE_ORDER}
+    for entry in catalog:
+        by_stage.setdefault(entry["stage"], []).append(entry)
+
+    out: list[str] = [_REFERENCE_BANNER, "# When to use which operator", ""]
+    out.append(
+        "Generated from operator frontmatter. Grouped by stage. "
+        "For each operator, the **scope** line tells the router how it consumes ideas; "
+        "**Use when** and **Avoid when** are the judgment cues."
+    )
+    out.append("")
+
+    for stage in _STAGE_ORDER:
+        entries = sorted(by_stage.get(stage, []), key=lambda e: e["name"])
+        if not entries:
+            continue
+        out.append(f"## {_STAGE_TITLES[stage]}")
+        out.append("")
+        for e in entries:
+            out.append(f"### {e['name']}")
+            out.append("")
+            out.append(f"- **scope:** {e['scope']}")
+            kinds = e["applies_to"]["kinds"]
+            kinds_str = ", ".join(kinds) if kinds else "—"
+            out.append(f"- **applies to kinds:** {kinds_str}")
+            out.append(f"- **min cohort:** {e['applies_to']['min_cohort']}")
+            out.append("- **Use when:**")
+            for cue in e["use_when"]:
+                out.append(f"  - {cue}")
+            out.append("- **Avoid when:**")
+            for cue in e["avoid_when"]:
+                out.append(f"  - {cue}")
+            if e["followups"]:
+                out.append("- **Typical followups:** " + ", ".join(e["followups"]))
+            out.append("")
+
+    return "\n".join(out) + "\n" if not out[-1].endswith("\n") else "\n".join(out)
+
+
+def cmd_generate_reference(args: argparse.Namespace) -> None:
+    import operator_meta
+
+    ops_dir = _resolve_operators_dir()
+    try:
+        catalog = operator_meta.load_catalog(ops_dir)
+    except (operator_meta.FrontmatterError, operator_meta.LintError) as e:
+        sys.exit(f"ERROR: {e}")
+
+    rendered = _render_reference(catalog)
+    output = Path(args.output) if args.output else (
+        Path(__file__).resolve().parent.parent / "references" / "when-to-use-which-operator.md"
+    )
+    output.parent.mkdir(parents=True, exist_ok=True)
+    output.write_text(rendered)
+    print(str(output))
+
+
 def _render_catalog_yaml(payload: dict[str, Any]) -> str:
     """Render the catalog as a YAML-ish text block for display only.
 
@@ -1719,6 +1797,13 @@ def build_parser() -> argparse.ArgumentParser:
 
     p = sub.add_parser("lint-operators", help="Validate operator frontmatter across the catalog")
     p.set_defaults(func=cmd_lint_operators)
+
+    p = sub.add_parser(
+        "generate-reference",
+        help="Render the when-to-use-which-operator.md doc from frontmatter",
+    )
+    p.add_argument("--output", help="Output path (default: references/when-to-use-which-operator.md)")
+    p.set_defaults(func=cmd_generate_reference)
 
     # Utility
     p = sub.add_parser("new-run-id", help="Print a fresh UUID to use as run_id")

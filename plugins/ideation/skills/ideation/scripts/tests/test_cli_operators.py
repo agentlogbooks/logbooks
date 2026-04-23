@@ -167,5 +167,38 @@ class TestLintOperatorsCli(unittest.TestCase):
         # The clean file should still have been processed.
 
 
+class TestGenerateReferenceCli(unittest.TestCase):
+    def test_generates_reference_with_banner(self):
+        with tempfile.TemporaryDirectory() as td:
+            ops = Path(td) / "operators"
+            ops.mkdir()
+            (ops / "transform.invert.md").write_text(VALID_OP_FILE)
+            out_path = Path(td) / "when-to-use.md"
+            result = _run_cli(
+                "generate-reference",
+                "--output",
+                str(out_path),
+                operators_dir=ops,
+            )
+            self.assertEqual(result.returncode, 0, msg=result.stderr)
+            content = out_path.read_text()
+            self.assertIn("<!--", content)
+            self.assertIn("generated from operator frontmatter", content)
+            self.assertIn("## Transform operators", content)
+            self.assertIn("### transform.invert", content)
+            self.assertIn("promising but brittle", content)
+
+    def test_regenerating_is_byte_identical(self):
+        with tempfile.TemporaryDirectory() as td:
+            ops = Path(td) / "operators"
+            ops.mkdir()
+            (ops / "transform.invert.md").write_text(VALID_OP_FILE)
+            a = Path(td) / "a.md"
+            b = Path(td) / "b.md"
+            _run_cli("generate-reference", "--output", str(a), operators_dir=ops)
+            _run_cli("generate-reference", "--output", str(b), operators_dir=ops)
+            self.assertEqual(a.read_bytes(), b.read_bytes())
+
+
 if __name__ == "__main__":
     unittest.main()

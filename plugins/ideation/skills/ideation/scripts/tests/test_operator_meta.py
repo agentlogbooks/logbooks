@@ -102,5 +102,23 @@ class TestParseFrontmatterRejects(unittest.TestCase):
         self.assertEqual(meta["applies_to"]["min_cohort"], 1)
 
 
+class TestParseFrontmatterStrictGrammar(unittest.TestCase):
+    def test_rejects_tab_indented_child(self):
+        # single tab in place of 2-space indent
+        text = "---\nfoo:\n\tbar: baz\n---\n\nbody\n"
+        with self.assertRaises(FrontmatterError):
+            parse_frontmatter(text)
+
+    def test_rejects_duplicate_top_level_key(self):
+        text = "---\nname: foo\nname: bar\n---\n\nbody\n"
+        with self.assertRaises(FrontmatterError):
+            parse_frontmatter(text)
+
+    def test_rejects_empty_key(self):
+        text = "---\n: value\n---\n\nbody\n"
+        with self.assertRaises(FrontmatterError):
+            parse_frontmatter(text)
+
+
 if __name__ == "__main__":
     unittest.main()

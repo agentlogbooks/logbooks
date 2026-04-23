@@ -49,7 +49,12 @@ def _parse_lines(lines: list[str], indent: int) -> tuple[dict[str, Any], int]:
         if not raw.strip() or raw.lstrip().startswith("#"):
             i += 1
             continue
-        cur_indent = len(raw) - len(raw.lstrip(" "))
+        # Enforce space-only indentation (reject tabs in leading whitespace).
+        stripped = raw.lstrip()
+        leading = raw[: len(raw) - len(stripped)]
+        if any(ch != " " for ch in leading):
+            raise FrontmatterError(f"non-space indent character at line: {raw!r}")
+        cur_indent = len(leading)
         if cur_indent < indent:
             return out, i
         if cur_indent > indent:
@@ -57,6 +62,10 @@ def _parse_lines(lines: list[str], indent: int) -> tuple[dict[str, Any], int]:
         if ":" not in raw:
             raise FrontmatterError(f"expected 'key:' line, got: {raw!r}")
         key, _, rest = raw.strip().partition(":")
+        if not key:
+            raise FrontmatterError(f"empty key in line: {raw!r}")
+        if key in out:
+            raise FrontmatterError(f"duplicate key {key!r}")
         rest = rest.strip()
         if rest == "":
             # Block value — either a list (next line starts with `-`) or a nested dict.
@@ -84,10 +93,14 @@ def _parse_list(lines: list[str], indent: int) -> tuple[list[Any], int]:
         if not raw.strip():
             i += 1
             continue
-        cur_indent = len(raw) - len(raw.lstrip(" "))
+        # Enforce space-only indentation (reject tabs in leading whitespace).
+        stripped = raw.lstrip()
+        leading = raw[: len(raw) - len(stripped)]
+        if any(ch != " " for ch in leading):
+            raise FrontmatterError(f"non-space indent character at line: {raw!r}")
+        cur_indent = len(leading)
         if cur_indent < indent:
             return out, i
-        stripped = raw.strip()
         if not stripped.startswith("-"):
             return out, i
         item = stripped[1:].strip()

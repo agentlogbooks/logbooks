@@ -50,10 +50,10 @@ For each idea in `cohort_ids`:
 1. Read the idea and its lineage-ops history.
 2. Compute the set of **candidate operators** from the catalog that pass the hard gates:
    - The idea's `kind` is in the operator's `applies_to.kinds` (unless `applies_to.kinds` is empty — those are pool-scope and not assignable per-idea anyway; skip them for per-idea decisions).
-   - If `params.cheap` is set, drop operators with `cost.web: true`.
-   - The operator's `repeat_guard.same_lineage_cooldown` is not violated — count operator runs on this idea's lineage (from `lineage-ops`) and ensure that if the same operator appears in the most recent N entries, N exceeds the cooldown.
+   - If `params.cheap` is set, drop operators with `cost.web: true`. If this eliminates every remaining candidate for an idea (no non-web operators pass the other gates), park that idea with reason "no non-web operators available".
+   - The operator's `repeat_guard.same_lineage_cooldown` is not violated — an operator is on cooldown for this idea if it appears in the `same_lineage_cooldown` most-recent entries returned by `lineage-ops`. If `same_lineage_cooldown` is 0, the operator is never on cooldown. Note: `lineage-ops` is queried with `--limit 5`, so cooldowns above 5 are effectively capped at 5 — currently no operator has a cooldown above 2, but revisit this limit if one is added.
 3. Among the candidates, use `use_when` / `avoid_when` as soft judgment cues. Pick the single best operator, or one of:
-   - **Pair this idea with another** — if two ideas in the cohort have complementary mechanisms or sit in tension, recommend `transform.hybridize cohort=[i,j]` (scope=group, min_cohort=2). Emit this as a single fragment line covering both ideas, not two separate recommendations.
+   - **Pair this idea with another** — if two ideas in the cohort have complementary mechanisms or sit in tension, recommend `transform.hybridize cohort=[i,j]` (scope=group, min_cohort=2). Emit this as a single fragment line covering both ideas, not two separate recommendations. Before emitting a hybridize line, verify that `transform.hybridize` clears the cooldown gate on **both** ideas' lineage histories — if it's on cooldown for either one, skip the pair.
    - **Park** — with a one-line reason, for ideas that are too vague or already exhausted.
 
 ## Output — run-scoped report file
@@ -73,7 +73,7 @@ Write `./.ideation/$SLUG/reports/$RUN_ID-route.md` with exactly two sections:
 
 PARALLEL:
 - transform.invert cohort=[8]
-- transform.hybridize cohort=[14,19]
+- transform.hybridize cohort=[14, 19]
 ```
 
 The `## Plan fragment` section uses the exact grammar below. The orchestrator parses it.

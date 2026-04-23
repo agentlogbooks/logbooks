@@ -56,7 +56,10 @@ def _git_root(start: Path) -> Path | None:
 
 
 def _ideation_root() -> Path:
-    """Resolve the `./.ideation/` root: git repo root if inside one, else cwd."""
+    """Resolve the `./.ideation/` root: env override > git repo root > cwd."""
+    override = os.environ.get("IDEATION_ROOT_OVERRIDE")
+    if override:
+        return Path(override)
     cwd = Path.cwd().resolve()
     root = _git_root(cwd) or cwd
     return root / IDEATION_DIR
@@ -950,6 +953,84 @@ def cmd_lineage_tree(args: argparse.Namespace) -> None:
         _print_json(_rows_to_list(rows))
 
 
+def _lineage_closure(conn: sqlite3.Connection, start_id: int) -> set[int]:
+    """Return the set of ancestor + descendant + self idea_ids, via lineage table."""
+    seen: set[int] = {start_id}
+    frontier = [start_id]
+    while frontier:
+        cur = frontier.pop()
+        rows = conn.execute(
+            "SELECT parent_idea_id AS other FROM lineage WHERE child_idea_id = ?"
+            " UNION "
+            "SELECT child_idea_id AS other FROM lineage WHERE parent_idea_id = ?",
+            (cur, cur),
+        ).fetchall()
+        for r in rows:
+            if r["other"] not in seen:
+                seen.add(r["other"])
+                frontier.append(r["other"])
+    return seen
+
+
+def cmd_lineage_ops(args: argparse.Namespace) -> None:
+    with _connect(args.slug) as conn:
+        closure = _lineage_closure(conn, args.idea_id)
+        if not closure:
+            _print_json([])
+            return
+
+        # Runs reachable via idea origin (transforms / generators).
+        placeholders = ",".join("?" * len(closure))
+        origin_run_ids = {
+            r["origin_operator_run_id"]
+            for r in conn.execute(
+                f"SELECT DISTINCT origin_operator_run_id FROM ideas "
+                f"WHERE idea_id IN ({placeholders})",
+                tuple(closure),
+            ).fetchall()
+        }
+
+        # Runs reachable via lineage edges (hybridize / derive operators).
+        lineage_run_ids = {
+            r["operator_run_id"]
+            for r in conn.execute(
+                f"SELECT DISTINCT operator_run_id FROM lineage "
+                f"WHERE child_idea_id IN ({placeholders}) "
+                f"OR parent_idea_id IN ({placeholders})",
+                tuple(closure) * 2,
+            ).fetchall()
+        }
+
+        # All remaining runs — filter in Python on cohort_ids intersection.
+        # operator_runs is small per topic; --limit is the caller's cap anyway.
+        all_runs = conn.execute(
+            "SELECT operator_run_id, operator_name, operator_persona, started_at, cohort_ids "
+            "FROM operator_runs WHERE status = 'succeeded' "
+            "ORDER BY started_at DESC"
+        ).fetchall()
+
+        matched: list[dict[str, Any]] = []
+        for row in all_runs:
+            cohort = _json_load_safe(row["cohort_ids"], [])
+            cohort_ids_set = {int(x) for x in cohort if isinstance(x, int)}
+            touched_by_cohort = bool(cohort_ids_set & closure)
+            if (
+                row["operator_run_id"] in origin_run_ids
+                or row["operator_run_id"] in lineage_run_ids
+                or touched_by_cohort
+            ):
+                matched.append({
+                    "operator_run_id": row["operator_run_id"],
+                    "operator_name": row["operator_name"],
+                    "operator_persona": row["operator_persona"],
+                    "started_at": row["started_at"],
+                    "idea_ids_touched": cohort,
+                })
+            if len(matched) >= args.limit:
+                break
+        _print_json(matched)
+
+
 # ----------------------------------------------------------------------------
 # Assessments
 # ----------------------------------------------------------------------------
@@ -1719,6 +1800,15 @@ def build_parser() -> argparse.ArgumentParser:
     _add_slug(p)
     p.add_argument("idea_id", type=int)
     p.set_defaults(func=cmd_lineage_tree)
+
+    p = sub.add_parser(
+        "lineage-ops",
+        help="Operator runs that touched an idea's lineage closure (ancestors + descendants + self)",
+    )
+    _add_slug(p)
+    p.add_argument("idea_id", type=int)
+    p.add_argument("--limit", type=int, default=10)
+    p.set_defaults(func=cmd_lineage_ops)
 
     # Assessments
     p = sub.add_parser("add-assessment", help="Append an assessment row")

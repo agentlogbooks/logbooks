@@ -361,7 +361,7 @@ When the user invoked the `route` playbook with `--loop`, after the full plan bo
 
    On Stop → exit the loop.
 4. Otherwise, increment the iteration counter and re-execute the playbook body:
-   - Run `decide.route cohort=all_active_capped(50)` again. When calling `op-start`, omit `--plan-step` (so `plan_step_index` stores `NULL` — iteration-2+ routes are not in the planner's original plan) and pass `--params-json '{"loop_iteration": <N>}'`.
+   - Run `decide.route cohort=all_active_capped(50)` again. When calling `op-start`, omit `--plan-step` (so `plan_step_index` stores `NULL` — iteration-2+ routes are not in the planner's original plan) and pass `--params-json` as the **original invocation's playbook params augmented with `loop_iteration: <N>`**. Specifically: carry forward `cheap` (and any other playbook param the user passed at invocation time) into every iteration's `decide.route` row and add `"loop_iteration": <N>`. Do NOT replace the params with `{"loop_iteration": <N>}` alone — that would silently disengage Step 5D's `cheap` validation gate on iteration 2+.
    - Expand the fresh plan fragment via Step 5D. Each expanded row's `params-json` includes `"loop_iteration": <N>` alongside the `parent_operator_run_id` and `parent_plan_step_index` keys.
 
 Critical invariants:

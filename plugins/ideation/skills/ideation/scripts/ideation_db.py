@@ -1349,6 +1349,42 @@ def cmd_list_operators(args: argparse.Namespace) -> None:
         print(_render_catalog_yaml(payload))
 
 
+def cmd_lint_operators(args: argparse.Namespace) -> None:
+    import operator_meta
+
+    ops_dir = _resolve_operators_dir()
+    errors_total = 0
+    per_file: list[tuple[str, list[str]]] = []
+
+    raw: list[tuple[str, dict[str, Any]]] = []
+    for path in sorted(ops_dir.glob("*.md")):
+        text = path.read_text()
+        try:
+            meta = operator_meta.parse_frontmatter(text)
+        except operator_meta.FrontmatterError as e:
+            per_file.append((path.name, [f"frontmatter parse: {e}"]))
+            errors_total += 1
+            continue
+        raw.append((path.name, meta))
+
+    known_names = {m["name"] for _, m in raw if "name" in m}
+    for filename, meta in raw:
+        errs = operator_meta.lint_operator(meta, filename, known_operator_names=known_names)
+        if errs:
+            per_file.append((filename, errs))
+            errors_total += len(errs)
+
+    if per_file:
+        for filename, errs in per_file:
+            print(f"{filename}:")
+            for e in errs:
+                print(f"  - {e}")
+        print(f"\n{errors_total} errors across {len(per_file)} file(s).")
+        sys.exit(1)
+
+    print(f"0 errors across {len(raw)} operator file(s).")
+
+
 def _render_catalog_yaml(payload: dict[str, Any]) -> str:
     """Render the catalog as a YAML-ish text block for display only.
 
@@ -1673,6 +1709,9 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("list-operators", help="Print the operator frontmatter catalog")
     p.add_argument("--format", choices=("yaml", "json"), default="yaml")
     p.set_defaults(func=cmd_list_operators)
+
+    p = sub.add_parser("lint-operators", help="Validate operator frontmatter across the catalog")
+    p.set_defaults(func=cmd_lint_operators)
 
     # Utility
     p = sub.add_parser("new-run-id", help="Print a fresh UUID to use as run_id")

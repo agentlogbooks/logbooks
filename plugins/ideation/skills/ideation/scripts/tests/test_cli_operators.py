@@ -102,5 +102,26 @@ class TestListOperatorsCli(unittest.TestCase):
         self.assertIn("stage", result.stderr.lower())
 
 
+class TestLintOperatorsCli(unittest.TestCase):
+    def test_lint_operators_passes_on_clean_catalog(self):
+        with tempfile.TemporaryDirectory() as td:
+            ops = Path(td) / "operators"
+            ops.mkdir()
+            (ops / "transform.invert.md").write_text(VALID_OP_FILE)
+            result = _run_cli("lint-operators", operators_dir=ops)
+        self.assertEqual(result.returncode, 0, msg=result.stderr)
+        self.assertIn("0 errors", result.stdout)
+
+    def test_lint_operators_fails_on_bad_stage(self):
+        bad = VALID_OP_FILE.replace("stage: transform", "stage: decide")
+        with tempfile.TemporaryDirectory() as td:
+            ops = Path(td) / "operators"
+            ops.mkdir()
+            (ops / "transform.invert.md").write_text(bad)
+            result = _run_cli("lint-operators", operators_dir=ops)
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("transform.invert.md", result.stdout + result.stderr)
+
+
 if __name__ == "__main__":
     unittest.main()

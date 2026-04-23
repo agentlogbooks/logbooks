@@ -18,7 +18,7 @@
         ],
         "surfaced_count_max": 5,
         "logbook_written": true,
-        "logbook_path_pattern": "~/logbooks/code-review/paste-*.sqlite"
+        "logbook_path_pattern": "./.code-review/paste-*.sqlite"
       }
     },
     {

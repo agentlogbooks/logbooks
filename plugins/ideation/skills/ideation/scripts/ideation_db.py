@@ -1358,11 +1358,15 @@ def cmd_lint_operators(args: argparse.Namespace) -> None:
 
     raw: list[tuple[str, dict[str, Any]]] = []
     for path in sorted(ops_dir.glob("*.md")):
-        text = path.read_text()
         try:
+            text = path.read_text()
             meta = operator_meta.parse_frontmatter(text)
         except operator_meta.FrontmatterError as e:
             per_file.append((path.name, [f"frontmatter parse: {e}"]))
+            errors_total += 1
+            continue
+        except (OSError, UnicodeDecodeError) as e:
+            per_file.append((path.name, [f"read error: {e}"]))
             errors_total += 1
             continue
         raw.append((path.name, meta))
@@ -1379,10 +1383,13 @@ def cmd_lint_operators(args: argparse.Namespace) -> None:
             print(f"{filename}:")
             for e in errs:
                 print(f"  - {e}")
-        print(f"\n{errors_total} errors across {len(per_file)} file(s).")
+        err_word = "error" if errors_total == 1 else "errors"
+        file_word = "file" if len(per_file) == 1 else "files"
+        print(f"\n{errors_total} {err_word} across {len(per_file)} operator {file_word}.")
         sys.exit(1)
 
-    print(f"0 errors across {len(raw)} operator file(s).")
+    file_word = "file" if len(raw) == 1 else "files"
+    print(f"0 errors across {len(raw)} operator {file_word}.")
 
 
 def _render_catalog_yaml(payload: dict[str, Any]) -> str:

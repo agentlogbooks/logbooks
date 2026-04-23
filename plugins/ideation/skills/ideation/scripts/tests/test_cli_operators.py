@@ -122,6 +122,50 @@ class TestLintOperatorsCli(unittest.TestCase):
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("transform.invert.md", result.stdout + result.stderr)
 
+    def test_lint_operators_aggregates_multiple_lint_errors(self):
+        bad1 = VALID_OP_FILE.replace("stage: transform", "stage: decide")
+        bad2 = VALID_OP_FILE.replace(
+            "name: transform.invert", "name: transform.hybridize"
+        ).replace("scope: per_idea", "scope: broken_scope_value")
+        with tempfile.TemporaryDirectory() as td:
+            ops = Path(td) / "operators"
+            ops.mkdir()
+            (ops / "transform.invert.md").write_text(bad1)
+            (ops / "transform.hybridize.md").write_text(bad2)
+            result = _run_cli("lint-operators", operators_dir=ops)
+        self.assertNotEqual(result.returncode, 0)
+        output = result.stdout + result.stderr
+        self.assertIn("transform.invert.md", output)
+        self.assertIn("transform.hybridize.md", output)
+        # Both files must be reported — a fail-fast impl would only show one.
+
+    def test_lint_operators_aggregates_parse_and_lint_errors(self):
+        bad_lint = VALID_OP_FILE.replace("stage: transform", "stage: decide")
+        with tempfile.TemporaryDirectory() as td:
+            ops = Path(td) / "operators"
+            ops.mkdir()
+            (ops / "transform.invert.md").write_text(bad_lint)
+            (ops / "transform.hybridize.md").write_text("no frontmatter here\n")
+            result = _run_cli("lint-operators", operators_dir=ops)
+        self.assertNotEqual(result.returncode, 0)
+        output = result.stdout + result.stderr
+        self.assertIn("transform.invert.md", output)
+        self.assertIn("transform.hybridize.md", output)
+        self.assertIn("frontmatter", output.lower())
+
+    def test_lint_operators_handles_binary_files_gracefully(self):
+        with tempfile.TemporaryDirectory() as td:
+            ops = Path(td) / "operators"
+            ops.mkdir()
+            (ops / "transform.invert.md").write_text(VALID_OP_FILE)
+            # Write invalid UTF-8 bytes to a .md file.
+            (ops / "broken.md").write_bytes(b"\xff\xfe\xfd not utf-8 \xc3\x28")
+            result = _run_cli("lint-operators", operators_dir=ops)
+        # Should not crash; should report the read error for the bad file.
+        output = result.stdout + result.stderr
+        self.assertIn("broken.md", output)
+        # The clean file should still have been processed.
+
 
 if __name__ == "__main__":
     unittest.main()

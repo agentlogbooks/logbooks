@@ -292,7 +292,7 @@ def print_summary(stats: dict, threshold: float) -> None:
     print()
 
 
-def print_gap_summary(gap_result: dict, stats: dict | None = None) -> None:
+def print_gap_summary(gap_result: dict, stats: dict | None = None, has_logbook: bool = False) -> None:
     """Print new / persistent / fixed breakdown after a run."""
     new        = gap_result["new"]
     persistent = gap_result["persistent"]
@@ -302,8 +302,10 @@ def print_gap_summary(gap_result: dict, stats: dict | None = None) -> None:
     if not new and not persistent and not fixed:
         if survived == 0:
             print("✅ No surviving mutants.")
-        else:
+        elif has_logbook:
             print(f"🔕 {survived} survivor(s) acknowledged/wont_fix — no new or persistent gaps.")
+        else:
+            print(f"⚠️  {survived} survivor(s) — run with logbook enabled to track gaps.")
         return
 
     print()
@@ -769,7 +771,7 @@ def main() -> None:
         append_jsonl(jsonl_path, run_id, slug, stats, args.threshold, results, args.model, gap_result, now)
         print(f"📚 Logbook updated: {db_path}")
 
-    print_gap_summary(gap_result, stats)
+    print_gap_summary(gap_result, stats, has_logbook=conn is not None)
 
     # ── Write mutation-todos.md ───────────────────────────────────────────────
     write_todos(stats, args.threshold, gap_result=gap_result, conn=conn, project=slug)

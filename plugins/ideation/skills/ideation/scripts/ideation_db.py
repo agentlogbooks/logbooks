@@ -29,6 +29,8 @@ from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Iterable
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+
 # ----------------------------------------------------------------------------
 # Path resolution
 # ----------------------------------------------------------------------------
@@ -1319,6 +1321,72 @@ def cmd_new_run_id(args: argparse.Namespace) -> None:
 
 
 # ----------------------------------------------------------------------------
+# Operator catalog
+# ----------------------------------------------------------------------------
+
+
+def _resolve_operators_dir() -> "Path":
+    env = os.environ.get("IDEATION_OPERATORS_DIR")
+    if env:
+        return Path(env)
+    return Path(__file__).resolve().parent.parent / "operators"
+
+
+def cmd_list_operators(args: argparse.Namespace) -> None:
+    import operator_meta
+
+    ops_dir = _resolve_operators_dir()
+    try:
+        catalog = operator_meta.load_catalog(ops_dir)
+    except (operator_meta.FrontmatterError, operator_meta.LintError) as e:
+        sys.exit(f"ERROR: {e}")
+
+    payload = {"operators": catalog}
+    if args.format == "json":
+        _print_json(payload)
+    else:
+        # Deterministic YAML-ish rendering — mirrors the input grammar.
+        print(_render_catalog_yaml(payload))
+
+
+def _render_catalog_yaml(payload: dict[str, Any]) -> str:
+    lines: list[str] = ["operators:"]
+    for entry in payload["operators"]:
+        lines.append(f"  - name: {entry['name']}")
+        lines.append(f"    stage: {entry['stage']}")
+        lines.append(f"    scope: {entry['scope']}")
+        lines.append("    applies_to:")
+        kinds = entry["applies_to"]["kinds"]
+        lines.append(f"      kinds: [{', '.join(kinds)}]")
+        lines.append(f"      min_cohort: {entry['applies_to']['min_cohort']}")
+        lines.append("    use_when:")
+        for cue in entry["use_when"]:
+            lines.append(f"      - {cue}")
+        lines.append("    avoid_when:")
+        for cue in entry["avoid_when"]:
+            lines.append(f"      - {cue}")
+        produces = entry["produces"]
+        lines.append(
+            "    produces: {"
+            f"ideas: {str(produces['ideas']).lower()}, "
+            f"assessments: {str(produces['assessments']).lower()}, "
+            f"facts: {str(produces['facts']).lower()}"
+            "}"
+        )
+        lines.append("    cost: {web: " + str(entry["cost"]["web"]).lower() + "}")
+        lines.append(
+            f"    repeat_guard: {{same_lineage_cooldown: {entry['repeat_guard']['same_lineage_cooldown']}}}"
+        )
+        if entry["followups"]:
+            lines.append("    followups:")
+            for fn in entry["followups"]:
+                lines.append(f"      - {fn}")
+        else:
+            lines.append("    followups: []")
+    return "\n".join(lines) + "\n"
+
+
+# ----------------------------------------------------------------------------
 # argparse
 # ----------------------------------------------------------------------------
 
@@ -1594,6 +1662,11 @@ def build_parser() -> argparse.ArgumentParser:
     p = sub.add_parser("export-menu", help="Render the idea menu (quick wins / core bets / moonshots)")
     _add_slug(p)
     p.set_defaults(func=cmd_export_menu)
+
+    # Operator catalog
+    p = sub.add_parser("list-operators", help="Print the operator frontmatter catalog")
+    p.add_argument("--format", choices=("yaml", "json"), default="yaml")
+    p.set_defaults(func=cmd_list_operators)
 
     # Utility
     p = sub.add_parser("new-run-id", help="Print a fresh UUID to use as run_id")

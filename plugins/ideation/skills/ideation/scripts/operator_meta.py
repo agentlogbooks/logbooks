@@ -240,14 +240,25 @@ def lint_operator(
 
 
 def load_catalog(operators_dir: Path) -> list[dict[str, Any]]:
-    """Load and parse every operators/*.md file. Raises if any fails."""
-    # Implemented in Task 4.
-    entries: list[dict[str, Any]] = []
+    """Parse + lint every operator file. Raises on first failure."""
+    raw: list[tuple[str, dict[str, Any]]] = []
     for path in sorted(operators_dir.glob("*.md")):
         text = path.read_text()
         try:
             meta = parse_frontmatter(text)
         except FrontmatterError as e:
             raise FrontmatterError(f"{path.name}: {e}") from e
-        entries.append(meta)
-    return entries
+        raw.append((path.name, meta))
+
+    known_names = {m["name"] for _, m in raw if "name" in m}
+    for filename, meta in raw:
+        errs = lint_operator(meta, filename, known_operator_names=known_names)
+        if errs:
+            raise LintError(f"{filename}:\n  - " + "\n  - ".join(errs))
+
+    return [m for _, m in raw]
+
+
+def operators_dir_default() -> Path:
+    """Default location of the operators/ directory (sibling of scripts/)."""
+    return Path(__file__).resolve().parent.parent / "operators"

@@ -316,6 +316,8 @@ Do not proceed past the PARALLEL block until all its sub-steps have terminated.
 
 When the step you just executed is a `decide.route` call, the normal Step 5B flow changes: **defer the `op-finalize` on the `decide.route` row until after the fragment has been read and validated**, so the outcome summary records both the subagent's decisions and any validation drops in a single finalize.
 
+If `decide.route` itself fails (subagent returns an error, raises an exception, or fails twice under Step 5B's retry policy), do NOT enter this expansion flow — apply Step 5B's normal failure handling and stop. Step 5D only runs on a confirmed successful `decide.route` return.
+
 1. After the `decide.route` subagent returns its outcome summary, do NOT call `op-finalize` yet. Keep the summary in a local variable as `subagent_summary`.
 2. Read `./.ideation/<slug>/reports/<RUN_ID>-route.md` — the subagent wrote this during its operator work.
 3. Extract the `## Plan fragment` section. Its grammar is narrow:
@@ -327,7 +329,7 @@ When the step you just executed is a `decide.route` call, the normal Step 5B flo
    - `cohort size >= applies_to.min_cohort`.
    - If `applies_to.kinds` is non-empty, every idea in the cohort has `kind` ∈ those kinds (read via `ideation_db.py idea <slug> <id>`).
    - If the parent `decide.route` was invoked with `params.cheap=true`, drop any bullet whose operator has `cost.web: true`.
-   - Consult `ideation_db.py lineage-ops <slug> <id>` for each cohort idea and drop any bullet that would violate `repeat_guard.same_lineage_cooldown`. Defense in depth — the subagent should already have respected this.
+   - For each idea in the bullet's cohort, query `ideation_db.py lineage-ops <slug> <id> --limit <cooldown + 1>` to retrieve the idea's lineage-ops history. If the bullet's operator name appears within the last `repeat_guard.same_lineage_cooldown` entries for ANY cohort idea, drop the bullet. Defense in depth — the subagent should already have respected this, but the orchestrator enforces it definitively.
    - Collect dropped bullets + reasons in a local `drops` list; print a warning per drop.
 5. Compute the combined finalize summary:
    - If `drops` is empty: `final_summary = subagent_summary`.
@@ -336,7 +338,7 @@ When the step you just executed is a `decide.route` call, the normal Step 5B flo
 7. If the validated fragment is empty or every bullet was dropped, proceed to the next plan step. Print "Fragment empty — nothing to expand" to the user.
 8. Otherwise, treat the validated bullets as a PARALLEL block and execute them using the normal Step 5C parallel-dispatch. Each bullet gets its own `operator_runs` row:
    - Call `op-start` with `--run-id $RUN_ID` but **omit `--plan-step`** (so `plan_step_index` stores `NULL` — these are fragment-expanded, not in the planner's original plan).
-   - Pass `--params-json '{"parent_operator_run_id": <decide.route op_run_id>, "parent_plan_step_index": <decide.route plan_step>}'` (merge with any operator-specific params the bullet carried).
+   - Construct a single JSON object containing BOTH the parent-linkage keys AND every `key=value` pair parsed from the bullet. For example, if the bullet was `transform.scamper count=3 cohort=[8]`, the params JSON is `{"parent_operator_run_id": <decide.route op_run_id>, "parent_plan_step_index": <decide.route plan_step>, "count": 3}`. Pass this as `--params-json`.
    - Spawn each subagent per the normal Step 5B procedure.
    - Finalize each row as subagents return.
 

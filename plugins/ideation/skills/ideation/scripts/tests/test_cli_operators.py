@@ -67,6 +67,21 @@ class TestListOperatorsCli(unittest.TestCase):
         self.assertEqual(len(payload["operators"]), 1)
         self.assertEqual(payload["operators"][0]["name"], "transform.invert")
 
+        # Structural contract for decide.route — the catalog shape is part of the API.
+        entry = payload["operators"][0]
+        required = {
+            "name", "stage", "scope", "applies_to", "use_when",
+            "avoid_when", "produces", "cost", "repeat_guard", "followups",
+        }
+        self.assertEqual(set(entry.keys()), required)
+        self.assertIsInstance(entry["applies_to"]["min_cohort"], int)
+        self.assertIsInstance(entry["produces"]["ideas"], bool)
+        self.assertIsInstance(entry["cost"]["web"], bool)
+        self.assertIsInstance(entry["repeat_guard"]["same_lineage_cooldown"], int)
+        self.assertIsInstance(entry["use_when"], list)
+        self.assertIsInstance(entry["avoid_when"], list)
+        self.assertIsInstance(entry["followups"], list)
+
     def test_list_operators_fails_when_frontmatter_missing(self):
         with tempfile.TemporaryDirectory() as td:
             ops = Path(td) / "operators"

@@ -1350,6 +1350,12 @@ def cmd_list_operators(args: argparse.Namespace) -> None:
 
 
 def _render_catalog_yaml(payload: dict[str, Any]) -> str:
+    """Render the catalog as a YAML-ish text block for display only.
+
+    Output uses inline-dict syntax (e.g. produces: {ideas: true, ...}) which
+    the operator_meta frontmatter parser does not round-trip. Do not feed
+    this output back into parse_frontmatter.
+    """
     lines: list[str] = ["operators:"]
     for entry in payload["operators"]:
         lines.append(f"  - name: {entry['name']}")

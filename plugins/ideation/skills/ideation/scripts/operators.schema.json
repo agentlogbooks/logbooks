@@ -62,7 +62,7 @@
             "additionalProperties": false,
             "properties": {"same_lineage_cooldown": {"type": "integer", "minimum": 0}}
           },
-          "followups": {"type": "array", "items": {"type": "string"}}
+          "followups": {"type": "array", "items": {"type": "string", "pattern": "^[a-z]+\\.[a-z_]+$"}}
         }
       }
     }

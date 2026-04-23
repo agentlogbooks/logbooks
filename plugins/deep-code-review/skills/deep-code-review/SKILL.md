@@ -6,7 +6,7 @@ description: >
   progress changes. Models behavior changes, selects risky hotspots, acquires minimal local context,
   generates candidate findings and questions, runs a skeptic pass and dedup, then surfaces at most
   5 high-signal outputs. Persists a per-run JSONL trace and per-PR SQLite ledger under
-  ./.code-review/. Invoke for any concrete review request: "review PR #123", "deep review",
+  ./logbooks/code-review/. Invoke for any concrete review request: "review PR #123", "deep review",
   "check this diff", "review current branch", "review staged changes", "review codebase",
   "audit this repo", "review this repo". Do not invoke for vague
   opinion requests that have no diff, code, or concrete review target ("what do you think of these
@@ -117,8 +117,8 @@ Compute and store:
 ## Initialize stores
 
 ```bash
-mkdir -p ./.code-review/
-sqlite3 ./.code-review/${PR_REF}.sqlite "
+mkdir -p ./logbooks/code-review/
+sqlite3 ./logbooks/code-review/${PR_REF}.sqlite "
 PRAGMA foreign_keys = ON;
 CREATE TABLE IF NOT EXISTS hotspots (
   hotspot_id TEXT PRIMARY KEY,
@@ -183,7 +183,7 @@ jq -nc \
   --arg skill_version "$SKILL_VERSION" \
   --arg started_at "$(date -Iseconds)" \
   '{record_type, run_id, repo_slug, pr_ref, review_target_type, diff_hash, current_model, skill_version, started_at}' \
-  >> ./.code-review/${PR_REF}.jsonl
+  >> ./logbooks/code-review/${PR_REF}.jsonl
 ```
 
 **Note on `paste-`/`wip-` slugs:** these include timestamps that change each run — SQLite deduplication (Phase 7) will always return empty for these slugs. Only `pr-{N}` and `branch-{name}` slugs benefit from cross-run deduplication.
@@ -253,7 +253,7 @@ A **hotspot** is a risky changed unit that deserves focused review. Each hotspot
 Persist each hotspot to SQLite and JSONL immediately:
 
 ```bash
-sqlite3 ./.code-review/${PR_REF}.sqlite \
+sqlite3 ./logbooks/code-review/${PR_REF}.sqlite \
   "INSERT INTO hotspots (hotspot_id, run_id, hotspot_key, file_path, symbol, line_start, line_end,
      summary, change_archetypes_json, risk_tags_json, why_selected, lenses_json)
    VALUES ('${HOTSPOT_ID}', '${RUN_ID}', '${HOTSPOT_KEY}', '${FILE_PATH}', '${SYMBOL}',
@@ -274,7 +274,7 @@ jq -nc \
   --argjson risk_tags "${RISK_TAGS_JSON}" \
   --arg why_selected "$WHY_SELECTED" \
   '{record_type, run_id, hotspot_id, hotspot_key, file_path, symbol, summary, line_start, line_end, change_archetypes, risk_tags, why_selected}' \
-  >> ./.code-review/${PR_REF}.jsonl
+  >> ./logbooks/code-review/${PR_REF}.jsonl
 ```
 
 **SQL safety:** `${SYMBOL}`, `${SUMMARY}`, and `${WHY_SELECTED}` originate from model-generated analysis. Escape any single quotes (replace `'` with `''`) before embedding in SQL strings, or use parameterized inserts via Python.
@@ -378,7 +378,7 @@ Triggered only when the diff **explicitly** references a versioned external depe
 
 Update `hotspots.lenses_json` with the selected lens list:
 ```bash
-sqlite3 ./.code-review/${PR_REF}.sqlite \
+sqlite3 ./logbooks/code-review/${PR_REF}.sqlite \
   "UPDATE hotspots SET lenses_json = '${LENSES_JSON}' WHERE hotspot_id = '${HOTSPOT_ID}';"
 ```
 
@@ -484,7 +484,7 @@ Where `primary_symbol_or_path` is the function/method/endpoint name or file path
 Persist all raw candidates to SQLite and JSONL immediately:
 
 ```bash
-sqlite3 ./.code-review/${PR_REF}.sqlite \
+sqlite3 ./logbooks/code-review/${PR_REF}.sqlite \
   "INSERT INTO candidate_findings
    (candidate_id, run_id, hotspot_id, output_type, issue_class, fingerprint, summary,
     evidence, why_now, file_path, line_start, line_end, severity, confidence_local,
@@ -517,7 +517,7 @@ jq -nc \
   --arg blast_radius "$BLAST_RADIUS" \
   --arg suggested_fix "${SUGGESTED_FIX:-}" \
   '{record_type, run_id, candidate_id, hotspot_id, output_type, issue_class, fingerprint, summary, evidence, why_now, file_path, line_start, line_end, severity, confidence_local, confidence_context, actionability, blast_radius, suggested_fix}' \
-  >> ./.code-review/${PR_REF}.jsonl
+  >> ./logbooks/code-review/${PR_REF}.jsonl
 ```
 
 **SQL safety:** `summary`, `evidence`, and `why_now` originate from subagent output that processed untrusted diff content. Escape single quotes (replace `'` with `''`) before embedding in SQL strings, or use Python parameterized inserts.
@@ -555,7 +555,7 @@ Track these state decisions in-memory. The actual SQLite UPDATE for `detection_s
 **Before running dedup:** compute priority_score for every surviving candidate (use the Phase 8 formula below) so you can correctly select the strongest duplicate. Update SQLite with the computed scores. Then proceed with dedup.
 
 ```bash
-sqlite3 ./.code-review/${PR_REF}.sqlite \
+sqlite3 ./logbooks/code-review/${PR_REF}.sqlite \
   "UPDATE candidate_findings
    SET priority_score = min(100, max(0, cast(round(100.0 * (
      CASE severity WHEN 'critical' THEN 1.0 WHEN 'high' THEN 0.8
@@ -666,7 +666,7 @@ For `already_on_pr=false`: no change; candidate keeps its skeptic-pass decision.
 ## Dedup query
 
 ```bash
-sqlite3 ./.code-review/${PR_REF}.sqlite \
+sqlite3 ./logbooks/code-review/${PR_REF}.sqlite \
   "SELECT candidate_id, summary, priority_score FROM candidate_findings
    WHERE run_id = '${RUN_ID}' AND fingerprint = '${ESCAPED_FINGERPRINT}'
    ORDER BY priority_score DESC;"
@@ -727,7 +727,7 @@ jq -nc \
   --arg drop_reason "${DROP_REASON:-}" \
   --argjson priority_score "$PRIORITY_SCORE" \
   '{record_type, run_id, candidate_id, detection_state, surfacing_state, drop_reason, priority_score}' \
-  >> ./.code-review/${PR_REF}.jsonl
+  >> ./logbooks/code-review/${PR_REF}.jsonl
 
 # Output record — write only for surfaced items
 jq -nc \
@@ -743,7 +743,7 @@ jq -nc \
   --argjson line_end "${LINE_END:-null}" \
   --argjson priority_score "$PRIORITY_SCORE" \
   '{record_type, run_id, candidate_id, pr_ref, output_type, severity, summary, file_path, line_start, line_end, priority_score}' \
-  >> ./.code-review/${PR_REF}.jsonl
+  >> ./logbooks/code-review/${PR_REF}.jsonl
 
 # PR-comment dedup record — one per run, after the Phase 7 subagent call
 # (or once if dispatch was skipped). Closes the forward reference from Phase 7.
@@ -760,7 +760,7 @@ jq -nc \
   --argjson dispatched true \
   --argjson decisions "$DECISIONS_JSON" \
   '{record_type, run_id, dispatched, decisions}' \
-  >> ./.code-review/${PR_REF}.jsonl
+  >> ./logbooks/code-review/${PR_REF}.jsonl
 
 # When skipped:
 jq -nc \
@@ -769,7 +769,7 @@ jq -nc \
   --argjson dispatched false \
   --arg skip_reason "$SKIP_REASON" \
   '{record_type, run_id, dispatched, skip_reason}' \
-  >> ./.code-review/${PR_REF}.jsonl
+  >> ./logbooks/code-review/${PR_REF}.jsonl
 ```
 
 ## SQLite
@@ -777,7 +777,7 @@ jq -nc \
 Update `detection_state`, `surfacing_state`, `priority_score`, and `drop_reason` for all candidates. Hotspots were already inserted in Phase 2 — do not re-insert. (`priority_score` was already computed in Phase 7; this UPDATE re-writes the final value after any Phase 6 severity downgrades that happened after the Phase 7 scoring.)
 
 ```bash
-sqlite3 ./.code-review/${PR_REF}.sqlite \
+sqlite3 ./logbooks/code-review/${PR_REF}.sqlite \
   "UPDATE candidate_findings
    SET detection_state = '${DETECTION_STATE}',
        surfacing_state = '${SURFACING_STATE}',
@@ -815,8 +815,8 @@ Present concise, reviewer-oriented output:
 (list only when they materially affect confidence in the surfaced items)
 
 ---
-Logbook: ./.code-review/{PR_REF}.sqlite
-         ./.code-review/{PR_REF}.jsonl
+Logbook: ./logbooks/code-review/{PR_REF}.sqlite
+         ./logbooks/code-review/{PR_REF}.jsonl
 ```
 
 **Rules:**
@@ -830,4 +830,4 @@ Logbook: ./.code-review/{PR_REF}.sqlite
 
 Full schema, query examples, and cloud export setup: `plugins/deep-code-review/skills/deep-code-review/findings.logbook.md`.
 
-**Important:** `findings.logbook.md` is a shared repo artifact — permanently read-only. Never edit its `address_pattern` or binding fields. Store resolved IDs and credentials in a gitignored local override (e.g. `./.code-review/bindings.local.yaml`) — never in the spec file.
+**Important:** `findings.logbook.md` is a shared repo artifact — permanently read-only. Never edit its `address_pattern` or binding fields. Store resolved IDs and credentials in a gitignored local override (e.g. `./logbooks/code-review/bindings.local.yaml`) — never in the spec file.

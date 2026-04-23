@@ -34,7 +34,7 @@ Generate, filter, and validate names for a product, feature, company, project, o
 - ~70 name candidates in the logbook, distributed across SAFE / BOLD / WILD and five naming angles.
 - ~10 taste-picked favorites with `taste=picked` assessments.
 - Web-sourced facts on the top 10: domain availability observations, trademark hits, similar brands in the category. Evidence-state on each shifts from `untested` to `supported` / `stressed` / `disputed`.
-- One comparison report under `./.ideation/<slug>/reports/<run_id>-compare.md` showing name, description, taste rank, and a one-line evidence summary for each survivor.
+- One comparison report under `./logbooks/ideation/<slug>/reports/<run_id>-compare.md` showing name, description, taste rank, and a one-line evidence summary for each survivor.
 
 ## Notes on the craft
 

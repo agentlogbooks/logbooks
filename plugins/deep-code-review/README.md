@@ -11,7 +11,7 @@ Optimized to be **right about a few important things**, not to produce many comm
 5. Runs a skeptic pass and dedup.
 6. Surfaces **at most 5** high-signal outputs.
 
-Each run is persisted to a per-run JSONL trace and per-PR SQLite ledger under `./.code-review/` in the reviewed repo, so follow-up reviews can see what was already flagged.
+Each run is persisted to a per-run JSONL trace and per-PR SQLite ledger under `./logbooks/code-review/` in the reviewed repo, so follow-up reviews can see what was already flagged.
 
 ## Install
 

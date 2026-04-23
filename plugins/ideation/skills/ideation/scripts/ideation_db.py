@@ -2,7 +2,7 @@
 """
 ideation_db.py — SQLite multi-entity CLI for the ideation skill.
 
-One database per topic at `./.ideation/<slug>/logbook.sqlite`.
+One database per topic at `./logbooks/ideation/<slug>/logbook.sqlite`.
 Schema, semantics, and correction rules are documented in `ideation.logbook.md`.
 
 Conventions:
@@ -35,7 +35,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent))
 # Path resolution
 # ----------------------------------------------------------------------------
 
-IDEATION_DIR = ".ideation"
+IDEATION_DIR = "logbooks/ideation"
 
 
 def _git_root(start: Path) -> Path | None:
@@ -56,7 +56,7 @@ def _git_root(start: Path) -> Path | None:
 
 
 def _ideation_root() -> Path:
-    """Resolve the `./.ideation/` root: env override > git repo root > cwd."""
+    """Resolve the `./logbooks/ideation/` root: env override > git repo root > cwd."""
     override = os.environ.get("IDEATION_ROOT_OVERRIDE")
     if override:
         return Path(override)
@@ -1617,7 +1617,7 @@ def _render_catalog_yaml(payload: dict[str, Any]) -> str:
 
 
 def _add_slug(p: argparse.ArgumentParser) -> None:
-    p.add_argument("slug", help="Topic slug (directory name under .ideation/)")
+    p.add_argument("slug", help="Topic slug (directory name under logbooks/ideation/)")
 
 
 def build_parser() -> argparse.ArgumentParser:

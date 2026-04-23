@@ -46,7 +46,7 @@ Full-treatment ideation for a fresh problem. Scout the problem space, generate f
 
 - ~50–80 active ideas in the logbook at peak (before shortlist).
 - 3–5 selected ideas after `decide.converge`.
-- Four report artifacts under `./.ideation/<slug>/reports/<run_id>-*.md`.
+- Four report artifacts under `./logbooks/ideation/<slug>/reports/<run_id>-*.md`.
 
 ## Notes
 

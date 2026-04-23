@@ -91,7 +91,7 @@ If `params.emphasis` is set, use it as a filter on which HMW questions to lean o
 Read active frame + facts:
 ```bash
 python scripts/ideation_db.py active-frame $SLUG
-sqlite3 ./.ideation/$SLUG/logbook.sqlite \
+sqlite3 ./logbooks/ideation/$SLUG/logbook.sqlite \
   "SELECT fact_id, claim, confidence, stance FROM facts ORDER BY confidence DESC;"
 ```
 

@@ -4,7 +4,7 @@ Idea-centric brainstorming on a per-topic SQLite logbook. Learn more at [agentlo
 
 Atomic operators (`generate`, `transform`, `evaluate`, `validate`, `decide`) compose into playbooks — covering brainstorming, naming, developing or combining ideas, stress-testing candidates, reframing problems, and picking final directions. Ideas persist across sessions, so follow-up prompts resume where the last one ended.
 
-A logbook lives at `./.ideation/<topic-slug>/logbook.sqlite` under your current repo root (or cwd). It carries the topic's frame, facts, ideas, lineage, assessments, and operator runs — the authoritative state across sessions.
+A logbook lives at `./logbooks/ideation/<topic-slug>/logbook.sqlite` under your current repo root (or cwd). It carries the topic's frame, facts, ideas, lineage, assessments, and operator runs — the authoritative state across sessions.
 
 ## Install
 

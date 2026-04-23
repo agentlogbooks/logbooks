@@ -12,6 +12,7 @@ use_when:
 avoid_when:
   - only one idea in the cohort
   - candidates are near-duplicates (hybridizing adds nothing)
+  - already hybridized recently on this lineage
 produces:
   ideas: true
   assessments: false

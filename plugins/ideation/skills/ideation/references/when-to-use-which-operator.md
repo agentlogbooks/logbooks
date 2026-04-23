@@ -111,6 +111,7 @@ Generated from operator frontmatter. Grouped by stage. For each operator, the **
 - **Avoid when:**
   - only one idea in the cohort
   - candidates are near-duplicates (hybridizing adds nothing)
+  - already hybridized recently on this lineage
 - **Typical followups:** transform.refine, validate.proof_search
 
 ### transform.invert
@@ -300,7 +301,7 @@ Generated from operator frontmatter. Grouped by stage. For each operator, the **
 
 - **scope:** pool
 - **applies to kinds:** —
-- **min cohort:** 1
+- **min cohort:** 2
 - **Use when:**
   - pool has been evaluated and validated
   - user asks to "pick" or "decide" or "converge"

@@ -4,7 +4,7 @@ stage: decide
 scope: pool
 applies_to:
   kinds: []
-  min_cohort: 1
+  min_cohort: 2
 use_when:
   - pool has been evaluated and validated
   - user asks to "pick" or "decide" or "converge"

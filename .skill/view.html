@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ideation — Live Wall</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1408; color: #e8dfc0; font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+header { padding: 12px 20px; border-bottom: 1px solid #2e2410; display: flex; align-items: center; gap: 10px; background: #150f04; }
+header h1 { font-size: 13px; font-weight: 600; color: #a09060; letter-spacing: 0.06em; text-transform: uppercase; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: #c8a020; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+
+.phases { display: flex; align-items: center; padding: 9px 20px; border-bottom: 1px solid #2e2410; background: #120d03; flex-wrap: wrap; gap: 4px; }
+.phase { display: flex; align-items: center; gap: 7px; font-size: 11px; color: #5a4c28; transition: color .3s; }
+.phase.done { color: #7a9a50; }
+.phase.active { color: #d4a020; }
+.phase-dot { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #3a3018; transition: all .3s; flex-shrink: 0; }
+.phase.done .phase-dot { background: #7a9a50; border-color: #7a9a50; }
+.phase.active .phase-dot { background: #d4a020; border-color: #d4a020; animation: pdot 1s ease-in-out infinite; }
+@keyframes pdot { 0%,100%{box-shadow:0 0 0 0 rgba(212,160,32,.5)} 50%{box-shadow:0 0 0 5px rgba(212,160,32,0)} }
+.phase-line { width: 24px; height: 1px; background: #2e2410; margin: 0 2px; }
+
+.stats { display: flex; gap: 18px; padding: 6px 20px; background: #120d03; border-bottom: 1px solid #2e2410; font-size: 11px; color: #5a4c28; flex-wrap: wrap; }
+.stats span { display: flex; align-items: center; gap: 5px; }
+.stat-val { font-weight: 700; color: #c8a020; }
+#cutCount { color: #7a5c40; }
+#keptCount { color: #7a9a50; }
+
+.board { padding: 18px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 14px; align-items: start; }
+
+/* Sticky note card */
+.card {
+  background: #e8d860;
+  border-radius: 3px;
+  padding: 14px 14px 12px;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 3px 3px 8px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.06);
+  transition: transform .15s, box-shadow .15s, opacity .4s;
+  animation: cardIn .35s cubic-bezier(.34,1.56,.64,1) both;
+  min-height: 110px;
+}
+@keyframes cardIn { from{opacity:0;transform:translateY(16px) rotate(-1deg) scale(.94)} to{opacity:1;transform:translateY(0) rotate(0deg) scale(1)} }
+.card:nth-child(4n+1) { background: #e8d860; }
+.card:nth-child(4n+2) { background: #f0e070; }
+.card:nth-child(4n+3) { background: #e8e060; }
+.card:nth-child(4n+4) { background: #f4dc50; }
+.card:hover { transform: translateY(-3px) rotate(0.5deg); box-shadow: 5px 5px 14px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.06); }
+.card.cut { opacity: .32; }
+.card.cut .card-title { text-decoration: line-through; text-decoration-color: rgba(0,0,0,.5); }
+
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+.kind-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+.kind-seed .kind-dot { background: #3a7a50; }
+.kind-variant .kind-dot { background: #7a4090; }
+.kind-hybrid .kind-dot { background: #c05020; }
+.status-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: rgba(0,0,0,.4); }
+.card.cut .status-tag { color: rgba(0,0,0,.3); }
+.card.kept .status-tag { color: #2a6030; }
+
+.card-title { font-size: 13px; font-weight: 700; color: #1a1408; line-height: 1.35; margin-bottom: 6px; }
+.card-desc { font-size: 11.5px; color: rgba(26,20,8,.65); line-height: 1.5; }
+.card-footer { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; }
+.card-score { font-size: 14px; font-weight: 800; color: #1a1408; }
+.card-rank { font-size: 10px; font-weight: 700; color: rgba(26,20,8,.5); }
+
+/* Tape effect on top */
+.card::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 40px; height: 14px; background: rgba(255,255,255,.35); border-radius: 2px; }
+
+/* Modal */
+.backdrop { display: none; position: fixed; inset: 0; background: rgba(10,8,2,.75); z-index: 100; align-items: center; justify-content: center; }
+.backdrop.open { display: flex; }
+.modal { background: #e8d860; border-radius: 4px; width: min(520px, 92vw); max-height: 84vh; overflow-y: auto; padding: 28px 24px 24px; box-shadow: 6px 6px 24px rgba(0,0,0,.6); animation: min .2s ease both; position: relative; }
+.modal::before { content: ''; position: absolute; top: -7px; left: 50%; transform: translateX(-50%); width: 50px; height: 16px; background: rgba(255,255,255,.35); border-radius: 2px; }
+@keyframes min { from{opacity:0;transform:scale(.95)} to{opacity:1;transform:scale(1)} }
+.m-close { position: absolute; top: 10px; right: 14px; background: none; border: none; color: rgba(26,20,8,.4); font-size: 20px; cursor: pointer; line-height: 1; }
+.m-close:hover { color: rgba(26,20,8,.8); }
+.m-meta { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: rgba(26,20,8,.4); margin-bottom: 8px; display: flex; gap: 12px; align-items: center; }
+.m-title { font-size: 19px; font-weight: 800; color: #1a1408; margin-bottom: 18px; line-height: 1.3; }
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.m-cell { background: rgba(255,255,255,.3); border-radius: 4px; padding: 8px 10px; }
+.m-cell.wide { grid-column: 1/-1; }
+.m-clabel { font-size: 9px; color: rgba(26,20,8,.45); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.m-cval { font-size: 12px; color: #1a1408; font-weight: 600; }
+hr.div { border: none; border-top: 1px solid rgba(0,0,0,.12); margin: 14px 0; }
+.m-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: rgba(26,20,8,.45); margin-bottom: 6px; }
+.m-body { font-size: 13px; color: rgba(26,20,8,.8); line-height: 1.65; }
+.m-note { background: rgba(0,0,0,.07); border-radius: 4px; padding: 10px 12px; font-size: 12px; color: rgba(26,20,8,.7); line-height: 1.55; font-style: italic; }
+
+.empty { grid-column: 1/-1; padding: 52px 20px; text-align: center; color: #3a3018; font-size: 14px; }
+.empty-icon { font-size: 36px; margin-bottom: 12px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="live-dot" id="liveDot"></div>
+  <h1 id="wallTitle">ideation — live wall</h1>
+</header>
+
+<div class="phases" id="phaseStrip"></div>
+
+<div class="stats">
+  <span>Ideas: <span class="stat-val" id="totalCount">0</span></span>
+  <span>Active: <span class="stat-val" id="activeCount">0</span></span>
+  <span>Kept: <span class="stat-val" id="keptCount">0</span></span>
+  <span>Cut: <span class="stat-val" id="cutCount">0</span></span>
+</div>
+
+<div class="board" id="board">
+  <div class="empty" id="empty">
+    <div class="empty-icon">💡</div>
+    <div>Waiting for ideas…</div>
+  </div>
+</div>
+
+<div class="backdrop" id="backdrop">
+  <div class="modal">
+    <button class="m-close" onclick="closeModal()">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const ideas = {};
+let counts = { total: 0, active: 0, kept: 0, cut: 0 };
+
+const PHASES = [];
+let phaseDefs = [];
+
+function esc(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+function renderPhases(activeName) {
+  if (!phaseDefs.length) return;
+  document.getElementById('phaseStrip').innerHTML = phaseDefs.map((p,i) => {
+    const cls = p.done ? 'done' : p.name === activeName ? 'active' : '';
+    const line = i < phaseDefs.length-1 ? '<div class="phase-line"></div>' : '';
+    return `<div class="phase ${cls}"><div class="phase-dot"></div>${p.name}</div>${line}`;
+  }).join('');
+}
+
+function updateStats() {
+  document.getElementById('totalCount').textContent = counts.total;
+  document.getElementById('activeCount').textContent = counts.active;
+  document.getElementById('keptCount').textContent = counts.kept;
+  document.getElementById('cutCount').textContent = counts.cut;
+}
+
+function kindClass(k) { return { seed:'kind-seed', variant:'kind-variant', hybrid:'kind-hybrid' }[k] || 'kind-seed'; }
+function statusLabel(s) { return { active:'active', kept:'✓ kept', cut:'✕ cut', hybrid:'⌘ hybrid' }[s] || s; }
+
+function renderCard(idea) {
+  const el = document.createElement('div');
+  const kc = kindClass(idea.kind || 'seed');
+  el.className = `card ${kc} ${idea.status === 'cut' ? 'cut' : ''} ${idea.status === 'kept' ? 'kept' : ''}`;
+  el.id = `card-${idea.id}`;
+  el.onclick = () => openModal(idea.id);
+  const scoreHtml = idea.score != null ? `<span class="card-score">${idea.score}</span>` : '';
+  const rankHtml = idea.rank != null ? `<span class="card-rank">#${idea.rank}</span>` : '';
+  el.innerHTML = `
+    <div class="card-header">
+      <div class="kind-dot"></div>
+      <span class="status-tag">${statusLabel(idea.status || 'active')}</span>
+    </div>
+    <div class="card-title">${esc(idea.title)}</div>
+    <div class="card-desc">${esc((idea.description||'').slice(0,90))}${(idea.description||'').length>90?'…':''}</div>
+    <div class="card-footer">${scoreHtml}${rankHtml}</div>`;
+  return el;
+}
+
+function patchCard(id) {
+  const idea = ideas[id];
+  if (!idea) return;
+  const el = document.getElementById(`card-${id}`);
+  if (!el) return;
+  el.className = `card ${kindClass(idea.kind||'seed')} ${idea.status==='cut'?'cut':''} ${idea.status==='kept'?'kept':''}`;
+  el.querySelector('.status-tag').textContent = statusLabel(idea.status||'active');
+  if (idea.score != null) {
+    let sf = el.querySelector('.card-score');
+    if (!sf) { sf = document.createElement('span'); sf.className = 'card-score'; el.querySelector('.card-footer').appendChild(sf); }
+    sf.textContent = idea.score;
+  }
+  if (idea.rank != null) {
+    let rf = el.querySelector('.card-rank');
+    if (!rf) { rf = document.createElement('span'); rf.className = 'card-rank'; el.querySelector('.card-footer').appendChild(rf); }
+    rf.textContent = `#${idea.rank}`;
+  }
+}
+
+function openModal(id) {
+  const f = ideas[id];
+  if (!f) return;
+  document.getElementById('modalContent').innerHTML = `
+    <div class="m-meta">
+      <span>${(f.kind||'seed').toUpperCase()}</span>
+      ${f.rank != null ? `<span>#${f.rank}</span>` : ''}
+    </div>
+    <div class="m-title">${esc(f.title)}</div>
+    <div class="m-grid">
+      <div class="m-cell"><div class="m-clabel">Status</div><div class="m-cval">${statusLabel(f.status||'active')}</div></div>
+      <div class="m-cell"><div class="m-clabel">Score</div><div class="m-cval">${f.score != null ? f.score : '—'}</div></div>
+      ${f.parents ? `<div class="m-cell wide"><div class="m-clabel">Parents</div><div class="m-cval" style="font-family:monospace;font-size:11px">#${(f.parents||[]).join(', #')}</div></div>` : ''}
+    </div>
+    <hr class="div">
+    <div class="m-lbl">Description</div>
+    <div class="m-body" style="margin-bottom:14px">${esc(f.description||'')}</div>
+    ${f.rationale ? `<hr class="div"><div class="m-lbl">Why it's interesting</div><div class="m-note">${esc(f.rationale)}</div>` : ''}
+    ${f.stress_note ? `<hr class="div"><div class="m-lbl">Stress-test</div><div class="m-note">${esc(f.stress_note)}</div>` : ''}`;
+  document.getElementById('backdrop').classList.add('open');
+}
+
+function closeModal() { document.getElementById('backdrop').classList.remove('open'); }
+document.getElementById('backdrop').onclick = e => { if (e.target.id==='backdrop') closeModal(); };
+document.addEventListener('keydown', e => e.key==='Escape' && closeModal());
+
+const handlers = {
+  session_started: p => {
+    if (p.topic) document.getElementById('wallTitle').textContent = `ideation — ${p.topic}`;
+    if (p.phases) {
+      phaseDefs = p.phases.map(n => ({ name: n, done: false }));
+      renderPhases(null);
+    }
+  },
+  phase_started: p => {
+    phaseDefs.forEach((ph,i) => { if (ph.name === p.name) { phaseDefs.slice(0,i).forEach(x => x.done=true); } });
+    renderPhases(p.name);
+  },
+  phase_done: p => {
+    phaseDefs.forEach(ph => { if (ph.name === p.name) ph.done = true; });
+    renderPhases(null);
+  },
+  idea_generated: p => {
+    if (ideas[p.id]) return;
+    ideas[p.id] = { ...p, status: p.status || 'active' };
+    counts.total++;
+    counts.active++;
+    const em = document.getElementById('empty');
+    if (em) em.remove();
+    document.getElementById('board').appendChild(renderCard(ideas[p.id]));
+    updateStats();
+  },
+  idea_kept: p => {
+    if (!ideas[p.id]) return;
+    if (ideas[p.id].status === 'active') { counts.active--; counts.kept++; }
+    ideas[p.id].status = 'kept';
+    patchCard(p.id);
+    updateStats();
+  },
+  idea_cut: p => {
+    if (!ideas[p.id]) return;
+    if (ideas[p.id].status === 'active') { counts.active--; counts.cut++; }
+    else if (ideas[p.id].status === 'kept') { counts.kept--; counts.cut++; }
+    ideas[p.id].status = 'cut';
+    if (p.stress_note) ideas[p.id].stress_note = p.stress_note;
+    patchCard(p.id);
+    updateStats();
+  },
+  idea_scored: p => {
+    if (!ideas[p.id]) return;
+    ideas[p.id].score = p.score;
+    if (p.rationale) ideas[p.id].rationale = p.rationale;
+    patchCard(p.id);
+  },
+  idea_ranked: p => {
+    if (!ideas[p.id]) return;
+    ideas[p.id].rank = p.rank;
+    patchCard(p.id);
+  },
+  session_complete: () => {
+    phaseDefs.forEach(p => p.done = true);
+    renderPhases(null);
+    const dot = document.getElementById('liveDot');
+    dot.style.background = '#7a9a50';
+    dot.style.animation = 'none';
+  },
+};
+
+new EventSource('/events').onmessage = e => {
+  try { const ev = JSON.parse(e.data); handlers[ev.type]?.(ev.payload); } catch {}
+};
+</script>
+</body>
+</html>

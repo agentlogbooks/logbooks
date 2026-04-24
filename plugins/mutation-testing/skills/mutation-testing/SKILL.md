@@ -20,8 +20,8 @@ a real bug the suite would miss.
 
 ## What this skill does
 
-1. **Discovers source files** — auto-detects from project structure, or uses `--sources` globs
-2. **Detects test runner** — infers from project config files (pytest, jest, vitest, mocha, go test)
+1. **Discovers source files** — the calling agent reads the project structure and selects files
+2. **Detects test runner** — the calling agent inspects project config and builds the test command
 3. **Checks baseline** — verifies the test suite passes before mutating anything
 4. **Generates mutations via subagents** — dispatches one Task per source file in parallel; each
    subagent reads the file and returns a JSON array of mutations; results are merged into a single
@@ -41,18 +41,26 @@ This skill follows a two-phase protocol: **generate** then **run**.
 
 ### Phase 1 — Generate mutations (caller's responsibility)
 
-Before dispatching subagents, the calling agent should:
+Before dispatching subagents, the calling agent must:
 
-1. **Detect the test runner** by inspecting the project root:
-   - `pytest.ini` / `conftest.py` / `[tool.pytest]` in `pyproject.toml` → `pytest`
-   - `jest.config.*` or `"jest"` in `package.json` devDependencies → `jest`
-   - `"vitest"` in `package.json` devDependencies → `vitest`
-   - `"mocha"` in `package.json` devDependencies → `mocha`
-   - Any `*.go` file → `go_test`
-   - `"test"` script in `package.json` → `npm_test`
-   Pass the result as `--runner <runner>` in Phase 2 so no auto-detection heuristics run.
-2. **Discover source files** by reading the project structure (prefer `src/`, `lib/` directories;
-   skip test files, `.venv`, `.git`, `dist`, `build`, `node_modules`, `__pycache__`).
+1. **Discover source files** by reading the project structure. Prefer `src/`, `lib/` directories;
+   skip test files (`test_*.py`, `*_test.py`, `*.spec.*`, `*.test.*`, paths with `test/` or
+   `tests/`), and skip non-source directories (`.venv`, `.git`, `dist`, `build`, `node_modules`,
+   `__pycache__`, `site-packages`). Cap at 20 files.
+
+2. **Detect the test runner** by inspecting the project root, then build the full test command:
+
+   | Signal | Command |
+   | ------ | ------- |
+   | `pytest.ini`, `conftest.py`, or `[tool.pytest]` in `pyproject.toml` | `python -m pytest --tb=no -q --no-header` |
+   | `jest.config.*` or `"jest"` in `package.json` devDependencies | `npx jest --passWithNoTests --forceExit` |
+   | `"vitest"` in `package.json` devDependencies | `npx vitest run` |
+   | `"mocha"` in `package.json` devDependencies (no babel) | `npx mocha --recursive` |
+   | `"mocha"` + `"@babel/register"` in `package.json` devDependencies | `npx mocha --require @babel/register --recursive` |
+   | Any `*.go` file present | `go test ./...` |
+   | `"test"` script in `package.json` | `npm test` |
+
+   Pass the full command via `--test-command` in Phase 2.
 
 Then, for each source file to mutate, dispatch a subagent with this prompt template:
 
@@ -94,32 +102,39 @@ Collect all subagent outputs, merge into a single JSON array, and save to a temp
 
 ```bash
 python plugins/mutation-testing/skills/mutation-testing/scripts/mutation_testing.py \
-  --mutations-file /tmp/mutations.json
+  --mutations-file /tmp/mutations.json \
+  --test-command python -m pytest --tb=no -q
 ```
 
 With options:
 
 ```bash
-# Specify source globs explicitly (for display / auto-detection context)
-python ... --mutations-file /tmp/mutations.json --sources "src/**/*.py" "lib/**/*.py"
+# Jest project
+python ... --mutations-file /tmp/mutations.json \
+  --test-command npx jest --passWithNoTests --forceExit
 
-# Custom runner, threshold, and timeout
-python ... --mutations-file /tmp/mutations.json --runner pytest --threshold 80 --timeout 120
+# Custom threshold and timeout
+python ... --mutations-file /tmp/mutations.json --threshold 80 --timeout 120 \
+  --test-command python -m pytest --tb=no -q
 
 # Record which model was used for generation (metadata only)
-python ... --mutations-file /tmp/mutations.json --model claude-sonnet-4-6
+python ... --mutations-file /tmp/mutations.json --model claude-sonnet-4-6 \
+  --test-command python -m pytest --tb=no -q
 
 # Skip logbook writes
-python ... --mutations-file /tmp/mutations.json --no-logbook
+python ... --mutations-file /tmp/mutations.json --no-logbook \
+  --test-command python -m pytest --tb=no -q
 ```
+
+> **Note:** `--test-command` must be the last flag — all remaining arguments after it are
+> captured as the test command.
 
 ## CLI flags
 
 | Flag | Default | Description |
 | ---- | ------- | ----------- |
 | `--mutations-file PATH` | **required** | JSON file of pre-generated mutations |
-| `--sources GLOB [GLOB …]` | auto | Glob patterns for source files (used for display and auto-detection) |
-| `--runner` | auto | `pytest` \| `jest` \| `vitest` \| `mocha` \| `go_test` \| `npm_test` |
+| `--test-command WORD …` | **required** | Full test command (must be last flag) |
 | `--threshold` | `70` | Minimum acceptable mutation score |
 | `--timeout` | `60` | Seconds allowed per test run |
 | `--model` | none | Claude model used for generation — recorded in logbook as metadata (optional) |
@@ -140,40 +155,8 @@ python ... --mutations-file /tmp/mutations.json --no-logbook
 
 - Python 3.10+ (uses `match`/`case` and `str.removesuffix`)
 - A working test suite (tests must pass before running mutation tests)
-- At least one source file (auto-detected or via `--sources`)
+- At least one source file (discovered by the calling agent)
 - No SDK or API key required — mutation generation is done by the calling Claude agent
-
----
-
-## Auto-detection
-
-### Source files
-
-Searches in order: `src/`, `lib/`, project root. Finds `.py` first, then `.ts`, then `.js`.
-Test files are excluded (`test_*.py`, `*_test.py`, `*.spec.*`, `*.test.*`, paths containing
-`test/` or `tests/`). Directories `.venv`, `.git`, `dist`, `build`, `__pycache__`, and similar
-are excluded. Capped at 20 files per run.
-
-> **Caveat:** Discovery picks the first language bucket it finds. In polyglot repos (e.g. a Python
-> project with TypeScript tooling) it may pick the wrong language. Use `--sources` explicitly in
-> those cases.
-
-### Test runner
-
-Detected from project config files in the working directory:
-
-| Signal | Runner |
-| ------ | ------ |
-| `pytest.ini`, `conftest.py`, `[tool.pytest]` in `pyproject.toml` | `pytest` |
-| `jest.config.*` or `"jest"` in `package.json` devDependencies | `jest` |
-| `"vitest"` in `package.json` devDependencies | `vitest` |
-| `"mocha"` in `package.json` devDependencies | `mocha` |
-| Any `*.go` file present | `go test ./...` |
-| `"test"` script in `package.json` | `npm test` |
-
-> **Caveat:** Detection can mislead in mixed repos. A repo with both `jest` and `vitest` in
-> devDependencies will resolve to whichever appears first. Use `--runner` explicitly when
-> auto-detection is unreliable.
 
 ---
 

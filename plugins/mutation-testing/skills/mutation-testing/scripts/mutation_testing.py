@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """
 Mutation testing runner — applies mutations from a JSON file and runs the project test suite.
-Call with --mutations-file pointing at pre-generated mutations (JSON array).
+Call with --mutations-file pointing at pre-generated mutations (JSON array) and
+--test-command specifying the test suite command (must be the last flag).
 """
 
 import subprocess
@@ -23,113 +24,6 @@ _SHELL = platform.system() == "Windows"
 THRESHOLD_DEFAULT  = 70
 TIMEOUT_DEFAULT    = 60    # seconds per test run
 LOGBOOK_DIR        = Path(".logbooks") / "mutation-testing"
-
-EXCLUDED_DIRS = {
-    ".venv", "venv", ".git", "dist", "build", "__pycache__",
-    ".tox", ".nox", "target", ".pytest_cache", ".mypy_cache",
-    "site-packages", "node_modules",
-}
-
-
-# ── Source file discovery ─────────────────────────────────────────────────────
-
-def _is_test_file(path: Path) -> bool:
-    name = path.name
-    return (
-        name.startswith("test_")
-        or name.endswith("_test.py")
-        or ".spec." in name
-        or ".test." in name
-        or "test" in path.parts
-        or "tests" in path.parts
-    )
-
-
-def auto_discover_sources(cwd: Path) -> list[Path]:
-    """Return up to 20 non-test source files, preferring src/ and lib/ layouts."""
-    for ext, bases in [
-        ("*.py",           [cwd / "src", cwd / "lib", cwd]),
-        ("*.ts",           [cwd / "src", cwd / "lib", cwd]),
-        ("*.js",           [cwd / "src", cwd / "lib", cwd]),
-    ]:
-        for base in bases:
-            found = [
-                f for f in base.rglob(ext)
-                if not _is_test_file(f)
-                and not any(p in EXCLUDED_DIRS for p in f.parts)
-            ]
-            if found:
-                return sorted(found)[:20]
-    return []
-
-
-def resolve_sources(patterns: list[str], cwd: Path) -> list[Path]:
-    files: list[Path] = []
-    for pattern in patterns:
-        files.extend(cwd.glob(pattern))
-    return sorted({f for f in files if f.is_file()})
-
-
-# ── Test runner detection ─────────────────────────────────────────────────────
-
-def detect_test_runner(cwd: Path) -> str | None:
-    # Python — pytest
-    if any((cwd / f).exists() for f in ["pytest.ini", "conftest.py"]):
-        return "pytest"
-    for cfg in ["pyproject.toml", "setup.cfg"]:
-        p = cwd / cfg
-        if p.exists() and "pytest" in p.read_text(encoding="utf-8"):
-            return "pytest"
-    if list(cwd.rglob("test_*.py")) or list(cwd.rglob("*_test.py")):
-        return "pytest"
-
-    # Go
-    if list(cwd.glob("*.go")) or list(cwd.rglob("*.go")):
-        return "go_test"
-
-    # JavaScript / TypeScript
-    jest_configs = ["jest.config.js", "jest.config.ts", "jest.config.mjs", "jest.config.cjs"]
-    if any((cwd / f).exists() for f in jest_configs):
-        return "jest"
-
-    pkg_json = cwd / "package.json"
-    if pkg_json.exists():
-        try:
-            pkg = json.loads(pkg_json.read_text(encoding="utf-8"))
-        except Exception:
-            pkg = {}
-        deps = {**pkg.get("dependencies", {}), **pkg.get("devDependencies", {})}
-        if "jest"   in deps: return "jest"
-        if "vitest" in deps: return "vitest"
-        if "mocha"  in deps: return "mocha"
-        if "test"   in pkg.get("scripts", {}): return "npm_test"
-
-    return None
-
-
-def build_test_command(runner: str, cwd: Path | None = None) -> list[str]:
-    base = {
-        "pytest":   ["python", "-m", "pytest", "--tb=no", "-q", "--no-header"],
-        "jest":     ["npx", "jest", "--passWithNoTests", "--forceExit"],
-        "vitest":   ["npx", "vitest", "run"],
-        "mocha":    ["npx", "mocha", "--recursive"],
-        "go_test":  ["go", "test", "./..."],
-        "npm_test": ["npm", "test"],
-    }.get(runner, [])
-
-    # Auto-add --require @babel/register when mocha + @babel/register is installed
-    if runner == "mocha" and cwd is not None:
-        pkg_json = cwd / "package.json"
-        if pkg_json.exists():
-            try:
-                pkg = json.loads(pkg_json.read_text(encoding="utf-8"))
-                all_deps = {**pkg.get("dependencies", {}), **pkg.get("devDependencies", {})}
-                if "@babel/register" in all_deps:
-                    base = ["npx", "mocha", "--require", "@babel/register", "--recursive"]
-            except Exception:
-                pass
-
-    return base
 
 
 # ── Baseline check ────────────────────────────────────────────────────────────
@@ -672,41 +566,33 @@ def append_jsonl(
 
 def main() -> None:
     parser = argparse.ArgumentParser(
-        description="Mutation testing runner: applies pre-generated mutations and runs the test suite."
+        description="Mutation testing runner: applies pre-generated mutations and runs the test suite.",
+        epilog="--test-command must be the last flag; all remaining arguments become the command.",
     )
-    parser.add_argument("--sources", nargs="+", metavar="GLOB",
-                        help="Source file globs (e.g. 'src/**/*.py'). Auto-detected if omitted.")
-    parser.add_argument("--runner",
-                        choices=["pytest", "jest", "vitest", "mocha", "go_test", "npm_test"],
-                        help="Test runner (auto-detected if omitted).")
+    parser.add_argument("--mutations-file", metavar="PATH", required=True,
+                        help="JSON file of pre-generated mutations.")
     parser.add_argument("--threshold",    type=float, default=THRESHOLD_DEFAULT,
                         help=f"Minimum mutation score (default: {THRESHOLD_DEFAULT})")
     parser.add_argument("--timeout",      type=int,   default=TIMEOUT_DEFAULT,
                         help=f"Seconds per test run (default: {TIMEOUT_DEFAULT})")
     parser.add_argument("--model",        default=None,
                         help="Claude model used to generate the mutations — recorded in logbook only (optional)")
-    parser.add_argument("--mutations-file", metavar="PATH", required=True,
-                        help="JSON file of pre-generated mutations.")
     parser.add_argument("--skip-baseline", action="store_true",
                         help="Skip the baseline test-suite pass check.")
     parser.add_argument("--no-logbook",   action="store_true",
                         help="Skip SQLite/JSONL logbook writes.")
+    parser.add_argument("--test-command", nargs=argparse.REMAINDER, required=True,
+                        help="Test command to run, e.g. python -m pytest --tb=no -q  "
+                             "(must be the last flag — everything after it is captured).")
     args = parser.parse_args()
 
-    cwd = Path.cwd()
-
-    # ── Source files (display only — mutations come from --mutations-file) ─────
-    source_files = resolve_sources(args.sources, cwd) if args.sources else auto_discover_sources(cwd)
-    if source_files:
-        print(f"🔍 {len(source_files)} source file(s) detected")
-
-    # ── Test runner ───────────────────────────────────────────────────────────
-    runner = args.runner or detect_test_runner(cwd)
-    if not runner:
-        print("❌ Could not detect test runner. Use --runner pytest|jest|vitest|mocha|go_test|npm_test")
+    if not args.test_command:
+        print("❌ --test-command requires at least one argument.")
         sys.exit(1)
-    test_command = build_test_command(runner, cwd)
-    print(f"🧪 Test runner: {runner}  ({' '.join(test_command)})")
+
+    cwd          = Path.cwd()
+    test_command = args.test_command
+    print(f"🧪 Test command: {' '.join(test_command)}")
 
     # ── Baseline check ────────────────────────────────────────────────────────
     if not args.skip_baseline:

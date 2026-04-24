@@ -75,8 +75,9 @@ class operation, not just an absence of the mutant in the next run.
 - `runs` and `mutant_results` are **append-only** — never update prior rows.
 - `mutants` rows are **upserted** — counters increment on each run.
 - `gap_ledger` rows are **patched** — status transitions as gaps open and close.
-- `mutant_key` is a stable 16-char hex digest of `file:line:mutator:original_line` — survives
+- `mutant_key` is a stable 24-char hex digest of `file \0 line \0 col \0 mutator \0 original_line \0 mutated_line` — survives
   re-runs but changes if the source line is edited (correct: it's a new mutation location).
+  The `col` and `mutated_line` fields ensure two different mutations on the same line get distinct keys.
 - Skipped mutants are excluded from score and not written to `mutant_results`.
 
 ---
@@ -101,6 +102,11 @@ One row per mutation test run. Append-only.
 | threshold | real NOT NULL | Score threshold used for this run |
 | passed | integer NOT NULL | 1 if score ≥ threshold, 0 otherwise |
 | model | text | Claude model used for mutation generation |
+| test_command | text | Full test command string for replay |
+| timeout | integer | Per-mutation timeout in seconds |
+| commit | text | `git rev-parse HEAD` at run start |
+| branch | text | `git rev-parse --abbrev-ref HEAD` at run start |
+| dirty | integer | 1 if working tree was dirty at run start (score non-reproducible) |
 
 ### mutant_results
 
@@ -119,7 +125,7 @@ One row per unique mutant identity. Upserted on each run (counters increment).
 
 | Column | Type | Notes |
 | ------ | ---- | ----- |
-| mutant_key | text PK | `sha256(file:line:mutator:original_line)[:16]` |
+| mutant_key | text PK | `sha256(file \0 line \0 col \0 mutator \0 original_line \0 mutated_line)[:24]` |
 | project | text NOT NULL | |
 | file | text NOT NULL | Source file path (relative to repo root) |
 | line | integer | 1-based line number |
@@ -169,7 +175,7 @@ One row per surviving mutant gap — the **patchable present-tense view**.
 
 | record_type | Written when | Key fields |
 | ----------- | ------------ | ---------- |
-| `run` | After stats are computed | run_id, project, ran_at, score, killed, survived, errors, skipped, total, threshold, passed, model |
+| `run` | After stats are computed | run_id, project, ran_at, score, killed, survived, errors, skipped, total, threshold, passed, model, test_command, timeout, commit, branch, dirty |
 | `mutant_result` | Once per non-skipped mutant | run_id, mutant_key, project, file, line, mutator, replacement, status |
 | `gap_update` | When gap_ledger changes | mutant_key, project, old_status, new_status, note, updated_at |
 
@@ -179,19 +185,31 @@ One row per surviving mutant gap — the **patchable present-tense view**.
 
 ```sql
 CREATE TABLE IF NOT EXISTS runs (
-    run_id    TEXT PRIMARY KEY,
-    project   TEXT NOT NULL,
-    ran_at    TEXT NOT NULL,
-    score     REAL NOT NULL,
-    killed    INTEGER NOT NULL,
-    survived  INTEGER NOT NULL,
-    errors    INTEGER NOT NULL,
-    skipped   INTEGER NOT NULL,
-    total     INTEGER NOT NULL,
-    threshold REAL NOT NULL,
-    passed    INTEGER NOT NULL,
-    model     TEXT
+    run_id       TEXT PRIMARY KEY,
+    project      TEXT NOT NULL,
+    ran_at       TEXT NOT NULL,
+    score        REAL NOT NULL,
+    killed       INTEGER NOT NULL,
+    survived     INTEGER NOT NULL,
+    errors       INTEGER NOT NULL,
+    skipped      INTEGER NOT NULL,
+    total        INTEGER NOT NULL,
+    threshold    REAL NOT NULL,
+    passed       INTEGER NOT NULL,
+    model        TEXT,
+    test_command TEXT,
+    timeout      INTEGER,
+    commit       TEXT,
+    branch       TEXT,
+    dirty        INTEGER
 );
+
+-- Migrate existing databases (SQLite ignores duplicate columns via the try/except in init_logbook)
+ALTER TABLE runs ADD COLUMN test_command TEXT;
+ALTER TABLE runs ADD COLUMN timeout      INTEGER;
+ALTER TABLE runs ADD COLUMN commit       TEXT;
+ALTER TABLE runs ADD COLUMN branch       TEXT;
+ALTER TABLE runs ADD COLUMN dirty        INTEGER;
 
 CREATE TABLE IF NOT EXISTS mutants (
     mutant_key     TEXT PRIMARY KEY,
@@ -239,7 +257,7 @@ CREATE INDEX IF NOT EXISTS idx_gap_ledger_status     ON gap_ledger(status);
 ### Score trend across runs
 
 ```sql
-SELECT run_id, ran_at, score, survived, passed, model
+SELECT run_id, ran_at, score, survived, passed, model, commit, branch, dirty
 FROM runs
 ORDER BY ran_at DESC
 LIMIT 20;

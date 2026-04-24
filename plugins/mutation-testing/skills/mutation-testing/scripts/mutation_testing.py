@@ -296,6 +296,23 @@ def resolve_slug() -> str:
     return slug.lower().replace(" ", "-")
 
 
+def resolve_git_context() -> dict:
+    try:
+        sha = subprocess.run(["git", "rev-parse", "HEAD"],
+                             capture_output=True, text=True, timeout=5)
+        br  = subprocess.run(["git", "rev-parse", "--abbrev-ref", "HEAD"],
+                             capture_output=True, text=True, timeout=5)
+        st  = subprocess.run(["git", "status", "--porcelain"],
+                             capture_output=True, text=True, timeout=5)
+        return {
+            "commit": sha.stdout.strip() or None,
+            "branch": br.stdout.strip() or None,
+            "dirty":  bool(st.stdout.strip()),
+        }
+    except Exception:
+        return {"commit": None, "branch": None, "dirty": None}
+
+
 def mutant_key(m: dict) -> str:
     # Includes mutated_line + col so two mutations on the same line with the same
     # mutator (e.g. two FlipGreaterThan variants) get distinct keys.
@@ -315,18 +332,23 @@ def init_logbook(db_path: Path) -> sqlite3.Connection:
     conn = sqlite3.connect(db_path)
     conn.executescript("""
         CREATE TABLE IF NOT EXISTS runs (
-            run_id    TEXT PRIMARY KEY,
-            project   TEXT NOT NULL,
-            ran_at    TEXT NOT NULL,
-            score     REAL NOT NULL,
-            killed    INTEGER NOT NULL,
-            survived  INTEGER NOT NULL,
-            errors    INTEGER NOT NULL,
-            skipped   INTEGER NOT NULL,
-            total     INTEGER NOT NULL,
-            threshold REAL NOT NULL,
-            passed    INTEGER NOT NULL,
-            model     TEXT
+            run_id       TEXT PRIMARY KEY,
+            project      TEXT NOT NULL,
+            ran_at       TEXT NOT NULL,
+            score        REAL NOT NULL,
+            killed       INTEGER NOT NULL,
+            survived     INTEGER NOT NULL,
+            errors       INTEGER NOT NULL,
+            skipped      INTEGER NOT NULL,
+            total        INTEGER NOT NULL,
+            threshold    REAL NOT NULL,
+            passed       INTEGER NOT NULL,
+            model        TEXT,
+            test_command TEXT,
+            timeout      INTEGER,
+            commit       TEXT,
+            branch       TEXT,
+            dirty        INTEGER
         );
         CREATE TABLE IF NOT EXISTS mutants (
             mutant_key     TEXT PRIMARY KEY,
@@ -363,6 +385,18 @@ def init_logbook(db_path: Path) -> sqlite3.Connection:
         CREATE INDEX IF NOT EXISTS idx_mutants_file          ON mutants(file);
         CREATE INDEX IF NOT EXISTS idx_gap_ledger_status     ON gap_ledger(status);
     """)
+    # Migrate existing databases — SQLite has no ALTER TABLE ADD COLUMN IF NOT EXISTS
+    for col, defn in [
+        ("test_command", "TEXT"),
+        ("timeout",      "INTEGER"),
+        ("commit",       "TEXT"),
+        ("branch",       "TEXT"),
+        ("dirty",        "INTEGER"),
+    ]:
+        try:
+            conn.execute(f"ALTER TABLE runs ADD COLUMN {col} {defn}")
+        except sqlite3.OperationalError:
+            pass  # column already exists
     conn.commit()
     return conn
 
@@ -395,6 +429,7 @@ def persist_run(
     threshold: float,
     results: list[dict],
     model: str,
+    run_ctx: dict,
 ) -> dict:
     """Persist a completed run. Returns gap categorisation: new/persistent/fixed + raw gap_updates."""
     now = datetime.now(timezone.utc).isoformat()
@@ -403,14 +438,20 @@ def persist_run(
     persistent_gaps: list[dict] = []
     fixed_gaps:      list[dict] = []
 
+    dirty = run_ctx.get("dirty")
     conn.execute(
-        "INSERT INTO runs VALUES (?,?,?,?,?,?,?,?,?,?,?,?)",
+        "INSERT INTO runs VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)",
         (
             run_id, project, now,
             stats["score"], stats["killed"], stats["survived"],
             stats["errors"], stats["skipped"], stats["total"],
             threshold, 1 if stats["score"] >= threshold else 0,
             model,
+            run_ctx.get("test_command"),
+            run_ctx.get("timeout"),
+            run_ctx.get("commit"),
+            run_ctx.get("branch"),
+            1 if dirty else 0 if dirty is not None else None,
         ),
     )
 
@@ -516,23 +557,30 @@ def append_jsonl(
     model: str,
     gap_result: dict,
     now: str,
+    run_ctx: dict,
 ) -> None:
     jsonl_path.parent.mkdir(parents=True, exist_ok=True)
+    dirty = run_ctx.get("dirty")
     with open(jsonl_path, "a", encoding="utf-8") as f:
         f.write(json.dumps({
-            "record_type": "run",
-            "run_id":      run_id,
-            "project":     project,
-            "ran_at":      now,
-            "score":       stats["score"],
-            "killed":      stats["killed"],
-            "survived":    stats["survived"],
-            "errors":      stats["errors"],
-            "skipped":     stats["skipped"],
-            "total":       stats["total"],
-            "threshold":   threshold,
-            "passed":      stats["score"] >= threshold,
-            "model":       model,
+            "record_type":  "run",
+            "run_id":       run_id,
+            "project":      project,
+            "ran_at":       now,
+            "score":        stats["score"],
+            "killed":       stats["killed"],
+            "survived":     stats["survived"],
+            "errors":       stats["errors"],
+            "skipped":      stats["skipped"],
+            "total":        stats["total"],
+            "threshold":    threshold,
+            "passed":       stats["score"] >= threshold,
+            "model":        model,
+            "test_command": run_ctx.get("test_command"),
+            "timeout":      run_ctx.get("timeout"),
+            "commit":       run_ctx.get("commit"),
+            "branch":       run_ctx.get("branch"),
+            "dirty":        1 if dirty else 0 if dirty is not None else None,
         }) + "\n")
 
         for m in results:
@@ -594,6 +642,16 @@ def main() -> None:
     test_command = args.test_command
     print(f"🧪 Test command: {' '.join(test_command)}")
 
+    # ── Git context (captured before any file mutations) ──────────────────────
+    git_ctx  = resolve_git_context()
+    run_ctx  = {
+        "test_command": " ".join(test_command),
+        "timeout":      args.timeout,
+        **git_ctx,
+    }
+    if git_ctx["dirty"]:
+        print("⚠️  Git tree is dirty at run start — score is not reproducible.")
+
     # ── Baseline check ────────────────────────────────────────────────────────
     if not args.skip_baseline:
         print("⏱  Running baseline (tests must pass before mutation)…", end="", flush=True)
@@ -652,8 +710,8 @@ def main() -> None:
     if conn is not None:
         now    = datetime.now(timezone.utc).isoformat()
         run_id = datetime.now(timezone.utc).strftime("%Y%m%d-%H%M%S") + f"-{secrets.token_hex(3)}-{slug}"
-        gap_result = persist_run(conn, run_id, slug, stats, args.threshold, results, args.model)
-        append_jsonl(jsonl_path, run_id, slug, stats, args.threshold, results, args.model, gap_result, now)
+        gap_result = persist_run(conn, run_id, slug, stats, args.threshold, results, args.model, run_ctx)
+        append_jsonl(jsonl_path, run_id, slug, stats, args.threshold, results, args.model, gap_result, now, run_ctx)
         print(f"📚 Logbook updated: {db_path}")
 
     print_gap_summary(gap_result, stats, has_logbook=conn is not None)

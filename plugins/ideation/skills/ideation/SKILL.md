@@ -455,6 +455,104 @@ The planner emits cohort references; the orchestrator resolves them via the CLI:
 | literal IDs `[17, 24]` | no CLI call needed; pass through |
 | `children_of(step N)` | for each idea produced by step N (from its operator_runs row's subsequent inserts), call `children-of` |
 
+## Live visualization (optional)
+
+When invoked interactively, the orchestrator can stream a real-time sticky-note wall to the browser. Infrastructure lives in `live/` next to this file.
+
+### Start the server
+
+Run once per session, before the plan executes. Background it so it doesn't block the shell:
+
+```bash
+python plugins/ideation/skills/ideation/live/serve.py <slug> &
+# prints: Dashboard: http://127.0.0.1:7878
+```
+
+The server reads `.logbooks/ideation/<slug>/live-events.jsonl` (created automatically on first emit). One server per port — if the port is already bound, the script exits cleanly.
+
+### Emit calls — when and what
+
+The orchestrator emits at these exact points:
+
+| When | Call |
+|------|------|
+| After `init-topic` (Step 1) | `session_started` with `topic` and `phases` |
+| Before each operator stage | `phase_started` with the stage name |
+| After every `generate.*` or `transform.*` op-finalize | `idea_generated` per new idea |
+| After `evaluate.taste_check` or `decide.converge` marks status | `idea_kept` or `idea_cut` per idea |
+| After `evaluate.score` op-finalize | `idea_scored` per scored idea |
+| After `decide.shortlist` or `decide.compare` picks top N | `idea_ranked` per ranked idea |
+| After Step 6 (post-run summary) | `session_complete` |
+
+### Emit command
+
+```bash
+python plugins/ideation/skills/ideation/live/emit.py <type> '<json-payload>' <slug>
+```
+
+### Event payloads
+
+```jsonc
+// session_started — call once after topic is resolved
+{"topic": "<slug>", "phases": ["Frame","Generate","Transform","Evaluate","Decide"]}
+
+// phase_started — operator stage names: Frame | Generate | Transform | Evaluate | Decide
+{"name": "Generate"}
+
+// idea_generated — one call per idea; fetch from DB after op-finalize
+{"id": 1, "title": "...", "description": "...", "kind": "seed", "tag": "BOLD", "status": "active"}
+
+// idea_kept / idea_cut
+{"id": 1}
+// idea_cut optionally carries a stress note:
+{"id": 1, "stress_note": "...one sentence on why it was cut"}
+
+// idea_scored — composite score as a single integer or short string
+{"id": 1, "score": 82, "rationale": "...one sentence"}
+
+// idea_ranked
+{"id": 1, "rank": 1}
+
+// session_complete — no payload needed
+{}
+```
+
+### Stage → phase name mapping
+
+| Operator prefix | Phase name to emit |
+|---|---|
+| `frame.*` | `"Frame"` |
+| `generate.*` | `"Generate"` |
+| `transform.*` | `"Transform"` |
+| `evaluate.*` | `"Evaluate"` |
+| `validate.*` | `"Evaluate"` |
+| `decide.*` | `"Decide"` |
+
+### Fetching ideas after a generate/transform batch
+
+After op-finalize, query new idea rows and emit one event per idea:
+
+```bash
+python -c "
+import sqlite3, json, subprocess, sys
+slug = sys.argv[1]
+op_run_id = int(sys.argv[2])
+conn = sqlite3.connect(f'.logbooks/ideation/{slug}/logbook.sqlite')
+rows = conn.execute(
+    'SELECT idea_id, title, description, kind, tag FROM ideas WHERE origin_operator_run_id=? ORDER BY idea_id',
+    (op_run_id,)
+).fetchall()
+conn.close()
+for r in rows:
+    p = json.dumps({'id':r[0],'title':r[1],'description':r[2],'kind':r[3],'tag':r[4],'status':'active'})
+    subprocess.run(['python','plugins/ideation/skills/ideation/live/emit.py','idea_generated',p,slug])
+" <slug> <op_run_id>
+```
+
+### Live wall is optional
+
+Never block plan execution on the server. If the server isn't running, emit calls are no-ops (they write to the JSONL file; nothing reads it). The wall can be opened mid-session and will hydrate from events already in the file.
+
 ## References
 
 - `ideation.logbook.md` — authoritative schema, identity rules, correction rules, queries, governance
@@ -462,6 +560,7 @@ The planner emits cohort references; the orchestrator resolves them via the CLI:
 - `references/output-rules.md` — mandatory style rules (coffee-talk descriptions, ID discipline, no methodology names in user-facing text)
 - `references/personas/<name>.md` — specialist voices loaded by parameterized operators
 - `references/zones/<name>.md` — temperature-zone constraints loaded by `transform.john` and `transform.ratchet`
+- `live/serve.py` — SSE server; `live/emit.py` — event emitter; `live/view.html` — sticky-note dashboard
 
 ## Tool usage reminders
 

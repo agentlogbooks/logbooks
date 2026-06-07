@@ -39,11 +39,15 @@ This draft is for your own reasoning. It does not enter the `description` field.
 
 Rewrite from the mechanism — not from the wording of the draft. Copying-then-polishing preserves jargon.
 
-Follow the rules in "Idea Description Rules" above: 2–3 sentences, concrete example mandatory, first sentence states what the idea IS.
+Follow the rules in "Idea Description Rules" above: 2–3 sentences, concrete example mandatory.
+
+**Mechanism first.** The first sentence states the concrete mechanism in plain words — who does what, with what, and what changes. Not a metaphor, not a positioning slogan ("the slowest cafe in town"), not an analogy ("like a submarine crew turning their keys at once"). State the literal move so the reader can picture the actual thing happening. The vivid hook that made you like the idea is not the idea — the mechanism under it is.
+
+**Metaphor is seasoning, never the carrier.** A vivid image or comparison may follow the mechanism to make it stick, but only after the mechanism is already clear, and never as the only place the mechanism appears. Acid test: delete every metaphor, analogy, and comparison from your description — can the reader still say exactly what concretely happens? If not, the mechanism was hiding inside the figure of speech; rewrite it into plain words first, then add the image back only if it earns its place.
 
 Before committing, apply the reader test:
-- If the reader has only this description and nothing else — no session, no frame, no parent idea, no hint — can they understand it?
-- Does the first sentence state the idea, rather than narrate how you arrived at it?
+- If the reader has only this description — no session, no frame, no parent idea, no hint — can they restate in one plain sentence what the idea IS and HOW it works? If they would come away with only a vibe or a vibe-y name, it fails.
+- Does the first sentence state the mechanism, rather than narrate how you arrived at it or how it feels?
 
 If either fails, rewrite.
 

@@ -9,7 +9,7 @@ use_when:
   - user gives a concrete hint and wants ideas shaped around it
   - prior seeds are stale and a hint-driven reset is warranted
 avoid_when:
-  - no clear hint — use generate.seed with a persona instead
+  - no clear hint and the user just wants ideas — use generate.brainstorm (the lean default); use generate.seed for a persona-driven pass
 produces:
   ideas: true
   assessments: false

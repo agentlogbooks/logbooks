@@ -1,12 +1,12 @@
 # Playbook: starter
 
-Lightweight default. Frame the problem in one step, generate ~20 ideas in parallel from two personas, present them side-by-side. One checkpoint (framing), no scoring, no web stress. A good starting point for almost any brainstorm — follow up with heavier playbooks only if the output warrants it.
+Opt-in structured treatment (the *old* default). Frame the problem in one step, generate ~20 ideas in parallel from two personas, present them side-by-side. One checkpoint (framing), no scoring, no web stress. Heavier than the lean capture default — pick it only when the user wants the structured frame+personas treatment.
 
 ## When to pick
 
-- **Default for fresh topics.** If the user says "brainstorm", "ideate", "give me ideas for X", or the intent has no signal either way, pick this.
-- The topic is fresh or very early — no prior ideas in the logbook yet.
-- The user wants to see output quickly (under ~5 minutes of wall clock time).
+- **Opt-in only.** The user asked for the structured/technique treatment — `--techniques`, "structured", "personas", "frame it properly". The no-signal / "just brainstorm" / "give me ideas for X" default is **lean capture** (`generate.brainstorm`, SKILL.md Step 3c), NOT this.
+- (Once opted in) the topic is fresh or very early — no prior ideas in the logbook yet.
+- The user explicitly wants frame-first generation with multiple personas and a compare report.
 
 ## When NOT to pick
 

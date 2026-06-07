@@ -60,6 +60,19 @@ Generated from operator frontmatter. Grouped by stage. For each operator, the **
 
 ## Generate operators
 
+### generate.brainstorm
+
+- **scope:** pool
+- **applies to kinds:** —
+- **min cohort:** 1
+- **Use when:**
+  - the lean default — a fresh topic, no ideas supplied, the user just wants ideas fast
+  - one plain brainstorm pass, no persona, no technique, no framing ceremony
+- **Avoid when:**
+  - the user supplied their own ideas — use generate.import
+  - the user asked for the structured/technique treatment — use generate.seed personas (starter/deep_explore)
+- **Typical followups:** evaluate.score, evaluate.taste_check, transform.refine, decide.compare
+
 ### generate.fresh
 
 - **scope:** pool
@@ -69,8 +82,20 @@ Generated from operator frontmatter. Grouped by stage. For each operator, the **
   - user gives a concrete hint and wants ideas shaped around it
   - prior seeds are stale and a hint-driven reset is warranted
 - **Avoid when:**
-  - no clear hint — use generate.seed with a persona instead
+  - no clear hint and the user just wants ideas — use generate.brainstorm (the lean default); use generate.seed for a persona-driven pass
 - **Typical followups:** transform.refine, evaluate.taste_check
+
+### generate.import
+
+- **scope:** pool
+- **applies to kinds:** —
+- **min cohort:** 1
+- **Use when:**
+  - the user supplies their own ideas from an external source (pasted list, a file, notes, a meeting dump)
+  - the intent is "import these", "here are my ideas", "store these", "log these ideas"
+- **Avoid when:**
+  - the user wants the skill to generate ideas — use generate.brainstorm (plain) or generate.seed (persona)
+- **Typical followups:** evaluate.score, evaluate.taste_check, transform.refine, decide.compare
 
 ### generate.seed
 

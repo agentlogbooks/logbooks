@@ -20,12 +20,17 @@ Ideas are first-class. Operators are second-class. The plan is ephemeral.
 The user runs the skill with one of these shapes:
 
 ```
-ideation <topic-slug>: <intent>                      # primary form
+ideation <topic-slug>: <intent>                      # primary form — lean capture by default
+ideation <topic-slug>: import these ideas: <list>    # capture YOUR ideas from a source
+ideation <topic-slug> --import <file>: <intent>      # capture ideas from a file
+ideation <topic-slug> --techniques: <intent>         # opt in to the structured treatment (frame + personas + compare)
 ideation <topic-slug> --playbook <name>: <intent>    # force a specific playbook
 ideation <topic-slug> --no-checkpoints: <intent>     # autonomous run, strip checkpoints
 ideation --list-topics                               # list existing topics
 ideation <topic-slug> --show-state                   # dump topic state (no plan, no ops)
 ```
+
+**Capture-first default.** On a fresh topic the skill is lean: if the intent supplies ideas, it stores them; otherwise it makes one plain brainstorm call. It does NOT run the frame→personas→compare machinery unless the user asks for it (`--techniques`, "thorough", "deep", "score", etc.). The structured toolkit is opt-in, surfaced as follow-ups. See the planner decision procedure (Step 3) below.
 
 Topic slug is lowercase alphanumeric with dashes or underscores. It resolves to `./.logbooks/ideation/<slug>/` under the current git repo root (or cwd if not in a repo).
 
@@ -47,13 +52,58 @@ Run these steps in order. The CLI you use throughout is `python plugins/ideation
     On Yes: run `ideation_db.py init-topic <slug> --description "<first sentence of intent>" --owner "<git user.name or 'personal'>"`.
     On Cancel: stop.
 
-### Step 2 — Generate a run_id
+### Step 2 — Generate a run_id and start the live wall
+
+The live wall is **mandatory**, not optional. It gives the user real-time visibility into a session that otherwise sits silent for minutes during subagent runs. Always start it before plan execution begins, verify it's bound to **this** topic, and open the browser tab automatically.
+
+`serve.py` is per-topic: a server bound to port 7878 will only stream events for the slug it was started with. If a stale server from a previous session is still running for a different topic, emits to the current topic's JSONL file will have no reader and the wall will appear empty. Do NOT trust `serve.py`'s silent exit — verify the bound process is serving the current slug, and kill+restart if not.
 
 ```bash
 RUN_ID=$(python plugins/ideation/skills/ideation/scripts/ideation_db.py new-run-id)
+
+# Step 2a — If port 7878 is already bound, verify it's serving THIS topic.
+# If it's serving a different topic, kill it so we can start a fresh server.
+existing_pid=$(lsof -ti :7878 2>/dev/null)
+if [ -n "$existing_pid" ]; then
+  existing_args=$(ps -p "$existing_pid" -o args= 2>/dev/null)
+  if [[ "$existing_args" == *serve.py* && "$existing_args" != *" <slug>"* ]]; then
+    kill "$existing_pid"
+    # macOS holds the socket in TIME_WAIT briefly after kill; wait it out.
+    sleep 5
+  fi
+fi
+
+# Step 2b — Start the live-wall server in the background. If port 7878 is still
+# bound at this point, it's already serving the current slug, and serve.py will
+# exit silently — that is fine.
+nohup python plugins/ideation/skills/ideation/live/serve.py <slug> > /tmp/ideation-wall-$RUN_ID.log 2>&1 &
+disown
+sleep 1
+
+# Step 2c — Verify the bound server is for THIS topic before announcing the URL.
+bound_args=$(ps -p $(lsof -ti :7878) -o args= 2>/dev/null)
+if [[ "$bound_args" != *" <slug>"* && "$bound_args" != *" <slug>" ]]; then
+  echo "WARNING: port 7878 is bound but not serving <slug>. Wall may be empty." >&2
+fi
+
+# Step 2d — Auto-open the browser tab. macOS: `open`. Linux: `xdg-open`.
+# Don't fail the session if the open command isn't available — the URL is still printed below.
+(open http://127.0.0.1:7878 2>/dev/null || xdg-open http://127.0.0.1:7878 2>/dev/null) &
+
+# Step 2e — Emit session_started so the wall has a title + phase scaffold immediately,
+# even before any operator runs.
+python plugins/ideation/skills/ideation/live/emit.py session_started \
+  '{"topic":"<slug>","phases":["Frame","Generate","Transform","Evaluate","Decide"]}' \
+  <slug>
 ```
 
+**Tell the user the URL** — output this exact message in your next assistant turn (before showing the plan):
+
+> Live wall: http://127.0.0.1:7878 — opening in your browser. (If a tab didn't pop, open it manually.)
+
 Keep `RUN_ID` for the whole session. Every `op-start` you call will pass it.
+
+**Emit early and often.** During plan execution you will emit at every visible transition — plan accepted, op started, ideas written, checkpoint reached, op finished, session complete. The wall is designed to absorb partial state and overwrite cards as data arrives — prefer to emit speculatively rather than wait for polished output. The full event schema is at the bottom of this file under "Live wall — event schema."
 
 ### Step 3 — Spawn the planner subagent
 
@@ -67,6 +117,8 @@ ls plugins/ideation/skills/ideation/operators/
 ls plugins/ideation/skills/ideation/playbooks/
 ```
 
+**If `--import <file>` was passed:** read the file's contents now and append them to the intent text you hand the planner (clearly marked as the user's supplied ideas). This makes the planner's Step 3a ingest branch fire with the file's ideas as `source=` — the planner cannot read files itself, so the orchestrator must inline them here.
+
 **Planner prompt** (embed verbatim in the subagent's prompt):
 
 ```
@@ -77,7 +129,7 @@ You are the planner for the `ideation` skill. Your job is to produce a plan — 
 - User intent (free text)
 - Topic state: active frame, idea counts by kind/status, recent operator runs, assessment metrics present
 - Operator catalog: one-line description per operator (you read the operator files for this)
-- Playbook catalog: seven playbooks with when-to-pick notes
+- Playbook catalog: ten playbooks with when-to-pick notes (plus the lean-capture default, which is not a playbook)
 
 ## Your decision procedure
 
@@ -87,12 +139,24 @@ You are the planner for the `ideation` skill. Your job is to produce a plan — 
    - Match intent shape to a playbook (followup_develop, hybridize_pair, stress_test_shortlist).
    - Use that playbook's shape, inject cohort IDs from the intent.
 
-3. Else if the topic is fresh (zero ideas in the logbook):
-   - If the intent is about picking a name ("name X", "naming ideas for X", "what should we call X", "rebrand X", "find a name for X"): use `naming`. Naming is a distinct craft; the general playbooks will underperform here.
-   - If the intent mentions "deep" / "thorough" / "full treatment" / "explore every angle" / "dig in" / "comprehensive": use `deep_explore`.
-   - If the intent mentions "score" / "rank" / "prioritize formally": use `quick_seed` (adds scoring to `starter`'s shape).
-   - If the intent mentions reframing a prior problem: `reframe_and_regenerate` (only valid if the topic already has a frame — if not, fall back to `starter` and note the reframe in its output).
-   - **Default (none of the above matched): `starter`.** Lightweight frame + 20 ideas + a compare report. One checkpoint. Pick this when the intent has no clear signal.
+3. Else if the topic is fresh (zero ideas in the logbook). **Capture-first: default to the leanest path; the structured machinery is opt-in.** In order:
+
+   **3a. INGEST** — the intent SUPPLIES external ideas (a pasted list, "import these", "here are my ideas", "store/log these ideas", or `--import <file>`):
+   - Plan = one step: `generate.import source=<the supplied ideas verbatim>`.
+   - No framing checkpoint, no compare. The user gave the ideas — store them, do not generate. (The orchestrator inserts a light frame first; see Light-frame precondition.)
+
+   **3b. OPT-IN heavier shapes** — only when the intent explicitly asks for them:
+   - "techniques" / "structured" / "personas" / "frame it properly" / `--techniques` → `starter` (frame + 2 personas + compare; the *old* default).
+   - "deep" / "thorough" / "full treatment" / "explore every angle" / "dig in" / "comprehensive" → `deep_explore`.
+   - "score" / "rank" / "prioritize formally" → `quick_seed`.
+   - naming intent ("name X", "what should we call X", "rebrand X", "find a name for X") → `naming` (a distinct craft; general playbooks underperform).
+   - reframing a prior problem → `reframe_and_regenerate` (only if the topic already has a frame; else fall back to `starter`).
+
+   **3c. DEFAULT (none of the above matched): lean capture.** Plan = one step: `generate.brainstorm count=12`. ONE plain generation call — no framing checkpoint, no persona fan-out, no compare report. The orchestrator inserts a light frame first (Light-frame precondition). End by offering the technique menu (Step 6). This is the default when the intent has no clear signal — get ideas on the wall fast; techniques come on demand.
+
+**Light-frame precondition.** `generate.brainstorm` and `generate.import` need an active frame (the not-null `frame_id_at_birth` FK), but the capture default must not run a framing exercise or pause the user. So when the plan's first step is `generate.brainstorm` or `generate.import` on a frameless topic, the ORCHESTRATOR inserts a thin placeholder frame itself before that step (see Step 5B → "Light-frame precondition"): problem statement = the user's intent, root-causes/HMW left as deferred placeholders. No subagent, no `frame.discover`, no checkpoint. Real framing is deferred (Frame-on-first-iterate).
+
+**Frame-on-first-iterate.** When a LATER invocation runs a technique or deep shape (`route`, `deep_explore`, scoring, `develop`, `--techniques`) on a topic that has only a light placeholder frame, prepend a real `frame.discover` (+ `CHECKPOINT: framing`) so the deep work is properly grounded. Detect a light frame by its placeholder root-causes (e.g. "(deferred …)").
 
 4. Else (the topic has ideas but the intent doesn't match a playbook shape):
 
@@ -105,7 +169,7 @@ You are the planner for the `ideation` skill. Your job is to produce a plan — 
 
 ## Checkpoint insertion
 
-After you draft the plan, insert these checkpoints (unless the user passed --no-checkpoints, unless they are already present, OR unless the user's intent explicitly names a playbook — playbooks carry their own checkpoints):
+The lean capture default (`generate.brainstorm`) and ingest (`generate.import`) carry NO checkpoints — capture is unpaused by design (no `frame.discover`, so no framing checkpoint applies). For all other plans, insert these checkpoints (unless the user passed --no-checkpoints, unless they are already present, OR unless the user's intent explicitly names a playbook — playbooks carry their own checkpoints):
 
 - After `frame.discover`: `CHECKPOINT: framing`
 - After `evaluate.criteria`: `CHECKPOINT: criteria_lock`
@@ -135,9 +199,37 @@ Output this exact format:
 <2-3 sentences: which playbook you chose (or why you emitted a custom plan) and what outcome the user should expect>
 ```
 
-### Example — the DEFAULT shape (starter playbook)
+### Example — the DEFAULT shape (lean capture)
 
-Most first-time invocations on a fresh topic should produce a short plan like this:
+Most first-time invocations on a fresh topic with no clear signal should produce a one-step plan:
+
+```
+## Plan
+
+1. Brainstorm a dozen varied ideas in one pass (generate.brainstorm count=12)
+
+## Rationale
+
+Lean capture — the default for fresh topics. One plain brainstorm call, no framing pause and no persona machinery (a blind A/B showed it matches or beats the old frame+personas default on substance, relevance, and diversity). Ideas hit the wall in seconds. Techniques are one follow-up away: `ideation <slug>: score and rank these`, `stress-test the top 3`, `develop idea N`, or `ideation <slug> --techniques` for the full structured treatment.
+```
+
+One step, no checkpoint, ~12 ideas, straight to the wall. The orchestrator inserts a light placeholder frame before the step (Light-frame precondition). Keep the default this tight.
+
+### Example — INGEST shape (the user brought ideas)
+
+```
+## Plan
+
+1. Store your ideas in the logbook (generate.import source=<the user's list>)
+
+## Rationale
+
+The user supplied their own ideas, so we capture rather than generate. One step, no checkpoint; the ideas land on the wall immediately and existing follow-ups (`develop idea N`, `score and rank`, `find tensions`) iterate from there.
+```
+
+### Example — opt-in structured shape (starter, via --techniques)
+
+When the user asks for the structured treatment ("techniques", "frame it properly", `--techniques`), emit the old default's shape:
 
 ```
 ## Plan
@@ -151,10 +243,8 @@ Most first-time invocations on a fresh topic should produce a short plan like th
 
 ## Rationale
 
-Running the `starter` playbook — the default for fresh topics. Light frame, two personas, a compare report. No scoring, no web research. If the output warrants it, follow up with `ideation <slug>: stress-test the top 3` or `ideation <slug>: develop idea N`.
+Running the `starter` playbook because the user opted into the structured treatment. Light frame, two personas, a compare report.
 ```
-
-Four steps, one checkpoint, ~20 ideas, one report. Keep plans this tight by default.
 
 ### Example — opt-in heavy shape (deep_explore)
 
@@ -235,6 +325,19 @@ On Accept: proceed.
 On Edit (any Other response): send the user's edit back to the planner with the original plan as context; it emits a revised plan. Re-present. Repeat until accepted or cancelled.
 On Cancel: stop.
 
+**On Accept, emit `plan_set` immediately** so the wall renders the approved roadmap. Build a JSON array of plan steps from the planner's `## Plan` section — one entry per top-level step (PARALLEL blocks count as one step, not one per sub-bullet). Use `type` of `op`, `parallel`, or `checkpoint`:
+
+```bash
+python plugins/ideation/skills/ideation/live/emit.py plan_set '{
+  "steps":[
+    {"n":1,"type":"op","description":"Identify root causes and framing questions"},
+    {"n":2,"type":"checkpoint","description":"Confirm the framing"},
+    {"n":3,"type":"parallel","description":"Generate ~20 diverse ideas in parallel"},
+    {"n":4,"type":"op","description":"Present them side-by-side in a short report"}
+  ]
+}' <slug>
+```
+
 ### Step 5 — Execute the plan
 
 For each step in order:
@@ -252,7 +355,35 @@ Do NOT spawn a subagent. Identify which built-in checkpoint this is by the human
 
 Record the outcome in `operator_runs` — when any operator runs after a checkpoint, pass `--user-approved` (true if the user proceeded; false if they explicitly skipped). If the user bails at a checkpoint, stop the plan cleanly and write a summary of what ran up to that point.
 
+**Live wall emits.** Bracket every checkpoint with two events so the wall renders a pause card and removes it on resolution:
+
+```bash
+# BEFORE calling AskUserQuestion:
+python plugins/ideation/skills/ideation/live/emit.py checkpoint_reached \
+  '{"name":"<framing|criteria_lock|before_validation|before_decide|taste|custom>","step_n":<plan_step>}' <slug>
+
+# AFTER the user answers (proceed / edit / skip / cancel):
+python plugins/ideation/skills/ideation/live/emit.py checkpoint_resolved \
+  '{"name":"<same>","action":"<proceed|edit|skip|cancel>"}' <slug>
+```
+
+If the user bails (cancel/skip), still emit `checkpoint_resolved` so the wall card disappears — then emit `session_complete` and stop.
+
 #### Step 5B — Regular operator steps
+
+**Light-frame precondition (capture default & ingest).** Before executing a `generate.brainstorm` or `generate.import` step, check whether the topic has an active frame (`ideation_db.py active-frame <slug>`). If it does NOT, insert a thin placeholder frame yourself first — no subagent, no checkpoint:
+
+```bash
+FRAME_OP=$(ideation_db.py op-start <slug> --run-id $RUN_ID --operator frame.light --cohort-ids-json '[]')
+ideation_db.py add-frame <slug> \
+  --problem-statement "<the user's intent, verbatim>" \
+  --root-causes-json '["(deferred — run --techniques or a deep playbook to frame properly)"]' \
+  --hmw-questions-json '["(deferred)"]' \
+  --operator-run-id $FRAME_OP
+ideation_db.py op-finalize <slug> $FRAME_OP --status succeeded --outcome-summary "light placeholder frame (capture default)"
+```
+
+This resolves the not-null `frame_id_at_birth` FK for the capture operators while keeping framing genuinely lazy. `frame.light` is an orchestrator-internal label (no operator file, no subagent) — it is documented here, not fabricated. Do NOT run this for `--techniques`/deep plans; those carry a real `frame.discover`.
 
 For each non-checkpoint step:
 
@@ -273,7 +404,20 @@ For each non-checkpoint step:
      [--params-json '<JSON object>'])
    ```
 
-3. **Spawn the operator subagent** via the `Agent` tool. Pass it:
+3. **Emit `phase_started` (if the phase changed) and `op_started`** — do this **before** spawning the subagent so the wall shows a placeholder card during the long subagent run:
+
+   ```bash
+   # If this op moves into a new phase (Frame/Generate/Transform/Evaluate/Decide), emit:
+   python plugins/ideation/skills/ideation/live/emit.py phase_started \
+     '{"name":"<Generate|Transform|Evaluate|Decide|Frame>"}' <slug>
+
+   # Always emit op_started (placeholder card appears immediately):
+   python plugins/ideation/skills/ideation/live/emit.py op_started \
+     '{"op_run_id":'$OP_RUN_ID',"operator":"<operator.name>","persona":"<persona-or-empty>","cohort_size":<N>,"step_n":<plan_step>,"description":"<plan-step-prose>"}' \
+     <slug>
+   ```
+
+4. **Spawn the operator subagent** via the `Agent` tool. Pass it:
    - The operator file content (read `operators/<operator>.md`).
    - The topic slug.
    - The literal cohort_ids.
@@ -284,21 +428,47 @@ For each non-checkpoint step:
 
    The operator subagent executes its prompt body, runs CLI commands, writes rows tagged with `$OP_RUN_ID`, and returns a 1-3 sentence outcome summary.
 
-4. **Finalize the row.**
+5. **Emit per-row events for what the subagent just wrote** — this populates the wall before `op-finalize` runs. See "Per-operator emit table" near the bottom of this file for which event to emit for which operator. The most common case (any `generate.*` or `transform.*`) is the inline Python loop below — run it as soon as the subagent returns:
+
+   ```bash
+   python -c "
+   import sqlite3, json, subprocess, sys
+   slug, op_run_id = sys.argv[1], int(sys.argv[2])
+   conn = sqlite3.connect(f'.logbooks/ideation/{slug}/logbook.sqlite')
+   rows = conn.execute(
+       'SELECT idea_id, title, description, kind, tag FROM ideas WHERE origin_operator_run_id=? ORDER BY idea_id',
+       (op_run_id,)
+   ).fetchall()
+   conn.close()
+   for r in rows:
+       p = json.dumps({'id':r[0],'title':r[1],'description':r[2],'kind':r[3],'tag':r[4],'status':'active'})
+       subprocess.run(['python','plugins/ideation/skills/ideation/live/emit.py','idea_generated',p,slug])
+   " <slug> $OP_RUN_ID
+   ```
+
+   For `evaluate.score`, `decide.shortlist`, `decide.compare`, etc. — emit `idea_scored`, `idea_kept`, `idea_ranked` etc. per the per-operator emit table below.
+
+6. **Finalize the row.**
 
    On success:
    ```bash
    ideation_db.py op-finalize <slug> $OP_RUN_ID \
      --status succeeded --outcome-summary "<from subagent>"
+
+   python plugins/ideation/skills/ideation/live/emit.py op_finished \
+     '{"op_run_id":'$OP_RUN_ID',"status":"succeeded","ideas_count":<N>}' <slug>
    ```
 
    On failure:
    ```bash
    ideation_db.py op-finalize <slug> $OP_RUN_ID \
      --status failed --error "<failure reason>"
+
+   python plugins/ideation/skills/ideation/live/emit.py op_finished \
+     '{"op_run_id":'$OP_RUN_ID',"status":"failed","error":"<reason>"}' <slug>
    ```
 
-5. **Retry policy.** If the operator fails, retry once. If it fails again, mark it `failed`, print a warning to the user, and continue to the next step unless the failure cascades (e.g., subsequent steps depended on output from the failed one — in that case, ask the user whether to continue or stop).
+7. **Retry policy.** If the operator fails, retry once. If it fails again, mark it `failed`, print a warning to the user, and continue to the next step unless the failure cascades (e.g., subsequent steps depended on output from the failed one — in that case, ask the user whether to continue or stop).
 
 #### Step 5C — PARALLEL blocks
 
@@ -306,9 +476,11 @@ PARALLEL blocks are the mechanism for fan-out (multiple `generate.seed` personas
 
 Execute by spawning all sub-steps in **one message** using multiple `Agent` tool calls. For each sub-step:
 - Create its own `operator_runs` row before spawning (ahead of time, so each subagent knows its `operator_run_id`).
+- **Emit `op_started` for each sub-step** before spawning the parallel subagents — one placeholder card per sub-op appears immediately.
 - Spawn all subagents in parallel.
-- Collect all their outcome summaries.
-- Finalize each `operator_runs` row as the subagents return.
+- Collect all their outcome summaries as they return.
+- For each returning subagent: run the per-row emit loop (`idea_generated` / `idea_scored` / etc. per the per-operator table) **as soon as that one returns** — do not wait for the whole block. Cards stream in as each parallel sub-op completes.
+- Finalize each `operator_runs` row and emit `op_finished` per sub-op as the subagents return.
 
 Do not proceed past the PARALLEL block until all its sub-steps have terminated.
 
@@ -341,7 +513,9 @@ If `decide.route` itself fails (subagent returns an error, raises an exception, 
 8. Otherwise, treat the validated bullets as a PARALLEL block and execute them using the normal Step 5C parallel-dispatch. Each bullet gets its own `operator_runs` row:
    - Call `op-start` with `--run-id $RUN_ID` but **omit `--plan-step`** (so `plan_step_index` stores `NULL` — these are fragment-expanded, not in the planner's original plan).
    - Construct a single JSON object containing BOTH the parent-linkage keys AND every `key=value` pair parsed from the bullet. For example, if the bullet was `transform.scamper count=3 cohort=[8]`, the params JSON is `{"parent_operator_run_id": <decide.route op_run_id>, "parent_plan_step_index": <decide.route plan_step>, "count": 3}`. Pass this as `--params-json`.
+   - Emit `op_started` per bullet before spawning (use the parent step's plan-step number for `step_n`, or omit it).
    - Spawn each subagent per the normal Step 5B procedure.
+   - Run the per-row emit loop and emit `op_finished` per sub-op as subagents return — same pattern as Step 5C.
    - Finalize each row as subagents return.
 
 Fragment expansion shares the outer plan's `RUN_ID` — querying `operator_runs` filtered by `RUN_ID` reconstructs the full session.
@@ -391,8 +565,11 @@ Try next:
 - Develop a specific idea further: `ideation <slug>: develop idea N`
 - Combine two ideas: `ideation <slug>: hybridize N and M`
 - Stress-test the strongest: `ideation <slug>: stress-test the top 3`
+- Frame it properly & go deeper (structured treatment): `ideation <slug> --techniques`
 - Just peek at state: `ideation <slug> --show-state`
 ```
+
+After a lean capture or ingest session especially, lead the "Try next" list with these — the techniques are opt-in, so this menu is how the user discovers them.
 
 **Followups from operators that ran this session.** After the default bullets, iterate over `operator_runs` for this `run_id`. For each distinct operator that ran and has a non-empty `followups` list in its frontmatter, emit one additional bullet per followup. Render each as a natural-language suggestion scoped to the ideas that operator just produced or touched. Example:
 
@@ -412,22 +589,31 @@ ls ./.logbooks/ideation/<slug>/reports/
 
 Omit zero-count lines. If no ideas were generated (e.g., a decide-only session), say so explicitly — "No new ideas this session; the work was evaluation and decision."
 
+**Emit `session_complete`** as the last action of the session — this freezes the wall's pulse and marks all phases done:
+
+```bash
+python plugins/ideation/skills/ideation/live/emit.py session_complete '{}' <slug>
+```
+
+Emit it even if the session ended early (cancel at checkpoint, fatal failure) — the wall should never sit pulsing on a stopped session.
+
 ## Operator catalog
 
 Read the files in `operators/` for the full library. Summary:
 
-- `frame.*` — context/problem-space operators (4): `context_scout`, `discover`, `historian`, `reframe`
-- `generate.*` — idea producers (2): `seed(persona=...)`, `fresh(hint=...)`
+- `frame.*` — context/problem-space operators (4): `context_scout`, `discover`, `historian`, `reframe`. (`frame.light` is an orchestrator-internal placeholder-frame insert for the capture default — not a subagent operator; see Step 5B.)
+- `generate.*` — idea producers (4): `brainstorm(count=...)` (lean default — one plain pass), `import(source=...)` (capture the user's own ideas), `seed(persona=...)`, `fresh(hint=...)`
 - `transform.*` — idea-to-idea operators (7): `scamper(op=...)`, `invert`, `cross_domain(domain=...)`, `hybridize`, `john(zone=..., stance=...)`, `ratchet(zone=..., cycles=...)`, `refine(hint=...)`
 - `evaluate.*` — per-metric judgments (6): `hats`, `tension`, `taste_check`, `criteria`, `score(criteria_path=...)`, `brilliance`
 - `validate.*` — web-sourced evidence (2): `web_stress`, `proof_search`
-- `decide.*` — report/decision artifacts (4): `shortlist(n=...)`, `compare`, `converge`, `export(format=...)`
+- `decide.*` — report/decision artifacts (5): `shortlist(n=...)`, `compare`, `converge`, `export(format=...)`, `route`
 
 ## Playbook catalog
 
 See `playbooks/<name>.md` for full shapes. Summary:
 
-- **`starter`** — **default**. Frame + 20 ideas + compare. 1 checkpoint. ~5 min.
+- **lean capture** — **the default** (not a playbook; the planner's Step 3c branch). One `generate.brainstorm` call, no checkpoint, straight to the wall. Ingest (`generate.import`) is its sibling for user-supplied ideas.
+- **`starter`** — opt-in (the *old* default), triggered by `--techniques` / "structured" / "frame it properly". Frame + 20 ideas + compare. 1 checkpoint. ~5 min.
 - `quick_seed` — `starter` plus criteria + scoring. 2 checkpoints. ~10 min.
 - `naming` — specialized for naming (products, features, companies). 70 candidates across 5 naming angles + web validation. ~10 min.
 - `deep_explore` — full treatment for fresh problems (four personas, Johns, ratchet, web-stress, brilliance, converge). Opt-in only.
@@ -455,36 +641,16 @@ The planner emits cohort references; the orchestrator resolves them via the CLI:
 | literal IDs `[17, 24]` | no CLI call needed; pass through |
 | `children_of(step N)` | for each idea produced by step N (from its operator_runs row's subsequent inserts), call `children-of` |
 
-## Live visualization (optional)
+## Live wall — event schema
 
-When invoked interactively, the orchestrator can stream a real-time sticky-note wall to the browser. Infrastructure lives in `live/` next to this file.
+The live wall is mandatory (see Step 2). This section is the canonical event reference for every emit call you make during plan execution.
 
-### Start the server
+Infrastructure lives in `live/` next to this file:
+- `live/serve.py` — SSE server on port 7878. Hydrates from offset 0 on every browser connect, so a tab opened mid-session sees the full session history.
+- `live/emit.py` — appends one JSON line to `.logbooks/ideation/<slug>/live-events.jsonl`. Independent of the server: emits always succeed even if no server is running (events accumulate in the file).
+- `live/view.html` — sticky-note board served at `/`.
 
-Run once per session, before the plan executes. Background it so it doesn't block the shell:
-
-```bash
-python plugins/ideation/skills/ideation/live/serve.py <slug> &
-# prints: Dashboard: http://127.0.0.1:7878
-```
-
-The server reads `.logbooks/ideation/<slug>/live-events.jsonl` (created automatically on first emit). One server per port — if the port is already bound, the script exits cleanly.
-
-### Emit calls — when and what
-
-The orchestrator emits at these exact points:
-
-| When | Call |
-|------|------|
-| After `init-topic` (Step 1) | `session_started` with `topic` and `phases` |
-| Before each operator stage | `phase_started` with the stage name |
-| After every `generate.*` or `transform.*` op-finalize | `idea_generated` per new idea |
-| After `evaluate.taste_check` or `decide.converge` marks status | `idea_kept` or `idea_cut` per idea |
-| After `evaluate.score` op-finalize | `idea_scored` per scored idea |
-| After `decide.shortlist` or `decide.compare` picks top N | `idea_ranked` per ranked idea |
-| After Step 6 (post-run summary) | `session_complete` |
-
-### Emit command
+The emit command is uniform:
 
 ```bash
 python plugins/ideation/skills/ideation/live/emit.py <type> '<json-payload>' <slug>
@@ -493,31 +659,73 @@ python plugins/ideation/skills/ideation/live/emit.py <type> '<json-payload>' <sl
 ### Event payloads
 
 ```jsonc
-// session_started — call once after topic is resolved
+// session_started — Step 2, once per session, immediately after server start
 {"topic": "<slug>", "phases": ["Frame","Generate","Transform","Evaluate","Decide"]}
 
-// phase_started — operator stage names: Frame | Generate | Transform | Evaluate | Decide
+// plan_set — Step 4, immediately after the user accepts the plan
+{"steps": [
+  {"n": 1, "type": "op",         "description": "Identify root causes and framing questions"},
+  {"n": 2, "type": "checkpoint", "description": "Confirm the framing"},
+  {"n": 3, "type": "parallel",   "description": "Generate ~20 diverse ideas in parallel"},
+  {"n": 4, "type": "op",         "description": "Present them side-by-side in a short report"}
+]}
+
+// phase_started — Step 5B/5C, when an op enters a new phase (Frame/Generate/Transform/Evaluate/Decide)
 {"name": "Generate"}
 
-// idea_generated — one call per idea; fetch from DB after op-finalize
-{"id": 1, "title": "...", "description": "...", "kind": "seed", "tag": "BOLD", "status": "active"}
+// op_started — Step 5B/5C/5D, BEFORE spawning the operator subagent. A placeholder card appears.
+{"op_run_id": 42, "operator": "generate.seed", "persona": "innovator",
+ "cohort_size": 0, "step_n": 3, "description": "Practical, contradiction-driven ideas — 10"}
 
-// idea_kept / idea_cut
-{"id": 1}
-// idea_cut optionally carries a stress note:
-{"id": 1, "stress_note": "...one sentence on why it was cut"}
+// idea_generated — after a generate.* / transform.* subagent returns. Loop over new idea rows.
+{"id": 17, "title": "...", "description": "...", "kind": "seed", "tag": "BOLD", "status": "active"}
 
-// idea_scored — composite score as a single integer or short string
-{"id": 1, "score": 82, "rationale": "...one sentence"}
+// idea_scored — after evaluate.score returns. composite score as int or short string.
+{"id": 17, "score": 82, "rationale": "...one sentence"}
 
-// idea_ranked
-{"id": 1, "rank": 1}
+// idea_kept — after evaluate.taste_check / decide.shortlist / decide.converge marks an idea kept/shortlisted
+{"id": 17}
 
-// session_complete — no payload needed
+// idea_cut — after evaluate.taste_check / decide.converge marks an idea cut. stress_note optional.
+{"id": 17, "stress_note": "...one sentence on why"}
+
+// idea_ranked — after decide.compare / decide.shortlist picks top N
+{"id": 17, "rank": 1}
+
+// op_finished — Step 5B/5C/5D, AFTER op-finalize. Removes the placeholder card.
+{"op_run_id": 42, "status": "succeeded", "ideas_count": 10}
+{"op_run_id": 42, "status": "failed",    "error": "..."}
+
+// checkpoint_reached — Step 5A, BEFORE AskUserQuestion. Pause card appears.
+{"name": "framing", "step_n": 2}
+
+// checkpoint_resolved — Step 5A, AFTER user answers. Pause card disappears.
+{"name": "framing", "action": "proceed"}
+
+// session_complete — Step 6, last action of the session
 {}
 ```
 
-### Stage → phase name mapping
+### Per-operator emit table
+
+After each operator subagent returns, run the emit loop for its stage. Always run the emit loop **before** `op-finalize` so cards appear without waiting on the bookkeeping write.
+
+| Operator | Emit per row in payload |
+|---|---|
+| `frame.*` | none (frames are not cards) |
+| `generate.*` | `idea_generated` per new idea (origin_operator_run_id = $OP_RUN_ID) |
+| `transform.*` | `idea_generated` per new idea |
+| `evaluate.score` | `idea_scored` per idea whose `score_summary` was patched |
+| `evaluate.taste_check` | `idea_kept` for each `status='kept'` patch; `idea_cut` for each `status='cut'` patch (with `stress_note` if available) |
+| `evaluate.brilliance` / `evaluate.tension` / `evaluate.hats` | none (assessments only — no card change) |
+| `validate.web_stress` / `validate.proof_search` | none (assessments + facts — no card change) |
+| `decide.shortlist` | `idea_kept` for each idea status patched to `shortlisted`; `idea_ranked` if a rank was assigned |
+| `decide.compare` | `idea_ranked` per idea in the report's top N |
+| `decide.converge` | `idea_kept` for each `status='selected'` patch; `idea_cut` for each `status='rejected'` |
+| `decide.export` | none |
+| `decide.route` | none (router decisions don't change card state) |
+
+### Stage → phase name mapping (for `phase_started`)
 
 | Operator prefix | Phase name to emit |
 |---|---|
@@ -528,15 +736,12 @@ python plugins/ideation/skills/ideation/live/emit.py <type> '<json-payload>' <sl
 | `validate.*` | `"Evaluate"` |
 | `decide.*` | `"Decide"` |
 
-### Fetching ideas after a generate/transform batch
-
-After op-finalize, query new idea rows and emit one event per idea:
+### Inline Python loop for `idea_generated` (most common case)
 
 ```bash
 python -c "
 import sqlite3, json, subprocess, sys
-slug = sys.argv[1]
-op_run_id = int(sys.argv[2])
+slug, op_run_id = sys.argv[1], int(sys.argv[2])
 conn = sqlite3.connect(f'.logbooks/ideation/{slug}/logbook.sqlite')
 rows = conn.execute(
     'SELECT idea_id, title, description, kind, tag FROM ideas WHERE origin_operator_run_id=? ORDER BY idea_id',
@@ -546,12 +751,17 @@ conn.close()
 for r in rows:
     p = json.dumps({'id':r[0],'title':r[1],'description':r[2],'kind':r[3],'tag':r[4],'status':'active'})
     subprocess.run(['python','plugins/ideation/skills/ideation/live/emit.py','idea_generated',p,slug])
-" <slug> <op_run_id>
+" <slug> $OP_RUN_ID
 ```
 
-### Live wall is optional
+The same pattern works for `idea_scored` (query `score_summary`), `idea_kept`/`idea_cut` (query `status` after the patch), etc. — adjust the SELECT and the event type accordingly. Use it after every `transform.*` op-finalize too, not only `generate.*`.
 
-Never block plan execution on the server. If the server isn't running, emit calls are no-ops (they write to the JSONL file; nothing reads it). The wall can be opened mid-session and will hydrate from events already in the file.
+### Resilience
+
+- The server may be already running (port 7878 bound). `serve.py` is per-topic — verify (per Step 2a) that the bound server is serving the current slug; if not, kill it and start a fresh one. Do NOT silently trust `serve.py`'s "exit silently if bound" message — emits to the current topic's JSONL will have no reader if the bound server is on a different slug, and the wall will appear empty.
+- If a browser tab is opened mid-session, it sees the full history (the server replays from offset 0).
+- After a kill+restart, macOS holds the socket in TIME_WAIT for a few seconds — the `sleep 5` in Step 2a handles this. If the restart still fails, increase the sleep before treating it as an error.
+- Emits never block plan execution. If `emit.py` errors (rare — disk full?), continue the plan and surface the error in the post-run summary.
 
 ## References
 

@@ -1,0 +1,2 @@
+{"ts": 0, "type": "session_started", "payload": {"topic": "cafe-afternoon-revenue", "phases": ["Frame", "Generate", "Transform", "Evaluate", "Decide"]}}
+{"ts": 0.2, "type": "plan_set", "payload": {"steps": [{"n": 1, "type": "op", "description": "Identify root causes and framing questions"}, {"n": 2, "type": "checkpoint", "description": "Confirm the framing"}, {"n": 3, "type": "parallel", "description": "Generate ~20 diverse ideas in parallel"}, {"n": 4, "type": "op", "description": "Present them side-by-side in a short report"}]}}

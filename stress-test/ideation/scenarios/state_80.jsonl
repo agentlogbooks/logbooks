@@ -1,0 +1,177 @@
+{"ts": 0, "type": "session_started", "payload": {"topic": "cafe-afternoon-revenue", "phases": ["Frame", "Generate", "Transform", "Evaluate", "Decide"]}}
+{"ts": 0.2, "type": "plan_set", "payload": {"steps": [{"n": 1, "type": "op", "description": "Identify root causes and framing questions"}, {"n": 2, "type": "checkpoint", "description": "Confirm the framing"}, {"n": 3, "type": "parallel", "description": "Generate ~20 diverse ideas in parallel"}, {"n": 4, "type": "op", "description": "Present them side-by-side in a short report"}]}}
+{"ts": 1, "type": "phase_started", "payload": {"name": "Decide"}}
+{"ts": 1.01, "type": "idea_generated", "payload": {"id": 1, "title": "Loyalty happy-hour after 2pm", "description": "Punch-card that only fills on weekday afternoons, so regulars learn the slow hours are the cheap hours and start drifting in then.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.02, "type": "idea_generated", "payload": {"id": 2, "title": "Laptop-corner day pass", "description": "Sell a $6 afternoon pass for a quiet corner with outlets and fast wifi; the coffee's extra, the seat is the product.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.03, "type": "idea_generated", "payload": {"id": 3, "title": "Pastry rescue box", "description": "Bag up the morning's unsold pastries at 3pm for half price; turns waste into a reason to walk in after lunch.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.04, "type": "idea_generated", "payload": {"id": 4, "title": "Second-cup half-price token", "description": "Anyone who bought a morning coffee gets a token for a half-price afternoon refill, redeemable same day only.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.05, "type": "idea_generated", "payload": {"id": 5, "title": "Neighborhood remote-work club", "description": "A monthly membership that reserves afternoon seating and a bottomless drip, aimed at the work-from-home crowd nearby.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.06, "type": "idea_generated", "payload": {"id": 6, "title": "Kids draw, parents stay", "description": "Free crayons and a wall to pin drawings on; parents on the school run linger and order a second drink.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.07, "type": "idea_generated", "payload": {"id": 7, "title": "Afternoon tasting flight", "description": "Three 4oz pours of single-origin for the price of a latte, framed as a slow-hour ritual, not a rush purchase.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.08, "type": "idea_generated", "payload": {"id": 8, "title": "Bring-a-friend 3-to-5", "description": "Between 3 and 5, two drinks ring up as one-and-a-half; the empty room fills because nobody comes alone.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.09, "type": "idea_generated", "payload": {"id": 9, "title": "Standing pre-order for offices", "description": "Nearby offices set a recurring 3pm tray order; you batch-make it, they expense it, the lull disappears.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.1, "type": "idea_generated", "payload": {"id": 10, "title": "Silent-hour study deal", "description": "Declare 2-4pm phone-free and discount drip 30%; the vibe itself becomes the draw for students.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.11, "type": "idea_generated", "payload": {"id": 11, "title": "Cold-brew growler refills", "description": "Sell branded growlers, refill cold brew cheap in the afternoon; regulars stock their fridge and your slow hours move volume.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.12, "type": "idea_generated", "payload": {"id": 12, "title": "Barista's-choice mystery cup", "description": "A $3 afternoon-only mystery drink the barista improvises; cheap experiment that turns dead time into a game.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.13, "type": "idea_generated", "payload": {"id": 13, "title": "Afterschool hot-chocolate route", "description": "Partner with the school two blocks over for a hot-chocolate punch card kids redeem walking home.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.14, "type": "idea_generated", "payload": {"id": 14, "title": "Co-working stamp partnership", "description": "Tie up with a co-working space: their members flash a badge for afternoon discounts, you get their overflow.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.15, "type": "idea_generated", "payload": {"id": 15, "title": "Slow-hour catering sampler", "description": "Use the lull to bake mini catering samplers and hand them to office managers who walk past at 3.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.16, "type": "idea_generated", "payload": {"id": 16, "title": "Pay-what-it-weighs cookies", "description": "Afternoon cookies priced by the gram on a little scale at the counter; novelty pulls the curious in.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.17, "type": "idea_generated", "payload": {"id": 17, "title": "Reverse rush-hour playlist", "description": "A posted live DJ-style afternoon playlist; people come for the set, the coffee is incidental.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.18, "type": "idea_generated", "payload": {"id": 18, "title": "Two-for-Tuesday iced drinks", "description": "Every Tuesday afternoon, iced drinks are buy-one-gift-one; the gifted one drags in a new face.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.19, "type": "idea_generated", "payload": {"id": 19, "title": "Window-seat reservation app", "description": "Let people reserve the good window seat for an afternoon hour for a small fee that's redeemable on food.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.2, "type": "idea_generated", "payload": {"id": 20, "title": "Local-maker pop-up shelf", "description": "Rent a shelf to a local maker who hosts an afternoon demo; their followers become your 3pm traffic.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.21, "type": "idea_generated", "payload": {"id": 21, "title": "Loyalty happy-hour after 2pm \u2014 variant", "description": "Push it wilder \u2014 what if it ran all week, not just afternoons?", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.22, "type": "idea_generated", "payload": {"id": 22, "title": "Laptop-corner day pass \u2014 variant", "description": "Ground it \u2014 tie the trigger to the existing POS punch-card so staff do nothing new.", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.23, "type": "idea_generated", "payload": {"id": 23, "title": "Pastry rescue box \u2014 variant", "description": "Pressure-test \u2014 who hates this, and what breaks at 50 covers?", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.24, "type": "idea_generated", "payload": {"id": 24, "title": "Second-cup half-price token \u2014 variant", "description": "Cross it with the loyalty app so the token lives on a phone, not paper.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.25, "type": "idea_generated", "payload": {"id": 25, "title": "Neighborhood remote-work club \u2014 variant", "description": "Invert it \u2014 instead of discounting, make the slow hour feel exclusive and charge more.", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.26, "type": "idea_generated", "payload": {"id": 26, "title": "Kids draw, parents stay \u2014 variant", "description": "Push it wilder \u2014 what if it ran all week, not just afternoons?", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.27, "type": "idea_generated", "payload": {"id": 27, "title": "Afternoon tasting flight \u2014 variant", "description": "Ground it \u2014 tie the trigger to the existing POS punch-card so staff do nothing new.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.28, "type": "idea_generated", "payload": {"id": 28, "title": "Bring-a-friend 3-to-5 \u2014 variant", "description": "Pressure-test \u2014 who hates this, and what breaks at 50 covers?", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.29, "type": "idea_generated", "payload": {"id": 29, "title": "Standing pre-order for offices \u2014 variant", "description": "Cross it with the loyalty app so the token lives on a phone, not paper.", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.3, "type": "idea_generated", "payload": {"id": 30, "title": "Silent-hour study deal \u2014 variant", "description": "Invert it \u2014 instead of discounting, make the slow hour feel exclusive and charge more.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.31, "type": "idea_generated", "payload": {"id": 31, "title": "Cold-brew growler refills \u2014 variant", "description": "Push it wilder \u2014 what if it ran all week, not just afternoons?", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.32, "type": "idea_generated", "payload": {"id": 32, "title": "Barista's-choice mystery cup \u2014 variant", "description": "Ground it \u2014 tie the trigger to the existing POS punch-card so staff do nothing new.", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.33, "type": "idea_generated", "payload": {"id": 33, "title": "Afterschool hot-chocolate route \u2014 variant", "description": "Pressure-test \u2014 who hates this, and what breaks at 50 covers?", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.34, "type": "idea_generated", "payload": {"id": 34, "title": "Co-working stamp partnership \u2014 variant", "description": "Cross it with the loyalty app so the token lives on a phone, not paper.", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.35, "type": "idea_generated", "payload": {"id": 35, "title": "Slow-hour catering sampler \u2014 variant", "description": "Invert it \u2014 instead of discounting, make the slow hour feel exclusive and charge more.", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.36, "type": "idea_generated", "payload": {"id": 36, "title": "Pay-what-it-weighs cookies \u2014 variant", "description": "Push it wilder \u2014 what if it ran all week, not just afternoons?", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.37, "type": "idea_generated", "payload": {"id": 37, "title": "Reverse rush-hour playlist \u2014 variant", "description": "Ground it \u2014 tie the trigger to the existing POS punch-card so staff do nothing new.", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.38, "type": "idea_generated", "payload": {"id": 38, "title": "Two-for-Tuesday iced drinks \u2014 variant", "description": "Pressure-test \u2014 who hates this, and what breaks at 50 covers?", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.39, "type": "idea_generated", "payload": {"id": 39, "title": "Window-seat reservation app \u2014 variant", "description": "Cross it with the loyalty app so the token lives on a phone, not paper.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.4, "type": "idea_generated", "payload": {"id": 40, "title": "Local-maker pop-up shelf \u2014 variant", "description": "Invert it \u2014 instead of discounting, make the slow hour feel exclusive and charge more.", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.41, "type": "idea_generated", "payload": {"id": 41, "title": "Loyalty happy-hour after 2pm \u2014 variant", "description": "Push it wilder \u2014 what if it ran all week, not just afternoons?", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.42, "type": "idea_generated", "payload": {"id": 42, "title": "Laptop-corner day pass \u2014 variant", "description": "Ground it \u2014 tie the trigger to the existing POS punch-card so staff do nothing new.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.43, "type": "idea_generated", "payload": {"id": 43, "title": "Pastry rescue box \u2014 variant", "description": "Pressure-test \u2014 who hates this, and what breaks at 50 covers?", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.44, "type": "idea_generated", "payload": {"id": 44, "title": "Second-cup half-price token \u2014 variant", "description": "Cross it with the loyalty app so the token lives on a phone, not paper.", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.45, "type": "idea_generated", "payload": {"id": 45, "title": "Neighborhood remote-work club \u2014 variant", "description": "Invert it \u2014 instead of discounting, make the slow hour feel exclusive and charge more.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.46, "type": "idea_generated", "payload": {"id": 46, "title": "Kids draw, parents stay \u2014 variant", "description": "Push it wilder \u2014 what if it ran all week, not just afternoons?", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.47, "type": "idea_generated", "payload": {"id": 47, "title": "Afternoon tasting flight \u2014 variant", "description": "Ground it \u2014 tie the trigger to the existing POS punch-card so staff do nothing new.", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.48, "type": "idea_generated", "payload": {"id": 48, "title": "Bring-a-friend 3-to-5 \u2014 variant", "description": "Pressure-test \u2014 who hates this, and what breaks at 50 covers?", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.49, "type": "idea_generated", "payload": {"id": 49, "title": "Standing pre-order for offices \u2014 variant", "description": "Cross it with the loyalty app so the token lives on a phone, not paper.", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.5, "type": "idea_generated", "payload": {"id": 50, "title": "Silent-hour study deal \u2014 variant", "description": "Invert it \u2014 instead of discounting, make the slow hour feel exclusive and charge more.", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.51, "type": "idea_generated", "payload": {"id": 51, "title": "Cold-brew growler refills \u2014 variant", "description": "Push it wilder \u2014 what if it ran all week, not just afternoons?", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.52, "type": "idea_generated", "payload": {"id": 52, "title": "Barista's-choice mystery cup \u2014 variant", "description": "Ground it \u2014 tie the trigger to the existing POS punch-card so staff do nothing new.", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.53, "type": "idea_generated", "payload": {"id": 53, "title": "Afterschool hot-chocolate route \u2014 variant", "description": "Pressure-test \u2014 who hates this, and what breaks at 50 covers?", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.54, "type": "idea_generated", "payload": {"id": 54, "title": "Co-working stamp partnership \u2014 variant", "description": "Cross it with the loyalty app so the token lives on a phone, not paper.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.55, "type": "idea_generated", "payload": {"id": 55, "title": "Slow-hour catering sampler \u2014 variant", "description": "Invert it \u2014 instead of discounting, make the slow hour feel exclusive and charge more.", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.56, "type": "idea_generated", "payload": {"id": 56, "title": "Pay-what-it-weighs cookies \u2014 variant", "description": "Push it wilder \u2014 what if it ran all week, not just afternoons?", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.57, "type": "idea_generated", "payload": {"id": 57, "title": "Reverse rush-hour playlist \u2014 variant", "description": "Ground it \u2014 tie the trigger to the existing POS punch-card so staff do nothing new.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.58, "type": "idea_generated", "payload": {"id": 58, "title": "Two-for-Tuesday iced drinks \u2014 variant", "description": "Pressure-test \u2014 who hates this, and what breaks at 50 covers?", "kind": "variant", "tag": "WILD", "status": "active"}}
+{"ts": 1.59, "type": "idea_generated", "payload": {"id": 59, "title": "Window-seat reservation app \u2014 variant", "description": "Cross it with the loyalty app so the token lives on a phone, not paper.", "kind": "variant", "tag": "SAFE", "status": "active"}}
+{"ts": 1.6, "type": "idea_generated", "payload": {"id": 60, "title": "Local-maker pop-up shelf \u2014 variant", "description": "Invert it \u2014 instead of discounting, make the slow hour feel exclusive and charge more.", "kind": "variant", "tag": "BOLD", "status": "active"}}
+{"ts": 1.61, "type": "idea_generated", "payload": {"id": 61, "title": "Loyalty pass \u00d7 tasting flight", "description": "Loyalty pass \u00d7 tasting flight \u2014 members get one free afternoon flight a week.", "kind": "hybrid", "tag": "WILD", "status": "active"}}
+{"ts": 1.62, "type": "idea_generated", "payload": {"id": 62, "title": "Pastry rescue \u00d7 office pre-order", "description": "Pastry rescue \u00d7 office pre-order \u2014 surplus pastries auto-bundle into the 3pm office tray.", "kind": "hybrid", "tag": "SAFE", "status": "active"}}
+{"ts": 1.63, "type": "idea_generated", "payload": {"id": 63, "title": "Silent hour \u00d7 co-working badge", "description": "Silent hour \u00d7 co-working badge \u2014 phone-free study room that co-workers can book.", "kind": "hybrid", "tag": "BOLD", "status": "active"}}
+{"ts": 1.64, "type": "idea_generated", "payload": {"id": 64, "title": "Mystery cup \u00d7 bring-a-friend", "description": "Mystery cup \u00d7 bring-a-friend \u2014 the mystery drink is free if you bring someone new.", "kind": "hybrid", "tag": "WILD", "status": "active"}}
+{"ts": 1.65, "type": "idea_generated", "payload": {"id": 65, "title": "Loyalty pass \u00d7 tasting flight", "description": "Loyalty pass \u00d7 tasting flight \u2014 members get one free afternoon flight a week.", "kind": "hybrid", "tag": "SAFE", "status": "active"}}
+{"ts": 1.66, "type": "idea_generated", "payload": {"id": 66, "title": "Pastry rescue \u00d7 office pre-order", "description": "Pastry rescue \u00d7 office pre-order \u2014 surplus pastries auto-bundle into the 3pm office tray.", "kind": "hybrid", "tag": "BOLD", "status": "active"}}
+{"ts": 1.67, "type": "idea_generated", "payload": {"id": 67, "title": "Silent hour \u00d7 co-working badge", "description": "Silent hour \u00d7 co-working badge \u2014 phone-free study room that co-workers can book.", "kind": "hybrid", "tag": "WILD", "status": "active"}}
+{"ts": 1.68, "type": "idea_generated", "payload": {"id": 68, "title": "Mystery cup \u00d7 bring-a-friend", "description": "Mystery cup \u00d7 bring-a-friend \u2014 the mystery drink is free if you bring someone new.", "kind": "hybrid", "tag": "SAFE", "status": "active"}}
+{"ts": 1.69, "type": "idea_generated", "payload": {"id": 69, "title": "Loyalty pass \u00d7 tasting flight", "description": "Loyalty pass \u00d7 tasting flight \u2014 members get one free afternoon flight a week.", "kind": "hybrid", "tag": "BOLD", "status": "active"}}
+{"ts": 1.7, "type": "idea_generated", "payload": {"id": 70, "title": "Pastry rescue \u00d7 office pre-order", "description": "Pastry rescue \u00d7 office pre-order \u2014 surplus pastries auto-bundle into the 3pm office tray.", "kind": "hybrid", "tag": "WILD", "status": "active"}}
+{"ts": 1.71, "type": "idea_generated", "payload": {"id": 71, "title": "Silent hour \u00d7 co-working badge", "description": "Silent hour \u00d7 co-working badge \u2014 phone-free study room that co-workers can book.", "kind": "hybrid", "tag": "SAFE", "status": "active"}}
+{"ts": 1.72, "type": "idea_generated", "payload": {"id": 72, "title": "Mystery cup \u00d7 bring-a-friend", "description": "Mystery cup \u00d7 bring-a-friend \u2014 the mystery drink is free if you bring someone new.", "kind": "hybrid", "tag": "BOLD", "status": "active"}}
+{"ts": 1.73, "type": "idea_generated", "payload": {"id": 73, "title": "Loyalty pass \u00d7 tasting flight", "description": "Loyalty pass \u00d7 tasting flight \u2014 members get one free afternoon flight a week.", "kind": "hybrid", "tag": "WILD", "status": "active"}}
+{"ts": 1.74, "type": "idea_generated", "payload": {"id": 74, "title": "Pastry rescue \u00d7 office pre-order", "description": "Pastry rescue \u00d7 office pre-order \u2014 surplus pastries auto-bundle into the 3pm office tray.", "kind": "hybrid", "tag": "SAFE", "status": "active"}}
+{"ts": 1.75, "type": "idea_generated", "payload": {"id": 75, "title": "Silent hour \u00d7 co-working badge", "description": "Silent hour \u00d7 co-working badge \u2014 phone-free study room that co-workers can book.", "kind": "hybrid", "tag": "BOLD", "status": "active"}}
+{"ts": 1.76, "type": "idea_generated", "payload": {"id": 76, "title": "Mystery cup \u00d7 bring-a-friend", "description": "Mystery cup \u00d7 bring-a-friend \u2014 the mystery drink is free if you bring someone new.", "kind": "hybrid", "tag": "WILD", "status": "active"}}
+{"ts": 1.77, "type": "idea_generated", "payload": {"id": 77, "title": "Loyalty pass \u00d7 tasting flight", "description": "Loyalty pass \u00d7 tasting flight \u2014 members get one free afternoon flight a week.", "kind": "hybrid", "tag": "SAFE", "status": "active"}}
+{"ts": 1.78, "type": "idea_generated", "payload": {"id": 78, "title": "Pastry rescue \u00d7 office pre-order", "description": "Pastry rescue \u00d7 office pre-order \u2014 surplus pastries auto-bundle into the 3pm office tray.", "kind": "hybrid", "tag": "BOLD", "status": "active"}}
+{"ts": 1.79, "type": "idea_generated", "payload": {"id": 79, "title": "Silent hour \u00d7 co-working badge", "description": "Silent hour \u00d7 co-working badge \u2014 phone-free study room that co-workers can book.", "kind": "hybrid", "tag": "WILD", "status": "active"}}
+{"ts": 1.8, "type": "idea_generated", "payload": {"id": 80, "title": "Mystery cup \u00d7 bring-a-friend", "description": "Mystery cup \u00d7 bring-a-friend \u2014 the mystery drink is free if you bring someone new.", "kind": "hybrid", "tag": "SAFE", "status": "active"}}
+{"ts": 3.01, "type": "idea_scored", "payload": {"id": 1, "score": 77, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.02, "type": "idea_scored", "payload": {"id": 2, "score": 58, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.03, "type": "idea_scored", "payload": {"id": 3, "score": 95, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.04, "type": "idea_scored", "payload": {"id": 4, "score": 76, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.05, "type": "idea_scored", "payload": {"id": 5, "score": 57, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.06, "type": "idea_scored", "payload": {"id": 6, "score": 94, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.07, "type": "idea_scored", "payload": {"id": 7, "score": 75, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.08, "type": "idea_scored", "payload": {"id": 8, "score": 56, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.09, "type": "idea_scored", "payload": {"id": 9, "score": 93, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.1, "type": "idea_scored", "payload": {"id": 10, "score": 74, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.11, "type": "idea_scored", "payload": {"id": 11, "score": 55, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.12, "type": "idea_scored", "payload": {"id": 12, "score": 92, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.13, "type": "idea_scored", "payload": {"id": 13, "score": 73, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.14, "type": "idea_scored", "payload": {"id": 14, "score": 54, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.15, "type": "idea_scored", "payload": {"id": 15, "score": 91, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.16, "type": "idea_scored", "payload": {"id": 16, "score": 72, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.17, "type": "idea_scored", "payload": {"id": 17, "score": 53, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.18, "type": "idea_scored", "payload": {"id": 18, "score": 90, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.19, "type": "idea_scored", "payload": {"id": 19, "score": 71, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.2, "type": "idea_scored", "payload": {"id": 20, "score": 52, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.21, "type": "idea_scored", "payload": {"id": 21, "score": 89, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.22, "type": "idea_scored", "payload": {"id": 22, "score": 70, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.23, "type": "idea_scored", "payload": {"id": 23, "score": 51, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.24, "type": "idea_scored", "payload": {"id": 24, "score": 88, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.25, "type": "idea_scored", "payload": {"id": 25, "score": 69, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.26, "type": "idea_scored", "payload": {"id": 26, "score": 50, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.27, "type": "idea_scored", "payload": {"id": 27, "score": 87, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.28, "type": "idea_scored", "payload": {"id": 28, "score": 68, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.29, "type": "idea_scored", "payload": {"id": 29, "score": 49, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.3, "type": "idea_scored", "payload": {"id": 30, "score": 86, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.31, "type": "idea_scored", "payload": {"id": 31, "score": 67, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.32, "type": "idea_scored", "payload": {"id": 32, "score": 48, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.33, "type": "idea_scored", "payload": {"id": 33, "score": 85, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.34, "type": "idea_scored", "payload": {"id": 34, "score": 66, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.35, "type": "idea_scored", "payload": {"id": 35, "score": 47, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.36, "type": "idea_scored", "payload": {"id": 36, "score": 84, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.37, "type": "idea_scored", "payload": {"id": 37, "score": 65, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.38, "type": "idea_scored", "payload": {"id": 38, "score": 46, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.39, "type": "idea_scored", "payload": {"id": 39, "score": 83, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.4, "type": "idea_scored", "payload": {"id": 40, "score": 64, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.41, "type": "idea_scored", "payload": {"id": 41, "score": 45, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.42, "type": "idea_scored", "payload": {"id": 42, "score": 82, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.43, "type": "idea_scored", "payload": {"id": 43, "score": 63, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.44, "type": "idea_scored", "payload": {"id": 44, "score": 44, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.45, "type": "idea_scored", "payload": {"id": 45, "score": 81, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.46, "type": "idea_scored", "payload": {"id": 46, "score": 62, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.47, "type": "idea_scored", "payload": {"id": 47, "score": 43, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.48, "type": "idea_scored", "payload": {"id": 48, "score": 80, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.49, "type": "idea_scored", "payload": {"id": 49, "score": 61, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.5, "type": "idea_scored", "payload": {"id": 50, "score": 42, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.51, "type": "idea_scored", "payload": {"id": 51, "score": 79, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.52, "type": "idea_scored", "payload": {"id": 52, "score": 60, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.53, "type": "idea_scored", "payload": {"id": 53, "score": 41, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.54, "type": "idea_scored", "payload": {"id": 54, "score": 78, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.55, "type": "idea_scored", "payload": {"id": 55, "score": 59, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.56, "type": "idea_scored", "payload": {"id": 56, "score": 40, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.57, "type": "idea_scored", "payload": {"id": 57, "score": 77, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.58, "type": "idea_scored", "payload": {"id": 58, "score": 58, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.59, "type": "idea_scored", "payload": {"id": 59, "score": 95, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.6, "type": "idea_scored", "payload": {"id": 60, "score": 76, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.61, "type": "idea_scored", "payload": {"id": 61, "score": 57, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.62, "type": "idea_scored", "payload": {"id": 62, "score": 94, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.63, "type": "idea_scored", "payload": {"id": 63, "score": 75, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.64, "type": "idea_scored", "payload": {"id": 64, "score": 56, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.65, "type": "idea_scored", "payload": {"id": 65, "score": 93, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.66, "type": "idea_scored", "payload": {"id": 66, "score": 74, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.67, "type": "idea_scored", "payload": {"id": 67, "score": 55, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.68, "type": "idea_scored", "payload": {"id": 68, "score": 92, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.69, "type": "idea_scored", "payload": {"id": 69, "score": 73, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.7, "type": "idea_scored", "payload": {"id": 70, "score": 54, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.71, "type": "idea_scored", "payload": {"id": 71, "score": 91, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.72, "type": "idea_scored", "payload": {"id": 72, "score": 72, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.73, "type": "idea_scored", "payload": {"id": 73, "score": 53, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.74, "type": "idea_scored", "payload": {"id": 74, "score": 90, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.75, "type": "idea_scored", "payload": {"id": 75, "score": 71, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.76, "type": "idea_scored", "payload": {"id": 76, "score": 52, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.77, "type": "idea_scored", "payload": {"id": 77, "score": 89, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.78, "type": "idea_scored", "payload": {"id": 78, "score": 70, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.79, "type": "idea_scored", "payload": {"id": 79, "score": 51, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.8, "type": "idea_scored", "payload": {"id": 80, "score": 88, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 5.05, "type": "idea_ranked", "payload": {"id": 8, "rank": 1}}
+{"ts": 5.1, "type": "idea_ranked", "payload": {"id": 3, "rank": 2}}
+{"ts": 5.15, "type": "idea_ranked", "payload": {"id": 64, "rank": 3}}
+{"ts": 5.2, "type": "idea_ranked", "payload": {"id": 41, "rank": 4}}
+{"ts": 5.25, "type": "idea_ranked", "payload": {"id": 72, "rank": 5}}
+{"ts": 6.08, "type": "idea_kept", "payload": {"id": 8}}
+{"ts": 6.03, "type": "idea_kept", "payload": {"id": 3}}
+{"ts": 6.64, "type": "idea_kept", "payload": {"id": 64}}
+{"ts": 6.05, "type": "idea_cut", "payload": {"id": 5, "stress_note": "Thin margin; cannibalizes the morning rush."}}
+{"ts": 6.13, "type": "idea_cut", "payload": {"id": 13, "stress_note": "Thin margin; cannibalizes the morning rush."}}
+{"ts": 6.2, "type": "idea_cut", "payload": {"id": 20, "stress_note": "Thin margin; cannibalizes the morning rush."}}
+{"ts": 6.33, "type": "idea_cut", "payload": {"id": 33, "stress_note": "Thin margin; cannibalizes the morning rush."}}
+{"ts": 6.47, "type": "idea_cut", "payload": {"id": 47, "stress_note": "Thin margin; cannibalizes the morning rush."}}
+{"ts": 6.51, "type": "idea_cut", "payload": {"id": 51, "stress_note": "Thin margin; cannibalizes the morning rush."}}

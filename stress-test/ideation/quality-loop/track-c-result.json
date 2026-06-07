@@ -1,0 +1,109 @@
+{
+  "summary": "Track C: measure the structural persona fix (disjoint lanes + ban-obvious + divergence pass) vs baseline, via blind A/B with novelty/mechanism/relevance broken out, plus a joint-labeled convergence census as a manipulation check",
+  "agentCount": 14,
+  "logs": [
+    "cafe-afternoon-revenue: base nov/mech/rel=3/4/4  fix=4/3.5/3.5  prefers=base,fix",
+    "b2b-saas-early-churn: base nov/mech/rel=3.5/4/4.5  fix=4/4/4  prefers=base,base"
+  ],
+  "result": {
+    "verdict_note": "Verdict = blind substance A/B with relevance flat-or-up. Census is a manipulation check (the fix instructs dedup), NOT an outcome. n=2 frames; only a LARGE delta is interpretable (Track A substance bounced 3.56-3.87 in noise). Two levers moved together (lanes+ban-obvious in personas, divergence pass in generate.seed).",
+    "substance": {
+      "base": 3.83,
+      "fix": 3.83
+    },
+    "axes": {
+      "base": {
+        "novelty": 3.25,
+        "mechanism": 4,
+        "relevance": 4.25,
+        "compliance": 4.5
+      },
+      "fix": {
+        "novelty": 4,
+        "mechanism": 3.75,
+        "relevance": 3.75,
+        "compliance": 4.5
+      }
+    },
+    "prefers_overall": [
+      "base",
+      "fix",
+      "base",
+      "base"
+    ],
+    "per_topic": [
+      {
+        "topic": "cafe-afternoon-revenue",
+        "base": {
+          "novelty": 3,
+          "mechanism": 4,
+          "relevance": 4,
+          "compliance": 4.5
+        },
+        "fix": {
+          "novelty": 4,
+          "mechanism": 3.5,
+          "relevance": 3.5,
+          "compliance": 4.5
+        },
+        "prefers": [
+          "base",
+          "fix"
+        ],
+        "reasons": [
+          "Y reaches further on novelty (4 vs 3): X duplicates 4-5 concepts across makers A and B — the morning-receipt token, descending-price mechanic, borrow-a-crowd, and sell-the-quiet all appear twice — which is a direct novelty failure, whereas Y has less wholesale A/B repetition. But Y bought that novelty partly at the cost of relevance and mechanism: its boldest entries (B6 \"chase the 4 o'clock light,\" B5 \"slowest cafe in town\") are vibe/positioning that sell roughly one coffee or one seat and offer no real revenue engine for a dead 3-hour window, and B3 \"marble in jar\" is just the morning-to-afternoon return token in poetic packaging — novel framing of a non-novel mechanism that also overlaps Y's own A3. X is consistently more concrete and root-cause-focused (self-serve mode cuts the labor that makes slow hours bleed, capturing the afternoon sale at the morning till, non-colliding new crowds via class-pass top-ups and after-school zones), so it leads mechanism and relevance. Since substance sums novelty+mechanism+relevance, X's edge on two of three axes — grounded in mechanisms that actually attack this problem — outweighs Y's single-axis novelty lead, making X the narrow substance winner; compliance is effectively a tie.",
+          "Both collections are equally compliant (self-contained coffee-talk, named personas, euros, no jargon) and roughly tied on mechanism and relevance, since nearly every idea in both attacks the stated problem with an explicit non-cannibalization angle. The deciding axis is novelty, where the within-collection overlap penalty hits Y hard: Y repeats the morning-buy/afternoon-redeem token THREE times (A1, A4, B1) and doubles up on descending-price (A6, B4), sell-the-silence (A3, B3), and import-a-crowd (A7, B6) — roughly nine of sixteen ideas are convergent, collapsing its novelty. X has far less internal duplication (its only real twin is the quiet-room pair A1/B2) and a richer non-obvious spread (slowest-cafe-in-town, the 4 o'clock light table, the marble-in-a-jar, apprentice hours). The honest caveat is that X bought a couple of those novelty points at some cost to mechanism/revenue traction — the light table and slowest-cafe are partly vibes/positioning with thin per-head economics — whereas Y's distinctive maker-B ideas (nap nook, rent-the-oven, board-game lending, after-school takeover) are tighter on concrete revenue. But that relevance/mechanism slippage in X touches only two or three ideas, while Y's overlap drags down its novelty across nine, so X has the higher overall substance."
+        ],
+        "census": {
+          "base": {
+            "distinct_mechanisms": 9,
+            "cross_maker_collisions": 4,
+            "obvious_default_count": 6
+          },
+          "fix": {
+            "distinct_mechanisms": 8,
+            "cross_maker_collisions": 5,
+            "obvious_default_count": 4
+          },
+          "note": "Used one shared 11-label vocabulary applied identically to both collections, stripping evocative prose down to the core move before labeling (advisor flagged that C2-B's rich framing is the main granularity trap). Shared labels: time-shift demand, repurpose idle oven, rent idle capacity, sell calm as product, cut afternoon labor cost, dynamic markdown, import external crowd, sell new idle-hours service, separate afternoon identity, afternoon subscription, relocate to crowd.\n\nC1 labels: A1 time-shift, A2 repurpose oven, A3 sell calm, A4 time-shift, A5 cut labor, A6 dynamic markdown, A7 import crowd, A8 separate identity; B1 time-shift, B2 rent idle capacity, B3 sell calm, B4 dynamic markdown, B5/B7/B8 sell new service, B6 import crowd. Distinct=9. A∩B = {time-shift, sell calm, dynamic markdown, import crowd} = 4 collisions.\n\nC2 labels: A1 sell calm, A2 subscription, A3 time-shift, A4 repurpose oven, A5 sell new service (pickup), A6 cut labor, A7 separate identity, A8 relocate; B1 separate identity, B2 sell calm, B3 time-shift, B4 sell new service (custody), B5 sell calm (slow cafe), B6 sell calm (golden light), B7 repurpose oven, B8 sell new service (lessons). Distinct=8. A∩B = {sell calm, time-shift, repurpose oven, sell new service, separate identity} = 5 collisions.\n\nKey anti-generosity decision: C2-B's marble-jar (B3) folds into time-shift; sanctuary/slowest-cafe/golden-light (B2/B5/B6) all fold into one 'sell calm' mechanism rather than splitting into three. After stripping prose, C2 is NOT more diverse than C1 (8<9) — the diversity-intervention signature (C2 distinct spiking from generous splitting) does not hold up.\n\nobvious_default_count counted strictly against the given closed list (loyalty/punch, discount/markdown, rent idle space, delivery, host events, referral, subscription, onboarding nudge), counting stock moves even when dressed up. C1=6: A3 + B3 (rent idle space = paid guaranteed quiet seat/room), B2 (rent idle oven capacity), A6 + B4 (markdown), B6 (host events). C2=4: A1 + B2 (rent idle space = paid quiet seat/room), A2 (subscription), A5 (order-ahead pickup ~ delivery). Symmetry rule applied identically: paying for a guaranteed seat/slot in the quiet room counts as 'rent idle space' in both collections; B5/B6 are service gimmicks, not seat-rental, so excluded."
+        }
+      },
+      {
+        "topic": "b2b-saas-early-churn",
+        "base": {
+          "novelty": 3.5,
+          "mechanism": 4,
+          "relevance": 4.5,
+          "compliance": 4.5
+        },
+        "fix": {
+          "novelty": 4,
+          "mechanism": 4,
+          "relevance": 4,
+          "compliance": 4.5
+        },
+        "prefers": [
+          "base",
+          "base"
+        ],
+        "reasons": [
+          "Both collections are near-parallel coffee-talk with concrete personas and no jargon, so compliance is a tie (~5) and excluded from substance. The discriminator is novelty-vs-relevance, which lives in the two B makers: both A makers are conventional-but-tightly-relevant, both B makers go wild. Y has the higher novelty ceiling — Y-A3 \"pay per active seat\" is the single best idea in either pile (non-obvious AND directly attacks ghost-account churn) — but Y bought that novelty at a relevance cost in Y-B: the mailed laser-etched keepsake card, the break-room hardware glass, and the whole-team coffee wager are vivid yet operationally heavy and only loosely tied to getting a stalled team to its first complete week in the first 60 days; Y also carries an intra-maker duplicate (A1 and A5 are both the same auto-draft idea). X stays more uniformly anchored to the stated root causes (admin-does-it-alone, late first-week, invisible value, weak lock-in, nag-backfire, late churn detection) with only one relevance leak (B5's apprentice-before-time-off adds week-1 friction), so despite its lower novelty ceiling and comparable A/B overlap, X's relevance discipline edges out Y's novelty-with-a-leak on substance.",
+          "Mechanism and compliance are effectively tied: both collections are concrete, self-contained, coffee-talk with named actors (cafe manager, nurse, line cooks) and identical, non-differentiating SAFE/BOLD/WILD tags. The substance edge goes to Y on two grounds. First, overlap: X carries the worst duplication — a near-verbatim cross-maker pair (A2 'each person owns their own row' = B2 'schedules nobody owns alone') stacked on a within-maker near-dup (A1 ≈ A5, both auto-draft the first week) and a three-way auto-draft cluster (A1/A5/B6); Y's heaviest overlaps (B3 sourdough ≈ B8 tide chart on churn-detection; A4 meter ≈ B4 stamps on saved-hours) are softer and more mechanistically distinct. Second, relevance: Y's Maker A is tightly aimed at the stated first-60-day activation problem (prefill, nudge-the-one-bottleneck, catch-the-silent-week, self-deleting practice week), whereas X spends a slot on pay-per-seat — a monetization lever, not a churn mechanism — plus more speculative gimmicks (keepsake, break-room glass, wager). Neither collection grossly bought novelty at relevance's expense, but X's WILD tail (keepsake/glass/wager) and the off-target pay-per-seat idea drift further from the root cause than Y's worst offender (apprentice-before-time-off), making Y the marginally higher-substance set."
+        ],
+        "census": {
+          "base": {
+            "distinct_mechanisms": 9,
+            "cross_maker_collisions": 4,
+            "obvious_default_count": 0
+          },
+          "fix": {
+            "distinct_mechanisms": 9,
+            "cross_maker_collisions": 3,
+            "obvious_default_count": 0
+          },
+          "note": "Shared 10-label vocabulary (labeled off the stripped strategic lever, not the metaphor): force team co-creation, autogenerate the work, make value visible, ambient presence, raise switching cost, peer shift trading, detect churn risk + intervene, import game mechanic, align pricing to adoption, targeted bottleneck nudge.\n\nC1 labels: A1 force-co-creation, A2 make-value-visible, A3 autogenerate, A4 make-value-visible, A5 targeted-bottleneck-nudge, A6 raise-switching-cost, A7 detect-churn-intervene, A8 game-mechanic; B1 force-co-creation, B2 peer-trading, B3 detect-churn-intervene, B4 make-value-visible, B5 raise-switching-cost, B6 peer-trading, B7 ambient-presence, B8 detect-churn-intervene. Distinct=9. Cross-maker collisions=4 (force-co-creation, make-value-visible, raise-switching-cost, detect-churn-intervene).\n\nC2 labels: A1 autogenerate, A2 force-co-creation, A3 align-pricing-to-adoption, A4 raise-switching-cost, A5 autogenerate, A6 raise-switching-cost, A7 peer-trading, A8 detect-churn-intervene; B1 make-value-visible, B2 force-co-creation, B3 ambient-presence, B4 game-mechanic, B5 make-value-visible, B6 autogenerate, B7 raise-switching-cost, B8 game-mechanic. Distinct=9. Cross-maker collisions=3 (autogenerate, force-co-creation, raise-switching-cost).\n\nGranularity held identical via a cross-collection symmetry pass: C2 B4 Sunday muster labeled game-mechanic (stripping the timed race collapses it to a plain swap board = A7, so the synchronized event is the non-removable essence) using the same essence-vs-flavor rule applied to C1 B2 standby-board (trading=essence, points=removable flavor -> peer trading). C2 exit-visibility ideas (A4 export stamp, B7 leaving-note) folded into raise-switching-cost rather than spawning a C2-only 'exit-friction' label, which would be the asymmetric split the task forbids. obvious_default=0/0 applied strictly against the enumerated stock list; pay-per-active-seat (C2 A3) is a pricing-alignment redesign, not the stock 'subscription' move, and the targeted/value-as-nudge ideas explicitly position against generic onboarding nudges.\n\nAudit finding: both collections land at 9 distinct mechanisms - the diversity intervention did NOT increase mechanism count. Collection 2 is more vividly FRAMED (WILD metaphors: keepsake card, break-room glass, wager, muster) but its surface variety reskins mechanisms already present (make-value-visible, import-game-mechanic, ambient-presence); it is not more mechanically diverse. The only genuine C2-unique lever is align-pricing-to-adoption; the only genuine C1-unique lever is targeted-bottleneck-nudge."
+        }
+      }
+    ]
+  }
+}

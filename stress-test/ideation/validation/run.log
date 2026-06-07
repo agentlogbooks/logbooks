@@ -1,0 +1,119 @@
+############ VALIDATION: feed ideas from a source -> iterate -> visualize ############
+## topic: import-iterate-test   (resolves under .logbooks/ideation/)
+/Users/ydmitry/work/logbook-creator/.logbooks/ideation/import-iterate-test/logbook.sqlite
+init-topic OK
+
+==== STAGE 1: FEED IDEAS FROM A SOURCE ====
+-- 1a. NAIVE path: add-idea straight from source, no framing (the obvious thing a user/agent would try) --
+ERROR: no active frame — run `frame.discover` before generating ideas, or pass --frame-id-at-birth explicitly.
+   naive add-idea exit code = 1  (non-zero / error = the journey's first wall)
+
+-- 1b. BOOTSTRAP path: op-start -> add-frame(placeholder) -> add-ideas-batch (8 source ideas) --
+   run_id=0f151ee4-30ec-491c-9154-50860cd8f971
+   import op_run_id=1
+1
+   add-frame OK
+   add-ideas-batch returned ids: [
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+]
+ok
+   imported active ideas:
+[
+  {
+    "idea_id": 1,
+    "title": "Self-serve refund portal",
+    "description": "Customers issue their own refunds within policy limits from a self-serve page, so support never touches routine refund tickets.",
+    "kind": "seed",
+    "tag": "SAFE",
+    "temperature_zone": null,
+    "status": "active",
+    "score_summary": null,
+    "evidence_state": "untested",
+    "next_action": null,
+   list-topics sees the topic?
+[
+  {
+    "topic_slug": "import-iterate-test",
+
+==== STAGE 2: ITERATE STEP BY STEP ON THE IMPORTED IDEAS ====
+-- 2a. cohort query (all-active) used by follow-up flows --
+[
+  1,
+  2,
+  3,
+  4,
+  5,
+  6,
+  7,
+  8
+]
+-- 2b. transform: refine idea #1 into a child, with lineage (like 'ideation <slug>: develop idea 1') --
+   refine op_run_id=2
+   new child idea_id=9
+ERROR: relation must be one of ('derived_from', 'hybrid_of', 'refinement_of', 'counter_of')
+ok
+   children-of 1:
+[]
+   lineage-tree 9:
+[
+  {
+    "idea_id": 9,
+    "kind": "refinement",
+    "title": "Refund portal + instant store credit",
+    "depth": 0
+  }
+]
+-- 2c. evaluate: score 3 imported ideas (assessments attach to imported rows) --
+   score op_run_id=3
+[
+  1,
+  2,
+  3
+]
+   add-assessments-batch OK
+ok
+   op-runs for this session (the audit trail of the iteration):
+[
+  {
+    "operator_run_id": 1,
+    "run_id": "0f151ee4-30ec-491c-9154-50860cd8f971",
+    "plan_step_index": null,
+    "operator_name": "user.import",
+    "operator_persona": null,
+    "params": null,
+    "cohort_ids": "[]",
+    "status": "succeeded",
+    "outcome_summary": "imported 8 ideas from external backlog",
+    "error": null,
+
+==== STAGE 3: VISUALIZE — did the import auto-show on the wall? ====
+-- 3a. After all the above, does a wall event log exist? (i.e., did import/iterate emit anything?) --
+ls: .logbooks/ideation/import-iterate-test/live-events.jsonl: No such file or directory
+   NO live-events.jsonl — the import+iterate wrote NOTHING to the wall (emits are orchestrator-only, not in the CLI/operators)
+############ END STAGE 1-3 (visualization emit handled next) ############
+
+==== STAGE 2b FIX: correct lineage relation (refinement_of) ====
+ok
+  add-lineage-batch (refinement_of) OK
+  children-of 1 now:
+[
+  {
+    "idea_id": 9,
+    "title": "Refund portal + instant store credit",
+    "kind": "refinement",
+    "relation": "refinement_of"
+  }
+]
+  -> iteration on imported ideas fully works (child + lineage + score + audit). Earlier 'refine' was a test typo; valid relations: derived_from/hybrid_of/refinement_of/counter_of.
+
+==== STAGE 3b: can the wall show it IF something emits? (simulate the missing import->emit) ====
+emitted 9 idea_generated events
+  live-events.jsonl now exists:
+      15 .logbooks/ideation/import-iterate-test/live-events.jsonl

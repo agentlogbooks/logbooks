@@ -1,0 +1,38 @@
+[
+  {
+    "slug": "cafe-afternoon-revenue",
+    "problem_statement": "A neighbourhood cafe is packed 7-11am but nearly empty 2-5pm; the owner wants to grow afternoon revenue without cannibalising the morning rush.",
+    "root_causes": [
+      "Afternoon foot traffic is structurally low — there is no commuter flow after lunch.",
+      "The cafe is known as a morning coffee stop, not an afternoon destination.",
+      "Staff and ovens sit idle in the afternoon but still cost money.",
+      "Regulars have no habit or trigger to return later in the day."
+    ],
+    "hmw_questions": [
+      "How might we give existing morning customers a reason to come back in the afternoon?",
+      "How might we turn idle afternoon capacity into a sellable product?",
+      "How might we attract a different afternoon crowd (students, remote workers, parents) without alienating regulars?",
+      "How might we make the slow hours feel like a feature rather than dead time?"
+    ],
+    "triz_tradeoff": "Filling the afternoon (more demand) risks straining the morning brand and quality the cafe is known for.",
+    "ifr": "The afternoon fills itself with paying customers using capacity the cafe already has, at no extra staffing cost."
+  },
+  {
+    "slug": "b2b-saas-early-churn",
+    "problem_statement": "A small B2B SaaS team-scheduling tool (~400 paying teams) loses about 4% of accounts every month, mostly within the first 60 days; the founder wants to cut early churn.",
+    "root_causes": [
+      "New teams never reach the 'aha' moment (a first fully-scheduled week) before the trial novelty fades.",
+      "Only the admin who signed up logs in; the rest of the team never adopts the tool.",
+      "The value is invisible — teams cannot see the time saved or the conflicts avoided.",
+      "Switching cost is low early on; a competitor is one CSV export away."
+    ],
+    "hmw_questions": [
+      "How might we get a whole team active, not just the admin, in the first week?",
+      "How might we make the time-saved value visible early?",
+      "How might we raise the cost of leaving without locking people in?",
+      "How might we detect a team about to churn and intervene in time?"
+    ],
+    "triz_tradeoff": "Pushing adoption harder with onboarding nudges risks annoying users and accelerating the very churn you are trying to prevent.",
+    "ifr": "Every new team reaches its first scheduled week on its own, and the value is obvious before the trial ends."
+  }
+]

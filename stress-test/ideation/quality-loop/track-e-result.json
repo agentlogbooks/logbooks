@@ -1,0 +1,69 @@
+{
+  "summary": "Track E: mechanism-first Description Writing Protocol vs baseline, isolated by holding IDEAS constant. Curated vivid metaphor-inviting fixtures stress the workflow; non-circular mechanism-recovery metric (read description -> restate mechanism -> score vs ground truth) plus a blind pairwise clarity vote.",
+  "agentCount": 8,
+  "logs": [
+    "fixtures: 10 vivid stubs",
+    "fidelity base=5 fix=5 | pairwise base/fix/tie=3/7/0"
+  ],
+  "result": {
+    "verdict_note": "Track E isolates the description WRITE-UP (same ideas, two protocols). Primary = mechanism-recovery fidelity (read description -> restate mechanism -> score vs ground truth, non-circular). Corroboration = blind pairwise clarity. Fixtures curated to be vivid/metaphor-inviting so the failure mode can fire. Headroom is small; report straight.",
+    "fidelity": {
+      "base": 5,
+      "fix": 5
+    },
+    "clarity": {
+      "base": 4.9,
+      "fix": 4.8
+    },
+    "pairwise": {
+      "base_wins": 3,
+      "fix_wins": 7,
+      "ties": 0
+    },
+    "n_stubs": 10,
+    "sample": [
+      {
+        "id": 1,
+        "title": "The Second Sunrise",
+        "ground_truth": "From 2-5pm the cafe sells a fixed 'afternoon set' at 9 dollars: any drip coffee plus a small savoury pastry that is baked fresh in a 1:30pm batch (separate from the morning sweet pastries), and the set is only orderable between 2 and 5pm so it cannot pull morning customers.",
+        "base_desc": "From 2 to 5pm the cafe sells one fixed 'afternoon set' for $9: any drip coffee plus a small savoury pastry from a fresh batch baked at 1:30pm, separate from the morning sweets. Because the set only exists in the afternoon, it gives tired 3pm people a reason to come in without pulling anyone away from the morning rush it can't compete with.",
+        "fix_desc": "From 2 to 5pm the cafe sells a fixed $9 'afternoon set' — any drip coffee plus a small savory pastry baked in its own 1:30pm batch, separate from the morning sweet pastries, and orderable only in that window. A worker dragging at 3pm grabs a hot coffee and a fresh savory bite for one price, which fills the dead mid-afternoon stretch without pulling anyone away from the morning rush."
+      },
+      {
+        "id": 2,
+        "title": "Punch-Card Inversion",
+        "ground_truth": "A loyalty stamp card that only earns a stamp on purchases made between 2 and 5pm, and ten afternoon stamps give a free afternoon drink; morning purchases earn nothing on this card, so it steers existing regulars into a second daily visit rather than rewarding the visit they already make.",
+        "base_desc": "It's a loyalty stamp card that only earns a stamp on purchases made between 2 and 5pm, and ten afternoon stamps get you a free afternoon drink; a morning latte earns nothing on this card. So instead of rewarding the visit your regulars already make, it nudges them to come back a second time in the slow afternoon to chase the stamp.",
+        "fix_desc": "A loyalty stamp card that earns a stamp only on purchases made between 2 and 5pm, where ten afternoon stamps get you a free afternoon drink and morning purchases earn nothing. Because a regular's existing 8am coffee doesn't count, the card nudges them to come back a second time later in the day, turning one daily visit into two and filling the quiet hours."
+      },
+      {
+        "id": 3,
+        "title": "The Library Hours",
+        "ground_truth": "Between 2 and 5pm the cafe relabels its back room as a quiet laptop-work zone with free wifi, power strips at every seat, and a posted no-meetings/keep-voices-low rule, and requires one drink or pastry purchase per two hours to hold a seat.",
+        "base_desc": "Between 2 and 5pm the cafe turns its back room into a quiet laptop-work zone, with free wifi, a power strip at every seat, and a posted rule of no meetings and low voices; to hold a seat you buy one drink or pastry every two hours. It turns the dead afternoon into a calm office-away-from-home that fills empty tables with people who linger and keep buying, without touching the busy morning trade.",
+        "fix_desc": "From 2 to 5pm the cafe turns its back room into a quiet laptop-work zone — free wifi, a power strip at every seat, and a posted rule of no meetings and low voices — and you hold a seat by buying one drink or pastry every two hours. A freelancer who'd otherwise sit unproductively at home gets a calm place to focus, and the cafe converts its emptiest hours into steady seat-by-seat purchases."
+      },
+      {
+        "id": 4,
+        "title": "Bake-Off at Three",
+        "ground_truth": "At 3pm daily the cafe puts the unsold morning pastries on a marked 'half-price after 3' shelf, and texts the discounted list to customers who opted into an afternoon-only SMS list, converting would-be waste into a 3pm traffic trigger that does not touch full-price morning sales.",
+        "base_desc": "At 3pm each day the cafe moves its unsold morning pastries to a 'half-price after 3' shelf and texts the list of what's there to customers who signed up for an afternoon-only message. It turns what would have been thrown-out waste into a daily 3pm reason to drop by, and because it's only yesterday-morning's leftovers it never undercuts the full-price morning sales.",
+        "fix_desc": "At 3pm each day the cafe moves its unsold morning pastries to a marked 'half-price after 3' shelf and texts the list to customers who opted into an afternoon-only SMS alert. Someone gets a ping that a croissant is now half off, walks over, and the cafe turns would-be waste into a daily 3pm traffic spike — all without discounting anything during the full-price morning."
+      },
+      {
+        "id": 5,
+        "title": "The Neighbour Handoff",
+        "ground_truth": "The cafe partners with the bookshop two doors down: any bookshop receipt from that day, shown between 2 and 5pm, gets the customer a 2-dollar-off afternoon drink, and the cafe gives the bookshop coffee vouchers to hand to its own buyers, routing the bookshop's afternoon foot traffic into the cafe's dead hours.",
+        "base_desc": "The cafe teams up with the bookshop two doors down: bring in a same-day bookshop receipt between 2 and 5pm and get $2 off an afternoon drink, and in return the cafe hands the bookshop coffee vouchers to give its own buyers. It quietly reroutes the bookshop's afternoon browsers into the cafe's slowest hours, with each shop feeding the other instead of competing.",
+        "fix_desc": "The cafe teams up with the bookshop two doors down: show a same-day bookshop receipt between 2 and 5pm and get $2 off an afternoon drink, while the cafe hands the bookshop coffee vouchers to give its own buyers. A customer who just bought a novel next door wanders in for a discounted afternoon coffee, routing the bookshop's foot traffic into the cafe's slowest hours."
+      },
+      {
+        "id": 6,
+        "title": "The Lighthouse Email",
+        "ground_truth": "Every Monday the app emails each team member (not just the admin) a personal one-line digest of how many hours of back-and-forth scheduling the tool saved them specifically last week, computed from their own accepted shifts and avoided reschedules, with a single button to view their schedule.",
+        "base_desc": "Every Monday the scheduling app emails each team member personally, not just the boss, a one-line note like 'we saved you about 2 hours of back-and-forth last week' calculated from their own accepted shifts and the reschedules they dodged, with one button to view their schedule. It makes every person feel the tool's value directly, so the whole team stays engaged instead of the admin being the only one who ever sees the benefit.",
+        "fix_desc": "Every Monday the app emails each team member — not just the admin — a personal one-line digest of how many hours of scheduling back-and-forth the tool saved them specifically last week, figured from their own accepted shifts and avoided reschedules, with one button to view their schedule. A nurse opens it to read 'we saved you 2.5 hours last week,' which gives every individual teammate a reason to log in, since the product's value only shows up once non-admins actually use it."
+      }
+    ]
+  }
+}

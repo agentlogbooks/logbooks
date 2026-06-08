@@ -1,0 +1,176 @@
+{
+  "insights": [
+    {
+      "key": "develop-wins",
+      "title": "A Second Pass Beats a First Draft",
+      "plain_explanation": "When we took a rough first idea and spent time improving it, the better version won in all 4 tests. The polished ideas scored a perfect 15 out of 15 every time, while the rough first tries scored only 10 to 12. So the gap was real, not luck.",
+      "analogy": "It's like a first draft of an essay versus the one you go back and edit. The second pass always reads better."
+    },
+    {
+      "key": "lens-doesnt-matter",
+      "title": "Fancy Brainstorm Tricks Win Nothing",
+      "plain_explanation": "We tested three famous idea-improving methods against just telling the AI \"make it better.\" Across all 12 head-to-head tests, the fancy methods never pulled ahead. Plain \"make it better\" won 8 of them; the famous tricks won only 4, and Six Hats lost every single round.",
+      "analogy": "It's like buying a $200 chef's knife and a $5 kitchen knife. Both cut the tomato the same way. The expensive one has a fancier name, but your dinner tastes exactly the same."
+    },
+    {
+      "key": "why-model-already",
+      "title": "Fancy idea tricks added nothing",
+      "plain_explanation": "When we just asked the AI to \"improve this idea,\" it already did the smart moves on its own \u2014 swapping things out, fixing the weak spot, and so on. So when we told it to use a named trick like SCAMPER or Six Thinking Hats, it landed on the same answer it would have found anyway. In all 4 test cases, every method ended up at the same core fix, and \"just improve it\" scored a touch higher on average than all three named tricks.",
+      "analogy": "It's like handing a recipe to a chef who already knows how to cook. Telling her \"now use the chop-then-saut\u00e9 method\" doesn't change the meal \u2014 she was going to do that anyway."
+    },
+    {
+      "key": "why-same-fix",
+      "title": "Every Method Finds the Same Fix",
+      "plain_explanation": "When an idea has one clear weak spot, there's usually only one good way to fix it, so it doesn't matter which brainstorming method you use. In all 4 tests, the different methods kept landing on the exact same fix. About 4 times out of 10, the answers were basically the same idea worn differently.",
+      "analogy": "It's like four people fixing a flat tire. You can hand them different toolboxes, but they all end up doing the one thing that actually works: change the tire."
+    },
+    {
+      "key": "real-lever",
+      "title": "What Wins Is Making Ideas Real",
+      "plain_explanation": "An idea gets better when you turn its vague promise into something specific that people actually have to do. In all 4 tests, the polished version beat the rough one (it scored 15, while the rough ideas scored only 10 to 12). And it didn't matter which brainstorming method we used to get there: the fix was always \"pin it down and make it stick.\"",
+      "analogy": "It's like a New Year's resolution. Saying \"I'll get fit\" does nothing. Saying \"I go to the gym Monday, Wednesday, Friday at 7am, and my friend checks on me\" is what actually works. The wording of the goal isn't the point; making it concrete and hard to skip is."
+    },
+    {
+      "key": "what-to-do",
+      "title": "Just deepen the idea you picked",
+      "plain_explanation": "Simply taking an idea and developing it made it much better, in all 4 tests it jumped from around 11 up to a 15. The fancy brainstorming tricks barely helped; against plain developing they only won 3 out of 12 times, and were usually a touch worse. So the real work is picking an idea and going deeper on it, not running it through a special method.",
+      "analogy": "The fancy tricks are like seasoning. A pinch can be nice, but it won't save a dish. The actual meal is taking your idea and cooking it properly."
+    }
+  ],
+  "techSummary": [
+    {
+      "technique": "reverse",
+      "wins": 2,
+      "losses": 2,
+      "ties": 0,
+      "avg_tech_q": 13.5,
+      "avg_plain_q": 13.75
+    },
+    {
+      "technique": "scamper",
+      "wins": 1,
+      "losses": 3,
+      "ties": 0,
+      "avg_tech_q": 12.75,
+      "avg_plain_q": 14
+    },
+    {
+      "technique": "sixhats",
+      "wins": 0,
+      "losses": 4,
+      "ties": 0,
+      "avg_tech_q": 12.25,
+      "avg_plain_q": 14.75
+    }
+  ],
+  "liftRows": [
+    {
+      "frame": "cafe",
+      "dev_won": true,
+      "dev_q": 15,
+      "raw_q": 11
+    },
+    {
+      "frame": "b2b",
+      "dev_won": true,
+      "dev_q": 15,
+      "raw_q": 12
+    },
+    {
+      "frame": "library",
+      "dev_won": true,
+      "dev_q": 15,
+      "raw_q": 10
+    },
+    {
+      "frame": "cupwaste",
+      "dev_won": true,
+      "dev_q": 15,
+      "raw_q": 12
+    }
+  ],
+  "convergenceRate": 0.42,
+  "armMoveTotals": {
+    "plain": {
+      "ENF": 2,
+      "RISK": 3,
+      "AMP": 2,
+      "DATA": 2,
+      "TIME": 2,
+      "COMB": 1
+    },
+    "reverse": {
+      "RISK": 3,
+      "SCOPE": 3,
+      "TIME": 1,
+      "ENF": 2,
+      "SUB": 1,
+      "AUD": 1
+    },
+    "scamper": {
+      "SUB": 3,
+      "AUD": 1,
+      "AMP": 2,
+      "COMB": 2,
+      "ENF": 1,
+      "TIME": 2
+    },
+    "sixhats": {
+      "DATA": 2,
+      "ENF": 3,
+      "RISK": 4,
+      "TIME": 2,
+      "AMP": 1
+    }
+  },
+  "divTally": {
+    "reverse": {
+      "minor_variation": 2,
+      "different_but_not_better": 2
+    },
+    "scamper": {
+      "different_but_not_better": 1,
+      "different_and_better": 2,
+      "minor_variation": 1
+    },
+    "sixhats": {
+      "minor_variation": 2,
+      "different_but_not_better": 1,
+      "nearly_identical": 1
+    }
+  },
+  "beforeAfter": [
+    {
+      "frame": "cafe",
+      "seed": "Morning receipt prints an afternoon reward",
+      "raw": "Every 7-11am receipt prints a same-day 2-5pm coupon - for example 'free cookie with any drink after 2 today,' expiring at 5pm - so the morning rush you already own becomes the distribution channel that pulls people back in the empty window. Mechanism: re-trigger your existing customers using traffic you already have, at the cost of only marginal food and staff who are already on the clock. Example: a regular grabbing a 7:45am latte walks out holding a reason to return at 3pm that they didn't have before.",
+      "developed": "The barista hands every 7-11am customer a receipt whose footer prints a same-day offer that only pays off if they buy something in the afternoon: 'Come back 2-5pm today, buy any drink, get a warm cookie free' or 'second drink half-price after 2.' The reward is bundled to a paid purchase, not given away, so each redemption is a net-new afternoon trip with a sale attached, costing only marginal food and staff already on the clock. To make it a habit rather than a one-off, the footer also stamps a tiny 'afternoon streak' line - redeem three afternoons in a week, the fourth drink is free - so regulars build a return reflex. Example: a regular grabbing a 7:45am latte walks out holding a receipt that turns a 3pm latte-plus-cookie run into a small reward, and by Thursday she's chasing her free fourth drink.",
+      "what_changed": "Tied the reward to a paid afternoon purchase and added a multi-day streak, so it generates incremental sales and a return habit instead of giving margin to people who'd come anyway."
+    },
+    {
+      "frame": "b2b",
+      "seed": "Done-for-you first week",
+      "raw": "A staffer (or a guided import bot acting as one) builds the customer's entire first real schedule for them within 48 hours of signup, instead of leaving the admin to learn an empty grid. The admin forwards last month's shifts (a spreadsheet, a photo of the whiteboard, even a screenshot of their old tool) and the team replies with a fully-populated, ready-to-publish week the admin only has to approve. Example: a 9-person cafe signs up Monday; by Wednesday a coordinator has imported their staff list, recurring shift patterns, and two known time-off requests, and sends the manager a finished published schedule with the message 'Approve and your team gets notified \u2014 took us 20 minutes, would've taken you two hours.' The customer crosses the fully-scheduled-week threshold before novelty can fade, because they never had to do the hard part.",
+      "developed": "A coordinator (or import bot acting as one) still builds the customer's whole first real week within 48 hours from whatever the admin forwards \u2014 spreadsheet, whiteboard photo, screenshot of the old tool \u2014 and sends a finished, ready-to-publish schedule the admin just approves. The new part: the coordinator doesn't hand over a flat one-off grid, they hand over a saved template \u2014 the recurring shift patterns, the staff list, and the time-off rules are stored as a reusable block, and they spend the last 10 minutes on a screenshare watching the admin make exactly ONE real edit themselves (drag a shift, swap a name, add a person) so the admin has touched the controls before they're alone. Example: a 9-person cafe signs up Monday; by Wednesday the coordinator publishes a finished week, then says 'Next Monday, hit Clone last week and you're 90% done \u2014 try moving Tariq's Friday shift right now so you've done it once.' The admin crosses the fully-scheduled-week threshold AND clears week two before novelty fades, because week two is a one-click clone of a template they've already edited, not a blank grid.",
+      "what_changed": "The handoff now leaves behind a reusable cloneable template plus one guided admin edit, so the second week isn't a blank grid \u2014 fixing the original's 'the novelty cliff just moves one week later' flaw."
+    }
+  ],
+  "frameWhys": [
+    {
+      "frame": "cafe",
+      "why": "The techniques did not out-develop plain because every arm converges on the same underlying deepening -- take the seed's already-stated-but-vague promise and make it enforceable, morning-safe, and scope-capped -- and each lens only changes the ROUTE to that destination (reverse via failure-framing, sixhats via a data clause, scamper via a lateral mechanism swap), producing differing move-types but the same quality of fix, so plain \"just improve it\" reaches it with no lens-specific edge."
+    },
+    {
+      "frame": "b2b",
+      "why": "The techniques mostly failed to out-develop plain because plain's built-in 'fix the obvious objection' move already harvests the highest-value improvement on each seed, so convergence simply tracks seed structure \u2014 a seed with one glaring flaw (seed 2) makes every lens find the same fix, a multi-flaw seed (seed 3) lets each lens grab a different weak point \u2014 leaving the named techniques to mostly add framing variety rather than superior develops, except where scamper's amplify-the-upside bias happened to hit the GOAL's adoption/switching-cost root causes harder."
+    },
+    {
+      "frame": "library",
+      "why": "This goal exposes essentially one dominant lever \u2014 converting one-off visits into committed recurring ones (ENF) \u2014 which plain finds directly, so the techniques either re-derive that same enforcement move (converge, especially seed 3) or apply their native bias to an off-goal layer (reverse to robustness, sixhats to risk-coverage), and the only real win is scamper's 'eliminate' lens matching seed 2, the one seed with a removable home-substitute it could attack."
+    },
+    {
+      "frame": "cupwaste",
+      "why": "The techniques did not out-develop plain because each seed had a single dominant weak point (fee-invisibility for 1, deposit-friction for 2) that forced the same fix regardless of method, so the arms converged; they diverged only on seed 3, which had no forced fix \u2014 and there reverse and scamper diverged not by beating plain but by drifting to a common attractor (collapsing the building loop into seed 2's pooled fleet), i.e. divergence-by-loss-of-identity rather than divergence-by-improvement."
+    }
+  ]
+}

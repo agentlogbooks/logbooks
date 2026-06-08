@@ -1,0 +1,1270 @@
+{
+  "agg": {
+    "techSummary": [
+      {
+        "technique": "reverse",
+        "wins": 2,
+        "losses": 2,
+        "ties": 0,
+        "avg_tech_q": 13.5,
+        "avg_plain_q": 13.75
+      },
+      {
+        "technique": "scamper",
+        "wins": 1,
+        "losses": 3,
+        "ties": 0,
+        "avg_tech_q": 12.75,
+        "avg_plain_q": 14
+      },
+      {
+        "technique": "sixhats",
+        "wins": 0,
+        "losses": 4,
+        "ties": 0,
+        "avg_tech_q": 12.25,
+        "avg_plain_q": 14.75
+      }
+    ],
+    "judgeRows": [
+      {
+        "frame": "cafe",
+        "tech": "reverse",
+        "winner": "plain",
+        "tech_q": 13,
+        "plain_q": 15
+      },
+      {
+        "frame": "cafe",
+        "tech": "scamper",
+        "winner": "plain",
+        "tech_q": 13,
+        "plain_q": 14
+      },
+      {
+        "frame": "cafe",
+        "tech": "sixhats",
+        "winner": "plain",
+        "tech_q": 12,
+        "plain_q": 14
+      },
+      {
+        "frame": "b2b",
+        "tech": "reverse",
+        "winner": "reverse",
+        "tech_q": 14,
+        "plain_q": 13
+      },
+      {
+        "frame": "b2b",
+        "tech": "scamper",
+        "winner": "scamper",
+        "tech_q": 14,
+        "plain_q": 13
+      },
+      {
+        "frame": "b2b",
+        "tech": "sixhats",
+        "winner": "plain",
+        "tech_q": 13,
+        "plain_q": 15
+      },
+      {
+        "frame": "library",
+        "tech": "reverse",
+        "winner": "plain",
+        "tech_q": 13,
+        "plain_q": 14
+      },
+      {
+        "frame": "library",
+        "tech": "scamper",
+        "winner": "plain",
+        "tech_q": 12,
+        "plain_q": 14
+      },
+      {
+        "frame": "library",
+        "tech": "sixhats",
+        "winner": "plain",
+        "tech_q": 13,
+        "plain_q": 15
+      },
+      {
+        "frame": "cupwaste",
+        "tech": "reverse",
+        "winner": "reverse",
+        "tech_q": 14,
+        "plain_q": 13
+      },
+      {
+        "frame": "cupwaste",
+        "tech": "scamper",
+        "winner": "plain",
+        "tech_q": 12,
+        "plain_q": 15
+      },
+      {
+        "frame": "cupwaste",
+        "tech": "sixhats",
+        "winner": "plain",
+        "tech_q": 11,
+        "plain_q": 15
+      }
+    ],
+    "liftRows": [
+      {
+        "frame": "cafe",
+        "dev_won": true,
+        "dev_q": 15,
+        "raw_q": 11
+      },
+      {
+        "frame": "b2b",
+        "dev_won": true,
+        "dev_q": 15,
+        "raw_q": 12
+      },
+      {
+        "frame": "library",
+        "dev_won": true,
+        "dev_q": 15,
+        "raw_q": 10
+      },
+      {
+        "frame": "cupwaste",
+        "dev_won": true,
+        "dev_q": 15,
+        "raw_q": 12
+      }
+    ],
+    "armMoveTotals": {
+      "plain": {
+        "ENF": 2,
+        "RISK": 3,
+        "AMP": 2,
+        "DATA": 2,
+        "TIME": 2,
+        "COMB": 1
+      },
+      "reverse": {
+        "RISK": 3,
+        "SCOPE": 3,
+        "TIME": 1,
+        "ENF": 2,
+        "SUB": 1,
+        "AUD": 1
+      },
+      "scamper": {
+        "SUB": 3,
+        "AUD": 1,
+        "AMP": 2,
+        "COMB": 2,
+        "ENF": 1,
+        "TIME": 2
+      },
+      "sixhats": {
+        "DATA": 2,
+        "ENF": 3,
+        "RISK": 4,
+        "TIME": 2,
+        "AMP": 1
+      }
+    },
+    "divTally": {
+      "reverse": {
+        "minor_variation": 2,
+        "different_but_not_better": 2
+      },
+      "scamper": {
+        "different_but_not_better": 1,
+        "different_and_better": 2,
+        "minor_variation": 1
+      },
+      "sixhats": {
+        "minor_variation": 2,
+        "different_but_not_better": 1,
+        "nearly_identical": 1
+      }
+    },
+    "convergenceRate": 0.42,
+    "commonFixes": [
+      "cafe: All four keep the identical core fix: harden the baker deal into two protected revenue lines -- a fixed weekly rent collected regardless of sales PLUS a consignment cut where the baker's goods on your counter become afternoon traffic bait -- fenced by a written agreement, labeling, liability, and a hard out-by-time. Scamper's weekly rotation is the same mechanism amplified, not a new one.",
+      "b2b: Resolve worker non-response so the admin's schedule never stalls or looks broken \u2014 and in 3 of 4 arms specifically re-offer a declined/empty shift to eligible teammates to claim, turning a red gap into self-healing coverage (which also deepens team adoption and switching cost).",
+      "library: Add a fixed-time recurring weekly draw so people return for a TIME not a vibe, plus carve out a protected/acoustically-zoned quiet area so the lounge doesn't evict existing readers (TIME + RISK). All four arms land on this identical two-part fix near-verbatim.",
+      "cupwaste: Reframe the per-cup fee from a one-time invisible blip into an accumulating personal number \u2014 a running 'cups avoided / dollars saved this month' tally that makes the reusable choice feel like a growing reward rather than a penalty.",
+      "cupwaste: Kill the $5 cash deposit-at-counter friction: replace it with a one-tap card pre-auth / no-charge account that auto-clears on return and only bills the cup's value if it is never returned within a window."
+    ],
+    "beforeAfter": [
+      {
+        "frame": "cafe",
+        "seed": "Morning receipt prints an afternoon reward",
+        "raw": "Every 7-11am receipt prints a same-day 2-5pm coupon - for example 'free cookie with any drink after 2 today,' expiring at 5pm - so the morning rush you already own becomes the distribution channel that pulls people back in the empty window. Mechanism: re-trigger your existing customers using traffic you already have, at the cost of only marginal food and staff who are already on the clock. Example: a regular grabbing a 7:45am latte walks out holding a reason to return at 3pm that they didn't have before.",
+        "developed": "The barista hands every 7-11am customer a receipt whose footer prints a same-day offer that only pays off if they buy something in the afternoon: 'Come back 2-5pm today, buy any drink, get a warm cookie free' or 'second drink half-price after 2.' The reward is bundled to a paid purchase, not given away, so each redemption is a net-new afternoon trip with a sale attached, costing only marginal food and staff already on the clock. To make it a habit rather than a one-off, the footer also stamps a tiny 'afternoon streak' line - redeem three afternoons in a week, the fourth drink is free - so regulars build a return reflex. Example: a regular grabbing a 7:45am latte walks out holding a receipt that turns a 3pm latte-plus-cookie run into a small reward, and by Thursday she's chasing her free fourth drink.",
+        "what_changed": "Tied the reward to a paid afternoon purchase and added a multi-day streak, so it generates incremental sales and a return habit instead of giving margin to people who'd come anyway."
+      },
+      {
+        "frame": "b2b",
+        "seed": "Done-for-you first week",
+        "raw": "A staffer (or a guided import bot acting as one) builds the customer's entire first real schedule for them within 48 hours of signup, instead of leaving the admin to learn an empty grid. The admin forwards last month's shifts (a spreadsheet, a photo of the whiteboard, even a screenshot of their old tool) and the team replies with a fully-populated, ready-to-publish week the admin only has to approve. Example: a 9-person cafe signs up Monday; by Wednesday a coordinator has imported their staff list, recurring shift patterns, and two known time-off requests, and sends the manager a finished published schedule with the message 'Approve and your team gets notified \u2014 took us 20 minutes, would've taken you two hours.' The customer crosses the fully-scheduled-week threshold before novelty can fade, because they never had to do the hard part.",
+        "developed": "A coordinator (or import bot acting as one) still builds the customer's whole first real week within 48 hours from whatever the admin forwards \u2014 spreadsheet, whiteboard photo, screenshot of the old tool \u2014 and sends a finished, ready-to-publish schedule the admin just approves. The new part: the coordinator doesn't hand over a flat one-off grid, they hand over a saved template \u2014 the recurring shift patterns, the staff list, and the time-off rules are stored as a reusable block, and they spend the last 10 minutes on a screenshare watching the admin make exactly ONE real edit themselves (drag a shift, swap a name, add a person) so the admin has touched the controls before they're alone. Example: a 9-person cafe signs up Monday; by Wednesday the coordinator publishes a finished week, then says 'Next Monday, hit Clone last week and you're 90% done \u2014 try moving Tariq's Friday shift right now so you've done it once.' The admin crosses the fully-scheduled-week threshold AND clears week two before novelty fades, because week two is a one-click clone of a template they've already edited, not a blank grid.",
+        "what_changed": "The handoff now leaves behind a reusable cloneable template plus one guided admin edit, so the second week isn't a blank grid \u2014 fixing the original's 'the novelty cliff just moves one week later' flaw."
+      },
+      {
+        "frame": "library",
+        "seed": "Recurring help desks for errands people repeat",
+        "raw": "The library hosts standing, same-day-every-week appointment desks for tasks residents have to redo on a cycle, staffed by partner agencies who come to the building: a Tuesday tax-and-benefits clinic, a Thursday immigration-paperwork hour, a Saturday small-business filing desk. A gig worker who files quarterly taxes and a parent re-certifying for childcare benefits both come back because their next deadline lands on a date the desk is open, so the visit recurs with their paperwork cycle rather than ending after one trip. This works because it ties the building to obligations people cannot do online and must repeat, converting a have-to errand into a predictable weekly footfall.",
+        "developed": "Partner agencies still run standing same-day-every-week clinics in the building, but each desk now works a case across visits instead of closing it in one trip: when a resident's tax, benefits, immigration, or business filing can't be finished today, the same staffer schedules the missing piece for a named date the desk is open and hands them a one-page 'bring this back' slip, so the next visit is already booked before they leave. A parent re-certifying for childcare benefits who is missing a pay stub comes back next Tuesday to the same person to close it, then again when the case worker flags a renewal window; a gig worker doing quarterly taxes gets a March follow-up plus a 'come in February to assemble receipts' working session, filling the dead weeks between deadlines. This raises weekly active visits because the recurrence no longer waits on a rare annual deadline\u2014it rides the multi-step, follow-up nature of the paperwork itself and the relationship with one staffer who already knows the file.",
+        "what_changed": "Turned each one-shot errand into a multi-visit case with a pre-booked next session, so recurrence comes from the paperwork's follow-up steps rather than rare quarterly/annual deadlines."
+      },
+      {
+        "frame": "cupwaste",
+        "seed": "The Cup Is on the Receipt",
+        "raw": "Mechanism: the district passes a rule that every cafe must ring up the disposable cup as its own visible line item the customer pays at the register, while the same drink in a reusable or in-house mug is the cheaper, pre-set default the POS suggests first. The lever is price + default-flip: the cup stops being invisible and free, and 'no cup' becomes the path of least resistance at the counter. Who does what: the district sets the charge and supplies the POS prompt; baristas no longer ask 'for here or to go' but ring the to-go cup as an add-on; the customer actively chooses to pay for disposable. Enforcement: it is a mandatory surcharge collected per cup, not an optional cafe choice, and the cafe keeps a portion as an offset for the lost margin. Example: a $0.35 'cup' line prints under the latte; order in your own tumbler and the screen has already knocked $0.35 off before the barista touches it, so the reusable customer literally watches the cup cost vanish. Distinct from the others because nothing is pooled or pre-staged: it works purely by making the existing disposable cost felt at the moment of payment.",
+        "developed": "The district still mandates the disposable cup as its own paid line item with the reusable/in-house mug as the cheaper pre-set default the POS rings first, but two things change so the charge actually bites instead of getting shrugged off. First, the receipt stops leading with the charge and leads with the saving plus a running tally: 'cup $0.40 \u2014 you've paid $11.20 for cups this month' on the disposable path, versus 'cup $0.00 \u2014 you've kept $9.60 this month, 24 cups avoided' on the reusable path, so the number people feel is their own accumulating total, not a one-time forty cents. Second, the charge isn't flat forever: the district steps it up on a published schedule (40 cents this year, 60 next) and prints the next bump right on the slip, so the trend is visible before it lands. The cafe keeps its margin-offset portion; the rest the district earmarks visibly ('your cup charges fund the district's bins/wash route'), printed as a line so the payer sees where it goes. Example: a daily latte-to-go drinker who never reacted to forty cents sees by week three a slip reading 'cups this month: $8.00, rising to $12 next year' \u2014 and the screen beside it shows the tumbler price already $8 lighter for the month \u2014 and that monthly figure, not the per-cup pittance, is what flips them. Still purely a price-and-default mechanism: nothing is pooled, pre-staged, or deposited; the only new force is making the cumulative cost (and its upward trajectory) impossible to not-notice.",
+        "what_changed": "Made the surcharge actually bite by surfacing each customer's running monthly cup total and a published rising rate, so the felt cost is a growing personal number rather than an ignorable per-cup pittance."
+      }
+    ],
+    "frameWhys": [
+      {
+        "frame": "cafe",
+        "why": "The techniques did not out-develop plain because every arm converges on the same underlying deepening -- take the seed's already-stated-but-vague promise and make it enforceable, morning-safe, and scope-capped -- and each lens only changes the ROUTE to that destination (reverse via failure-framing, sixhats via a data clause, scamper via a lateral mechanism swap), producing differing move-types but the same quality of fix, so plain \"just improve it\" reaches it with no lens-specific edge."
+      },
+      {
+        "frame": "b2b",
+        "why": "The techniques mostly failed to out-develop plain because plain's built-in 'fix the obvious objection' move already harvests the highest-value improvement on each seed, so convergence simply tracks seed structure \u2014 a seed with one glaring flaw (seed 2) makes every lens find the same fix, a multi-flaw seed (seed 3) lets each lens grab a different weak point \u2014 leaving the named techniques to mostly add framing variety rather than superior develops, except where scamper's amplify-the-upside bias happened to hit the GOAL's adoption/switching-cost root causes harder."
+      },
+      {
+        "frame": "library",
+        "why": "This goal exposes essentially one dominant lever \u2014 converting one-off visits into committed recurring ones (ENF) \u2014 which plain finds directly, so the techniques either re-derive that same enforcement move (converge, especially seed 3) or apply their native bias to an off-goal layer (reverse to robustness, sixhats to risk-coverage), and the only real win is scamper's 'eliminate' lens matching seed 2, the one seed with a removable home-substitute it could attack."
+      },
+      {
+        "frame": "cupwaste",
+        "why": "The techniques did not out-develop plain because each seed had a single dominant weak point (fee-invisibility for 1, deposit-friction for 2) that forced the same fix regardless of method, so the arms converged; they diverged only on seed 3, which had no forced fix \u2014 and there reverse and scamper diverged not by beating plain but by drifting to a common attractor (collapsing the building loop into seed 2's pooled fleet), i.e. divergence-by-loss-of-identity rather than divergence-by-improvement."
+      }
+    ]
+  },
+  "insights": [
+    {
+      "key": "develop-wins",
+      "title": "A Second Pass Beats a First Draft",
+      "plain_explanation": "When we took a rough first idea and spent time improving it, the better version won in all 4 tests. The polished ideas scored a perfect 15 out of 15 every time, while the rough first tries scored only 10 to 12. So the gap was real, not luck.",
+      "analogy": "It's like a first draft of an essay versus the one you go back and edit. The second pass always reads better."
+    },
+    {
+      "key": "lens-doesnt-matter",
+      "title": "Fancy Brainstorm Tricks Win Nothing",
+      "plain_explanation": "We tested three famous idea-improving methods against just telling the AI \"make it better.\" Across all 12 head-to-head tests, the fancy methods never pulled ahead. Plain \"make it better\" won 8 of them; the famous tricks won only 4, and Six Hats lost every single round.",
+      "analogy": "It's like buying a $200 chef's knife and a $5 kitchen knife. Both cut the tomato the same way. The expensive one has a fancier name, but your dinner tastes exactly the same."
+    },
+    {
+      "key": "why-model-already",
+      "title": "Fancy idea tricks added nothing",
+      "plain_explanation": "When we just asked the AI to \"improve this idea,\" it already did the smart moves on its own \u2014 swapping things out, fixing the weak spot, and so on. So when we told it to use a named trick like SCAMPER or Six Thinking Hats, it landed on the same answer it would have found anyway. In all 4 test cases, every method ended up at the same core fix, and \"just improve it\" scored a touch higher on average than all three named tricks.",
+      "analogy": "It's like handing a recipe to a chef who already knows how to cook. Telling her \"now use the chop-then-saut\u00e9 method\" doesn't change the meal \u2014 she was going to do that anyway."
+    },
+    {
+      "key": "why-same-fix",
+      "title": "Every Method Finds the Same Fix",
+      "plain_explanation": "When an idea has one clear weak spot, there's usually only one good way to fix it, so it doesn't matter which brainstorming method you use. In all 4 tests, the different methods kept landing on the exact same fix. About 4 times out of 10, the answers were basically the same idea worn differently.",
+      "analogy": "It's like four people fixing a flat tire. You can hand them different toolboxes, but they all end up doing the one thing that actually works: change the tire."
+    },
+    {
+      "key": "real-lever",
+      "title": "What Wins Is Making Ideas Real",
+      "plain_explanation": "An idea gets better when you turn its vague promise into something specific that people actually have to do. In all 4 tests, the polished version beat the rough one (it scored 15, while the rough ideas scored only 10 to 12). And it didn't matter which brainstorming method we used to get there: the fix was always \"pin it down and make it stick.\"",
+      "analogy": "It's like a New Year's resolution. Saying \"I'll get fit\" does nothing. Saying \"I go to the gym Monday, Wednesday, Friday at 7am, and my friend checks on me\" is what actually works. The wording of the goal isn't the point; making it concrete and hard to skip is."
+    },
+    {
+      "key": "what-to-do",
+      "title": "Just deepen the idea you picked",
+      "plain_explanation": "Simply taking an idea and developing it made it much better, in all 4 tests it jumped from around 11 up to a 15. The fancy brainstorming tricks barely helped; against plain developing they only won 3 out of 12 times, and were usually a touch worse. So the real work is picking an idea and going deeper on it, not running it through a special method.",
+      "analogy": "The fancy tricks are like seasoning. A pinch can be nice, but it won't save a dish. The actual meal is taking your idea and cooking it properly."
+    }
+  ],
+  "report": "The advisor corrected my move-dominance claim. ENF and TIME are present in all four arms; RISK is the highest-frequency move but absent in scamper. I'll frame ENF as the shared backbone and RISK as highest-frequency. Now writing the report.\n\n# Track H \u2014 why developing works but the technique doesn't\n\n## Verdict (with more power now)\n\nTrack G's n=2 finding held up \u2014 and hardened \u2014 at 4 frames.\n\n**Technique choice is noise (and if anything, a slight tax).** Across the blind A/B tally, the named techniques won **3 of 12** cells against plain-develop and lost 9. None of them beat plain on average quality:\n\n| technique | wins | losses | avg tech_q | avg plain_q |\n|---|---|---|---|---|\n| reverse | 2 | 2 | 13.5 | 13.75 |\n| scamper | 1 | 3 | 12.75 | 14.0 |\n| sixhats | 0 | 4 | 12.25 | 14.75 |\n\nPlain out-scores every technique on its own arm, and the only frame where any technique won twice (reverse) it still tied plain on average. Six Hats went 0/4. Whatever lift a technique seemed to give at n=2 was within the noise; with 4 fresh frames it disappears entirely.\n\n**Developing beats raw \u2014 cleanly, 4 for 4.** On the lift test (a developed idea vs. a fresh raw idea for the same goal), the developed idea won every frame:\n\n| frame | dev_q | raw_q |\n|---|---|---|\n| cafe | 15 | 11 |\n| b2b | 15 | 12 |\n| library | 15 | 10 |\n| cupwaste | 15 | 12 |\n\nEvery developed idea hit a ceiling-grazing 15; raw landed 10\u201312. That is the real, repeatable signal.\n\n## The \"why\" \u2014 the new part\n\nThe blind tally tells us *that* the technique doesn't help. The three instruments tell us *why*.\n\n**1. Move-tagging: plain already makes the moves.** Tagging each develop by the kind of improvement-move it made shows the techniques aren't doing anything plain isn't. `RISK` (hardening against failure) is the single highest-frequency move overall \u2014 top move in plain, reverse, and sixhats \u2014 yet it isn't a technique-exclusive trick: plain reaches for it as readily as the lenses do. The move that appears in *every* arm, including plain, is `ENF` (make the idea actually bite / recur / stick), with `TIME` the other universal. No technique unlocked a move-type plain lacked; they mostly reshuffled the *mix* (scamper leaned `SUB`, reverse leaned `SCOPE`) while landing the same kind of deepening.\n\n**2. Same-fix convergence: the obvious fix is seed-determined, not lens-determined.** On **42%** of seeds (5 of 12), all four methods converged on the *same core fix*. And these aren't vague overlaps \u2014 they're near-verbatim:\n- *cafe*: all four harden the baker deal into two protected revenue lines (fixed rent + consignment cut, fenced by a written agreement and a hard out-by-time). \"Scamper's weekly rotation is the same mechanism amplified, not a new one.\"\n- *library*: all four arms land \"near-verbatim\" on a fixed-time recurring weekly draw plus an acoustically-zoned quiet area.\n- *cupwaste*: across seeds, all arms converge on turning the per-cup fee into a running personal tally, and on killing the $5 deposit friction with a one-tap pre-auth.\n\nWhen a seed has one glaring weak point, every method finds it. The fix lives in the seed, not the lens.\n\n**3. Divergence-from-plain: technique output \u2248 plain output.** Scoring how far each technique's output drifted from plain, \"different *and better*\" shows up in only **2 of 12** cells \u2014 both scamper. Everything else is `nearly_identical`, `minor_variation`, or `different_but_not_better`. Where the techniques did diverge, they usually diverged sideways (different, not better) or drifted into a \"common attractor\" by losing the seed's identity (cupwaste seed 3) \u2014 divergence-by-loss, not divergence-by-improvement.\n\n**Conclusion.** The lens doesn't help because (a) the model already makes the improvement-moves the techniques are supposed to inject; (b) the highest-value fix is determined by the seed's dominant flaw, so all roads lead to it; and (c) the technique's output therefore ends up essentially the same artifact as plain \u2014 just reached by a different route, occasionally a worse one.\n\n## What developing actually does\n\nDeveloping takes a raw idea and makes its already-stated promise *bite*: the dominant work is `ENF`/`RISK` \u2014 converting a vague mechanism into something enforceable, habit-forming, and failure-hardened. That is exactly the gap between raw (10\u201312) and developed (15).\n\nTwo real before\u2192after pairs:\n\n**cafe \u2014 \"Morning receipt prints an afternoon reward.\"**\n- *raw*: \"Every 7-11am receipt prints a same-day 2-5pm coupon\u2026 'free cookie with any drink after 2 today.'\"\n- *developed*: \"The reward is bundled to a paid purchase, not given away, so each redemption is a net-new afternoon trip with a sale attached\u2026 the footer also stamps a tiny 'afternoon streak' line \u2014 redeem three afternoons in a week, the fourth drink is free \u2014 so regulars build a return reflex.\"\n- *what changed*: tied the reward to a paid afternoon purchase and added a multi-day streak, so it generates incremental sales and a return habit instead of giving margin to people who'd come anyway.\n\n**cupwaste \u2014 \"The Cup Is on the Receipt.\"**\n- *raw*: \"a $0.35 'cup' line prints under the latte; order in your own tumbler and the screen has already knocked $0.35 off.\"\n- *developed*: \"the receipt\u2026 leads with the saving plus a running tally: 'cup $0.00 \u2014 you've kept $9.60 this month, 24 cups avoided'\u2026 the district steps it up on a published schedule (40 cents this year, 60 next)\u2026 so the felt cost is a growing personal number rather than an ignorable per-cup pittance.\"\n- *what changed*: surfaced each customer's running monthly total and a published rising rate, so the surcharge actually bites.\n\nIn both, the seed's idea survives intact; developing makes it *work*.\n\n## What it means for the skill\n\n**Plain-develop is enough.** \"Just improve it\" reaches the same high-quality fix the structured techniques reach, more reliably and without the occasional sideways drift. The techniques (SCAMPER, Reverse, Six Hats) should stay as **optional flavor** \u2014 a way to vary the route or the framing \u2014 not as a quality lever, and never as a default the user must pick through.\n\nThis fits the larger pattern. Idea **generation** is model-bound: six prior nulls show prompt/technique tuning doesn't lift what the model produces from cold. But **developing a user-chosen idea is a real lever** \u2014 4/4 lift, every developed idea at ceiling. The skill's value is concentrated in the develop step, and that step needs no technique scaffolding to deliver it.\n\n## Caveats\n\n- 4 frames, 3 seeds each, **single sample per cell** \u2014 no within-cell variance estimate.\n- The blind A/B tally is the verdict; the move-tagging, convergence, and divergence numbers are **interpretive** instruments layered on top to explain it, not independent confirmations.\n- 12 A/B cells is more power than Track G's n=2 but still small; \"technique = noise\" is a failure-to-find-a-difference, not a proof of exact equivalence.\n- The \"why\" rests partly on a single judge's tagging of move-types and same-fix convergence, which is inherently subjective.",
+  "perFrame": [
+    {
+      "frame": "cafe",
+      "frameTitle": "Cafe \u2014 grow weekday-afternoon revenue",
+      "seeds": [
+        {
+          "id": "1",
+          "title": "Morning receipt prints an afternoon reward",
+          "description": "Every 7-11am receipt prints a same-day 2-5pm coupon - for example 'free cookie with any drink after 2 today,' expiring at 5pm - so the morning rush you already own becomes the distribution channel that pulls people back in the empty window. Mechanism: re-trigger your existing customers using traffic you already have, at the cost of only marginal food and staff who are already on the clock. Example: a regular grabbing a 7:45am latte walks out holding a reason to return at 3pm that they didn't have before."
+        },
+        {
+          "id": "2",
+          "title": "Rent the dead kitchen to a ghost baker",
+          "description": "Lease the idle 2-5pm kitchen and oven time to a home baker or small caterer who has no storefront of their own, charging them rent plus a cut of anything they sell to your walk-ins. Mechanism: convert idle physical assets into a direct revenue line that pays off even on days you personally sell nothing extra - the income is decoupled from your own afternoon foot traffic. Example: a wedding-cake baker pays you $200/week for the oven slot and sells leftover cupcakes over your counter, and your ovens stop costing money to sit cold."
+        },
+        {
+          "id": "3",
+          "title": "Sell the cafe as a paid work-and-meeting room",
+          "description": "Reposition 2-5pm so the empty seat itself is the product: a $12 'afternoon pass' includes a drink plus a guaranteed powered seat with quiet rules, or a back table rentable by the hour for one-on-one meetings. Mechanism: charge for the space and ambiance rather than just the cup, importing a remote-work and meetings audience that has no conflict with your morning rush. Example: a freelancer who'd otherwise sit at home pays $12 to camp from 2 to 5 with strong wifi, filling chairs that were earning nothing."
+        }
+      ],
+      "coll": {
+        "plain": [
+          {
+            "seed_id": "1",
+            "title": "Morning receipt prints a same-day afternoon comeback deal",
+            "description": "The barista hands every 7-11am customer a receipt whose footer prints a same-day offer that only pays off if they buy something in the afternoon: 'Come back 2-5pm today, buy any drink, get a warm cookie free' or 'second drink half-price after 2.' The reward is bundled to a paid purchase, not given away, so each redemption is a net-new afternoon trip with a sale attached, costing only marginal food and staff already on the clock. To make it a habit rather than a one-off, the footer also stamps a tiny 'afternoon streak' line - redeem three afternoons in a week, the fourth drink is free - so regulars build a return reflex. Example: a regular grabbing a 7:45am latte walks out holding a receipt that turns a 3pm latte-plus-cookie run into a small reward, and by Thursday she's chasing her free fourth drink.",
+            "what_changed": "Tied the reward to a paid afternoon purchase and added a multi-day streak, so it generates incremental sales and a return habit instead of giving margin to people who'd come anyway.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Rent the dead kitchen to a ghost baker who also fills your counter",
+            "description": "The owner leases the 2-5pm oven and bench to a home baker or small caterer for a fixed weekly rent, but the lease is written so the baker also drives afternoon foot traffic, not just pays for cold ovens: their finished goods get a branded display case by the register and a slice of every counter sale, and the baker promotes their pickup window to their own followers, who walk in during your empty hours. The handoff is hard-gated - the baker can't touch the kitchen until 11:30am and must clear by 5, with their own labeled ingredient bins and a signed food-safety and insurance addendum - so morning prep and your liability stay clean. Example: a wedding-cake baker pays $200/week for the slot, sells leftover cupcakes over your counter on an 80/20 split, and tells her 4,000 followers to grab same-day cupcakes at your shop from 2-4, turning her pickup crowd into your afternoon walk-ins while your ovens stop costing money.",
+            "what_changed": "Restructured the lease so the baker actively pulls afternoon bodies in via a counter display and her own audience, and added a hard handoff time plus food-safety/insurance terms to protect morning prep and liability.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Sell the 2-5pm seat as a product that can't open before 2",
+            "description": "The owner repositions the empty afternoon room as paid space: a $12 'afternoon pass' (drink plus a guaranteed powered, quiet seat) or a back table rentable by the hour for one-on-one meetings - but the whole offer is hard-gated to start at 2pm so it can never bleed into the morning rush. Passes are sold only after 2 (no early entry, the powered 'quiet zone' tables are roped off and unmarked until then), so no remote worker can squat through your 7-11am peak. Distribution rides the channel you already own: the morning receipt footer and a small counter sign advertise 'Need a quiet afternoon desk? $12 pass, 2-5pm,' and the back table takes bookings on a free scheduling link, so freelancers and one-on-one meetings discover it without you chasing them. Example: a freelancer who'd otherwise work from home sees the line on his 8am receipt, books a 2pm seat, and pays $12 to camp with strong wifi from 2 to 5, filling a chair that earned nothing - and he physically can't claim it before 2.",
+            "what_changed": "Hard-gated the paid seating to a 2pm start so it can never cannibalize the morning rush, and solved discovery by distributing it through the morning receipt and a booking link.",
+            "tag": "BOLD"
+          }
+        ],
+        "reverse": [
+          {
+            "seed_id": "1",
+            "title": "Morning receipt prints a same-day afternoon reward",
+            "description": "Every 7-11am receipt auto-prints a same-day 2-5pm offer straight from the POS, so there's nothing for the morning staff to explain or hand out and the line never slows. The offer is built to lift the afternoon ticket, not give product away: it's 'add a fresh-baked cookie for $1 with any drink after 2 today' or 'second drink half off, 2-5 only' rather than a flat freebie, so every redemption still carries a paid drink and positive margin, and it only prints on slow weekdays you actually need to fill. Example: a regular grabbing a 7:45am latte walks out holding a slip that turns a $1 cookie and a $4 afternoon americano into a reason to come back at 3, and the barista who printed it never said a word.",
+            "what_changed": "Made the reward a paid add-on or paired-drink discount that auto-prints from the POS, so it lifts the afternoon ticket and adds zero morning labor instead of bleeding margin to freebie-hunters.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Rent the dead kitchen to a vetted guest baker",
+            "description": "Lease the idle 2-5pm oven to a home baker or caterer, but on a written contract that protects your morning business: a fixed base rent (say $200/week) that you collect regardless of their sales, plus a cut of counter sales, so your income doesn't ride on their hustle. They run as a clearly labeled guest brand on your counter, carry their own food-handler cert and product liability naming you, and have a hard 'oven loaded by 1, fully cleaned and out by 5:30' rule so nothing touches your pre-dawn morning prep or pins their allergen mistake on your name. Example: a wedding-cake baker pays the $200 floor, sells co-branded cupcakes over your counter for a 20% cut, scrubs the line down by 5:30, and your ovens earn money whether or not a single walk-in buys.",
+            "what_changed": "Added a written contract with a guaranteed base rent, separate guest branding plus liability/allergen coverage, and a hard clean-out deadline that walls the baker off from your morning prep and your reputation.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Sell the 2-5pm seat as a paid work-and-meeting spot",
+            "description": "Reposition the empty afternoon seat as the product, but fence it tightly so it never collides with your social or morning crowd: a $12 'afternoon pass' (2-5 only) buys a powered, quiet seat in a designated back zone with a drink included and a minimum re-order or refill expectation, plus a back table rentable by the hour for one-on-ones. A firm 5pm clear-out wall resets the room before any evening or next-morning regulars arrive, the quiet zone is roped to a few tables so the rest of the cafe stays as chatty as ever, and the spend mechanic keeps a three-hour seat from earning only one $4 cup. Example: a freelancer who'd otherwise work from home pays $12 to camp the back corner from 2 to 5 with strong wifi, buys a refill at the two-hour mark, and is packed up by 5 before the after-work crowd walks in.",
+            "what_changed": "Bounded the offer to a roped-off back zone with a hard 5pm clear-out and a drink-plus-reorder spend floor, so it raises yield per seat without imposing quiet rules on the social crowd or bleeding into morning turnover.",
+            "tag": "BOLD"
+          }
+        ],
+        "scamper": [
+          {
+            "seed_id": "1",
+            "title": "The bring-a-friend afternoon receipt",
+            "description": "Keep printing a same-day 2-5pm offer on every morning receipt, but make the reward only unlock when the regular shows up with a second person: the receipt says 'come back after 2 today with a friend and both drinks are half off, expires 5pm.' The barista just scans or tears the receipt at the register. So your 7:45am latte regular now has a reason to text a coworker at 2:30 and walk in two-deep, and the person they drag in is a body who'd otherwise never set foot in the place in the afternoon. To stop giving margin to people who'd return anyway, the solo redeemer gets nothing and the paired redemption is what triggers the discount. Example: a regular grabs coffee at 7:50, sees 'half off both after 2 with a +1,' pings a friend who works nearby, and at 3pm you've turned one morning customer into two afternoon ones plus a new face who might come back on their own.",
+            "what_changed": "The reward now only fires when the regular brings a second person, so the morning channel imports brand-new afternoon foot traffic instead of just discounting returners.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "2",
+            "title": "A rotating kitchen residency that brings its own crowd",
+            "description": "Instead of leasing the idle 2-5pm oven to one baker on a flat monthly deal, run the slot as a rotating residency where a different local maker takes the afternoon each week and is required to bring their own following: they pay rent plus a cut, but the deal is built around them announcing 'I'm baking at the cafe Tuesday 2-5' to their own Instagram and email list, which drags their fans into your dead window. You collect rent whether or not anyone shows, but now each tenant is also a marketing engine pointing new customers at your counter, and rotating tenants means no single person leaving zeroes out the income. Example: a wedding-cake baker takes this week and posts a 'cupcake pop-up at the cafe, Thursday only' to her 4,000 followers; thirty of them come in at 3pm, buy her cupcakes plus your coffee, and next week a sourdough guy with his own list takes the same slot.",
+            "what_changed": "The tenant is now picked and structured to import their own audience into the dead window, turning rent collection into an afternoon foot-traffic channel and removing the single-tenant failure point through rotation.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Standing afternoon desks sold by the month",
+            "description": "Keep selling the empty 2-5pm seat as the product, but stop gambling on walk-up freelancers and sell it as a recurring monthly arrangement to nearby small businesses and remote workers: for a flat monthly fee they get a guaranteed powered, quiet seat every weekday afternoon with a drink included, billed automatically whether they show or not. On top of that, sell one standing weekly slot to a local group, a writers' circle, a language class, a small cowork crew, who book the back tables every Wednesday 2-5 as a recurring reservation. Now the chairs are filled by people who already paid, so the revenue is predictable and the room is reliably busy instead of randomly empty. Example: three remote workers from a startup two blocks away each pay $90/month for their standing afternoon desk, and a 10-person language meetup pays for every Wednesday afternoon, so your 2-5pm window goes from zero to a known floor of paying bodies before a single walk-in arrives.",
+            "what_changed": "The space is now sold as recurring monthly memberships and standing group reservations rather than one-off passes, converting unpredictable walk-up gambling into guaranteed prepaid afternoon occupancy.",
+            "tag": "BOLD"
+          }
+        ],
+        "sixhats": [
+          {
+            "seed_id": "1",
+            "title": "Morning receipt prints a same-day afternoon stamp",
+            "description": "Every 7-11am receipt prints a same-day reward that only unlocks with an afternoon drink purchase - 'free cookie when you buy any drink 2-5pm today' - so you convert morning customers who'd otherwise never come back, not the few who already drift in at 3. Add a small stamp box on the receipt: a second afternoon visit that week earns a bigger reward, turning a one-off coupon into a return habit. Watch redemption by daypart for two weeks and only keep rewards whose food cost the drink sale clearly covers. Example: a 7:45am latte regular walks out with a receipt that's worth nothing unless she buys a 3pm drink, comes back twice, and on the third afternoon her stamps earn a free pastry - and now 3pm is just part of her week.",
+            "what_changed": "The reward now requires a paid afternoon drink and stacks across visits, so it manufactures repeat afternoon traffic instead of giving cookies to people who'd come anyway.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Put a ghost baker's goods on your afternoon counter",
+            "description": "Lease your idle 2-5pm oven to a home baker who has no storefront, but structure it as two revenue lines, not one: a flat weekly oven rent plus a cut of whatever of theirs you sell on consignment over your own counter in the dead window - so their cupcakes become bait that pulls walk-ins into 2-5pm, not just leftovers. Protect yourself with a written slot agreement, a damage deposit, separate labeling so it's clearly their brand, and pick a baker whose product complements your menu instead of competing with it. Example: a wedding-cake baker pays $200/week for the oven, and her surplus cupcakes sit in your case at 3pm with a 'baked here today' card - you keep 30% of each one sold, and people who'd never come for coffee come for the cupcake.",
+            "what_changed": "Turned a flat oven-rent deal into a consignment arrangement where the baker's output is sold over your counter as an afternoon traffic draw plus a sales cut, with labeling and liability guardrails.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Sell a monthly afternoon desk, not just a day pass",
+            "description": "Reposition 2-5pm so the seat is the product, but lock in predictable bodies with a recurring monthly 'afternoon desk' membership - say $60/month for unlimited 2-5pm seating in a defined back zone with a drink and free refills included - on top of the one-off $12 day pass for drop-ins. The included refills keep spend above zero, the zone keeps campers out of the seats walk-ins want, and you only sell it for the empty window so it never touches the morning rush. Example: a freelancer who used to work from her kitchen pays $60 a month, shows up most afternoons, fills a corner table that earned nothing, and three or four members like her give you a guaranteed crowd in the deadest hours.",
+            "what_changed": "Added a recurring monthly membership that converts unpredictable one-off seat sales into guaranteed repeat afternoon occupancy, bounded to a seat zone with included refills.",
+            "tag": "BOLD"
+          }
+        ]
+      },
+      "judges": [
+        {
+          "tech": "reverse",
+          "xArm": "reverse",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 5,
+            "reason": "Both sets are highly concrete and both add strong morning-protection guardrails (hard time-gating, liability/insurance terms, 5pm clear-outs), so they tie on concreteness and defensive rigor. Y wins because it consistently layers a second, on-goal demand-generation mechanism onto each idea rather than just hardening it: an \"afternoon streak\" habit loop targeting the no-trigger-to-return root cause (id1), a lease rewritten so the baker imports their 4,000 followers into the dead window to attack the no-afternoon-foot-traffic root cause (id2), and reuse of the morning-receipt/scheduling channel to actually distribute the seat product (id3). X is excellent and its id3 minimum-re-order economics is the single sharpest insight in either set, but more of X's additions are risk-hardening and margin-tuning, whereas Y both protects the morning and adds real growth levers, making it the stronger, higher-value set."
+          }
+        },
+        {
+          "tech": "scamper",
+          "xArm": "plain",
+          "yArm": "scamper",
+          "v": {
+            "better": "X",
+            "x_strength": 4.5,
+            "x_concreteness": 5,
+            "x_value": 4.5,
+            "y_strength": 4.5,
+            "y_concreteness": 4,
+            "y_value": 4.5,
+            "reason": "Both sets are strongly developed and roughly even on strength and value-added: Y brings genuinely revenue-generative twists (bring-a-friend imports net-new bodies, rotating residencies churn new audiences, monthly desk subscriptions create a predictable revenue floor), while X adds habit-forming streaks and a traffic-driving baker. The discriminator is concreteness and operational completeness, where X is sharper \u2014 it specifies the 80/20 counter split, the 11:30am kitchen gate and clear-by-5 handoff, the food-safety/insurance addendum, labeled ingredient bins, roped-off unmarked tables, streak rules, and a scheduling link, giving clearer who-does-what machinery. The gap is narrow, but X's tighter execution detail edges it out."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "xArm": "sixhats",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Both sets share the core upgrades (bundling the receipt reward to a paid afternoon purchase plus a habit/streak loop, turning the baker's goods into traffic bait, and gating the seat product to the empty window), so those cancel out. Y wins on direct attack of the stated goal: it is the only set that explicitly imports NEW traffic (the baker promotes to her 4,000 followers and the receipt footer plus scheduling link distribute the afternoon desk), hitting the \"no afternoon foot traffic / known as a morning stop\" root causes, and it hard-gates the morning rush across all three ideas (baker locked out until 11:30, passes unsellable before 2). X is excellent and edges Y on business-model sophistication (a recurring $60/month membership and a daypart food-cost measurement discipline), but it mostly re-monetizes the base it already owns and only protects the morning rush on id3, so it falls just short."
+          }
+        }
+      ],
+      "lift": {
+        "devIsX": true,
+        "v": {
+          "better": "X",
+          "x_strength": 5,
+          "x_concreteness": 5,
+          "x_value": 5,
+          "y_strength": 4,
+          "y_concreteness": 4,
+          "y_value": 3,
+          "reason": "Both sets share the same three idea cores (receipt-coupon, ghost-baker kitchen rental, paid afternoon seat), so raw strength is close. X is the developed version, and its additions add real value rather than mere length because each one maps to a named root cause or the explicit constraint. Idea 1: X adds an \"afternoon streak\" loyalty mechanic (3 redemptions, 4th free) that directly attacks \"regulars have no trigger to return,\" converting a one-off into a recurring habit \u2014 Y's coupon is a single re-trigger only. (Note: both sets already bundle the reward to a paid purchase \u2014 Y's \"free cookie with any drink\" \u2014 so that is not an X advantage.) Idea 2: X has the baker promote the pickup window to their own followers, directly attacking \"no foot traffic after lunch,\" and adds hard operational gating (11:30 entry cutoff, clear-by-5, labeled bins, food-safety + insurance addendum) that resolves the liability/morning-contamination objection Y leaves wide open. Idea 3: X supplies the critical hard-gate-to-2pm mechanism (no early entry, roped-off unmarked quiet zone) that protects the single most important stated constraint, \"without hurting the morning rush\" \u2014 Y merely asserts \"no conflict\" without saying how. X is also more concrete throughout (split percentages, scheduling link, dollar figures, distribution riding the receipt channel). Y is genuinely crisp with its \"Mechanism:\" framing and is not weak, but it ignores the two biggest objections (morning-rush squatting and kitchen liability) that X explicitly closes. X wins on concreteness and especially value_added."
+        }
+      },
+      "why": {
+        "arm_moves": [
+          {
+            "arm": "plain",
+            "primary_moves": [
+              "ENF",
+              "RISK",
+              "AMP"
+            ]
+          },
+          {
+            "arm": "reverse",
+            "primary_moves": [
+              "RISK",
+              "SCOPE"
+            ]
+          },
+          {
+            "arm": "scamper",
+            "primary_moves": [
+              "SUB",
+              "AUD",
+              "AMP"
+            ]
+          },
+          {
+            "arm": "sixhats",
+            "primary_moves": [
+              "DATA",
+              "ENF",
+              "RISK"
+            ]
+          }
+        ],
+        "seed_convergence": [
+          {
+            "seed_id": "1",
+            "all_arms_same_core_fix": false,
+            "common_fix": "Three arms (plain/reverse/sixhats) keep the seed's core fix -- purchase-gate the reward and make it a repeatable habit/streak that re-triggers the EXISTING regular -- but scamper swaps the mechanism to a bring-a-friend gate that recruits NEW afternoon bodies, so they do not all land on the same core fix."
+          },
+          {
+            "seed_id": "2",
+            "all_arms_same_core_fix": true,
+            "common_fix": "All four keep the identical core fix: harden the baker deal into two protected revenue lines -- a fixed weekly rent collected regardless of sales PLUS a consignment cut where the baker's goods on your counter become afternoon traffic bait -- fenced by a written agreement, labeling, liability, and a hard out-by-time. Scamper's weekly rotation is the same mechanism amplified, not a new one."
+          },
+          {
+            "seed_id": "3",
+            "all_arms_same_core_fix": false,
+            "common_fix": "Plain and reverse keep the seed's core fix -- a morning-safe, hard-2pm-gated day pass with a spend floor / refill expectation in a roped-off back zone -- while scamper and sixhats swap the underlying money mechanism to a recurring MONTHLY subscription billed whether members show or not, so they do not all land on the same core fix."
+          }
+        ],
+        "technique_divergence": [
+          {
+            "technique": "reverse",
+            "relation_to_plain": "minor_variation",
+            "example": "Reverse reaches the same protective hardening as plain but foregrounds the failure framing -- 'auto-prints from the POS so the morning line never slows' and 'only prints on slow weekdays' (RISK+SCOPE) -- rather than plain's enforce-the-gate-then-add-a-streak emphasis; same destination, the morning-safe gated reward."
+          },
+          {
+            "technique": "sixhats",
+            "relation_to_plain": "minor_variation",
+            "example": "Six Hats arrives at plain's core fix but bolts on a real measurement clause plain lacks -- 'watch redemption by daypart for two weeks and only keep rewards whose food cost the drink sale clearly covers' / 'you keep 30%' (DATA) -- which is additive instrumentation, not a different fix."
+          },
+          {
+            "technique": "scamper",
+            "relation_to_plain": "different_but_not_better",
+            "example": "Scamper laterally substitutes the money mechanism -- bring-a-friend (new bodies) on seed 1, sell-by-the-month on seed 3 -- which genuinely hits the 'no commuter foot traffic' root cause that plain leaves untouched on seed 1, but it is frame-specific (seed-3 monthly desks gains predictability while abandoning walk-in discovery), so across seeds it is a sideways swap with no reliable edge over plain, not a strict improvement."
+          }
+        ],
+        "frame_why": "The techniques did not out-develop plain because every arm converges on the same underlying deepening -- take the seed's already-stated-but-vague promise and make it enforceable, morning-safe, and scope-capped -- and each lens only changes the ROUTE to that destination (reverse via failure-framing, sixhats via a data clause, scamper via a lateral mechanism swap), producing differing move-types but the same quality of fix, so plain \"just improve it\" reaches it with no lens-specific edge."
+      }
+    },
+    {
+      "frame": "b2b",
+      "frameTitle": "B2B SaaS \u2014 cut early churn",
+      "seeds": [
+        {
+          "id": "1",
+          "title": "Done-for-you first week",
+          "description": "A staffer (or a guided import bot acting as one) builds the customer's entire first real schedule for them within 48 hours of signup, instead of leaving the admin to learn an empty grid. The admin forwards last month's shifts (a spreadsheet, a photo of the whiteboard, even a screenshot of their old tool) and the team replies with a fully-populated, ready-to-publish week the admin only has to approve. Example: a 9-person cafe signs up Monday; by Wednesday a coordinator has imported their staff list, recurring shift patterns, and two known time-off requests, and sends the manager a finished published schedule with the message 'Approve and your team gets notified \u2014 took us 20 minutes, would've taken you two hours.' The customer crosses the fully-scheduled-week threshold before novelty can fade, because they never had to do the hard part."
+        },
+        {
+          "id": "2",
+          "title": "Every shift needs a tap-back from the worker",
+          "description": "Each published shift is sent to the individual worker by text/push and requires them to tap 'Got it' (or 'Can't make it'), and the admin's schedule visibly fills with green checkmarks only as workers respond \u2014 so the admin literally cannot get a confirmed schedule without their team logging in at least once. This drags the whole team into the product as an unavoidable side effect of the admin's core job, and each worker who has confirmed shifts in the app is now personally entangled, raising switching cost across the team rather than just the admin. Example: a warehouse manager publishes Saturday's shifts; six workers get a text, four tap 'Got it' and one taps 'Can't make it \u2014 dentist,' so the manager sees one red gap to fill and a ready-to-go crew, while all six now have the app open and their shifts living inside it."
+        },
+        {
+          "id": "3",
+          "title": "The Monday time-saved receipt",
+          "description": "Every Monday morning the tool emails the admin (and optionally their boss) a one-line plain receipt of what it saved them last week \u2014 hours not spent scheduling, texts not sent, swap requests it resolved automatically \u2014 turning the invisible value into a recurring number that lands in the inbox of the person deciding whether to keep paying. The mechanism is a scheduled digest that counts real actions the product took on their behalf and frames them as reclaimed time and avoided hassle. Example: a clinic office manager opens Monday's email reading 'Last week the scheduler saved you ~3.5 hours: it auto-filled 14 shifts, handled 3 swap requests without you, and texted 22 reminders so no one no-showed,' and forwards it to the practice owner \u2014 making the case for renewal before the 60-day novelty cliff, on its own, every single week."
+        }
+      ],
+      "coll": {
+        "plain": [
+          {
+            "seed_id": "1",
+            "title": "Done-for-you first week that leaves a reusable engine behind",
+            "description": "A coordinator (or import bot acting as one) still builds the customer's whole first real week within 48 hours from whatever the admin forwards \u2014 spreadsheet, whiteboard photo, screenshot of the old tool \u2014 and sends a finished, ready-to-publish schedule the admin just approves. The new part: the coordinator doesn't hand over a flat one-off grid, they hand over a saved template \u2014 the recurring shift patterns, the staff list, and the time-off rules are stored as a reusable block, and they spend the last 10 minutes on a screenshare watching the admin make exactly ONE real edit themselves (drag a shift, swap a name, add a person) so the admin has touched the controls before they're alone. Example: a 9-person cafe signs up Monday; by Wednesday the coordinator publishes a finished week, then says 'Next Monday, hit Clone last week and you're 90% done \u2014 try moving Tariq's Friday shift right now so you've done it once.' The admin crosses the fully-scheduled-week threshold AND clears week two before novelty fades, because week two is a one-click clone of a template they've already edited, not a blank grid.",
+            "what_changed": "The handoff now leaves behind a reusable cloneable template plus one guided admin edit, so the second week isn't a blank grid \u2014 fixing the original's 'the novelty cliff just moves one week later' flaw.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "2",
+            "title": "Tap-back that always resolves the schedule, so the admin never gets a worse result",
+            "description": "Every published shift still goes to the individual worker by text/push needing a 'Got it' or 'Can't make it', and the admin's grid fills with green checkmarks only as workers respond \u2014 dragging the whole team into the app as a side effect of the admin's core job. The fix for the obvious objection (a silent worker leaves the admin with an unconfirmed schedule, which is worse than before): non-response auto-escalates \u2014 a reminder at 4 hours, and if still silent the slot flags as at-risk and pings a named backup, so the admin's schedule always converges to confirmed-or-flagged instead of stalling. And to make workers come BACK, not just tap once, their own upcoming shifts plus a one-tap 'request swap' (which routes to a teammate, not back to the admin) now live in the app, so the worker has a standing reason to reopen it. Example: a warehouse manager publishes Saturday; six workers get a text, four tap 'Got it', one taps 'Can't make it \u2014 dentist' and the slot auto-offers to the listed backup, one stays silent so at hour 4 they're auto-reminded and then flagged \u2014 the manager sees one resolved gap and one flagged slot, never an ambiguous stall, while all six now use the app for their own shifts and swaps.",
+            "what_changed": "Added auto-escalation so a silent worker never strands the admin with a worse-than-before schedule, plus worker-owned swaps that give the team a reason to return rather than tap once \u2014 fixing the 'one-tap and gone, and admins may resist' weakness.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Monday receipt where every number is clickable proof and converts to dollars",
+            "description": "Every Monday the tool still emails the admin (and optionally their boss) a one-line receipt of what it did for them last week \u2014 hours not spent scheduling, texts sent, swaps auto-resolved \u2014 turning invisible value into a recurring inbox number for the person deciding whether to keep paying. The fix for the credibility problem (a round '~3.5 hours' reads like marketing and can quietly erode trust): every figure is auditable \u2014 click '14 shifts auto-filled' and you see the actual 14, click '3 swaps handled' and you see who swapped with whom, so nothing is a black-box estimate. And because the renewal-decider thinks in money, the admin sets their own loaded hourly rate once at setup, so the receipt also shows dollars saved, not just hours. Example: a clinic office manager opens Monday's email \u2014 'Last week the scheduler saved you ~3.5 hours / about $140: auto-filled 14 shifts, handled 3 swaps without you, texted 22 reminders so no one no-showed' \u2014 clicks the '3 swaps' line to see the real swap log, then forwards a credible, money-denominated case to the practice owner before the 60-day cliff.",
+            "what_changed": "Made every claimed saving click-through to the real underlying events (so the number is auditable, not a black-box estimate that erodes trust) and converted hours into dollars via the admin's own rate, so the renewal-decider sees money.",
+            "tag": "SAFE"
+          }
+        ],
+        "reverse": [
+          {
+            "seed_id": "1",
+            "title": "First week built from a 3-question call, not a guessed import",
+            "description": "Instead of silently guessing from a blurry whiteboard photo, the onboarding coordinator runs the import through a 15-minute live screen-share or recorded voice-note call where the admin confirms three things only a human knows: who's a manager vs. a closer, which shifts are 'never move these,' and who can't work together. The coordinator drafts the week, then sends it back highlighting in yellow exactly the 4-6 cells it inferred rather than confirmed ('I guessed Maria opens Tuesdays \u2014 right?'), so the admin's first act is a quick yes/no on a near-finished grid, never correcting a stranger's invisible mistakes. To stop this being a money-losing human-per-signup and a 48h dead zone, the bot does the parsing and the coordinator only does the 15-min confirmation, and the admin gets an instant auto-draft within 10 minutes of forwarding so there's never silence; the human-finished version follows within a day. Crucially, the coordinator publishes week 1 but hands the admin week 2's grid pre-filled with week 1's recurring pattern plus a 90-second 'now you drag-and-drop one shift' nudge, so the admin learns the tool on a warm grid instead of hitting the empty-grid cliff at day 14. Example: a 9-person cafe forwards a whiteboard photo Monday; by 9:10am an auto-draft lands, by Tuesday a coordinator has done a 15-min call, flagged 'I guessed you want two on Saturdays,' published week 1, and teed up week 2 already populated so the manager's first solo task is moving one barista's Thursday \u2014 done in a minute, not from scratch.",
+            "what_changed": "Added a confirm-the-guesses call plus a pre-populated week 2 with a guided first edit, so the admin never corrects invisible errors and never hits the empty-grid cliff once the human help stops.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "2",
+            "title": "Tap-back that helps the admin even when the team ignores it",
+            "description": "Keep the per-shift 'Got it / Can't make it' tap, but never let unconfirmed workers block the admin's job: a shift is publishable and final the moment the admin posts it, and tap-back is layered on top as bonus signal, not a gate. The schedule shows confirmed shifts green, but silent ones stay neutral-grey (not alarming red) and auto-flip to 'assumed confirmed' after a deadline the admin sets, so a quiet team never leaves the admin staring at an unfinished-looking grid. To beat notification fatigue and spam flags, the first message to each worker is a one-time opt-in with a real reason ('reply YES to get your shifts and never miss one'), reminders are capped at one nudge per shift, and a worker who taps 'Got it' once is auto-trusted for recurring identical shifts so regulars aren't pestered weekly. The 'Can't make it' path must hand back help, not just a hole: when a worker declines, the tool immediately texts the 2-3 qualified workers who are off that day asking 'can you cover Sat 9-5?', and the admin sees a pre-built shortlist instead of a raw gap. Example: a warehouse manager publishes Saturday and it's instantly live; six workers get one text, four tap 'Got it' (greening those cells), one taps 'Can't make it \u2014 dentist' and within seconds two off-shift workers get a cover request, so the manager opens the app to a ready crew and a one-tap fix for the single gap, while the silent sixth worker's cell quietly auto-confirms by the Friday deadline.",
+            "what_changed": "Made tap-back a non-blocking bonus layer (publish never waits on workers) and turned every 'Can't make it' into an auto-generated cover shortlist, so the feature never makes the admin's core job harder.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "A Monday receipt that earns the right to be sent",
+            "description": "Keep the Monday saved-time email, but gate it on a real-value floor so it never reminds the admin how little happened: the receipt only sends when measured savings clear a threshold (e.g. 30+ minutes or 3+ real actions), and in the slow first weeks it switches to a forward-looking 'setup progress' note instead ('you've got 2 of 4 recurring patterns saved \u2014 add the rest and next Monday I'll start auto-filling'), so the early window gets momentum, not a 0.2-hour gut-punch. Every number is defensible and auditable: each line links to the actual events that produced it ('3.5 hrs = 14 auto-filled shifts x 12 min + 3 swaps resolved'), with a conservative per-action time estimate the admin can see and adjust, so it reads like a meter reading, not marketing \u2014 and an inflated claim can't quietly erode trust because the math is one click away. The boss CC is opt-in and only unlocks after a streak of strong weeks, and the admin always previews the exact email before it forwards, so the digest never blindsides the admin or hands the boss a weak number that triggers 'why are we paying for this.' Example: a clinic office manager's first two Mondays bring 'you're 75% set up' nudges; by week 3 the tool has done real work and sends 'Last week I saved you ~3.5 hrs: 14 shifts auto-filled, 3 swaps handled, 22 reminders sent \u2014 tap any line to see the math,' which the manager, now confident the numbers hold up, chooses to forward to the practice owner.",
+            "what_changed": "Added a value-floor that swaps the receipt for a setup-progress nudge during the dead early weeks, plus click-to-audit math and gated boss-CC, so the digest never lands as a low-value reminder or an untrustworthy claim.",
+            "tag": "SAFE"
+          }
+        ],
+        "scamper": [
+          {
+            "seed_id": "1",
+            "title": "The first month builds itself, with a human on the line",
+            "description": "When someone signs up, a real coordinator takes whatever they have \u2014 last month's spreadsheet, a whiteboard photo, a screenshot of their old tool \u2014 and within 48 hours hands back a finished, publishable first week. But instead of stopping there, the coordinator also turns those shifts into a recurring template that auto-regenerates weeks two, three, and four, and stays on as a named person who personally checks in before each of the first three publishes to nudge the template until it's clean. So the customer doesn't just cross the fully-scheduled-week line once and drift \u2014 they have a running engine plus a relationship by the time novelty would normally fade. Example: a 9-person cafe signs up Monday; by Wednesday 'Maya' has sent a published week one and quietly set the recurring pattern so week two appears pre-filled Sunday night, then texts the manager 'week two's ready, I tweaked Sam's Friday \u2014 look good?' By the time Maya hands over fully in week four, ripping it out means losing a person and a working machine, not abandoning an empty grid.",
+            "what_changed": "The one-time hero import now leaves behind a self-regenerating recurring template and a named human who shepherds the first three publishes, so the customer is defended across the whole novelty cliff instead of crossing the threshold once.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "When one worker bails, the app hands the shift to the others",
+            "description": "Every published shift is texted to the individual worker, who must tap 'Got it' or 'Can't make it,' and the admin's grid fills with green checkmarks only as the crew responds \u2014 so a confirmed schedule is impossible without the whole team logging in. The upgrade: a 'Can't make it' tap doesn't just show the admin a red gap, it instantly offers that open shift to the other eligible workers, who tap 'I'll take it,' and the first taker self-fills the slot while the admin watches it close on its own. Workers now transact with each other inside the app \u2014 trading and grabbing shifts \u2014 not merely acknowledging, so the crew's whole coordination habit and their informal who-covers-for-whom social graph migrate into the product. Example: a warehouse manager publishes Saturday; one worker taps 'Can't make it \u2014 dentist,' three teammates get 'Saturday 6am open \u2014 grab it?', the fastest taps 'I'll take it,' and the manager's gap closes green before she's even noticed it opened. Leaving the tool now means the whole team loses the place where they swap shifts, not just where the boss posts them.",
+            "what_changed": "The worker's single acknowledgment tap becomes a live worker-to-worker shift marketplace, so the team transacts with each other inside the product and switching cost spreads across the whole crew's coordination habit.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "A running tally of reclaimed time that fights back when it stalls",
+            "description": "Every Monday the tool emails the admin (and optionally their boss) a plain receipt of what it saved last week \u2014 hours not spent scheduling, swaps it resolved, reminders it sent. The upgrade turns the one-way brag into a cumulative ledger and a sensor: the email leads with a growing all-time total ('47 hours reclaimed since you joined') that the admin would visibly forfeit by leaving, compares this week to their own first week, and flags one thing next week that still needs them \u2014 so it's an email they act on, not just read. And because the tally measures real product usage, when it flattens \u2014 the admin stopped publishing, the team stopped tapping \u2014 the system reads that stall as a churn signal and fires a live intervention: it surfaces the at-risk account to a human for a check-in, or auto-offers to rebuild next week's schedule for them. Example: a clinic office manager has watched her total climb to '52 hours saved'; one quiet week it doesn't move, and instead of a brag email she gets 'Looks like last week got away from you \u2014 want me to set up next week's shifts? Reply yes.' The receipt stops being a passive number and becomes the thing that catches the account on its way out the door.",
+            "what_changed": "The weekly digest gains a cumulative reclaimed-hours total the admin would lose by leaving and, crucially, becomes a churn sensor that fires a real intervention the moment usage stalls.",
+            "tag": "WILD"
+          }
+        ],
+        "sixhats": [
+          {
+            "seed_id": "1",
+            "title": "Your first week, already drafted before you ask",
+            "description": "The moment someone signs up, whatever they uploaded or pasted during signup (a roster spreadsheet, a whiteboard photo, a screenshot of their old tool) is pulled apart by a coordinator into staff, recurring shift patterns, and obvious time-off, and within 48 hours they get back a fully-built, ready-to-publish week. The key move: the admin is never asked to 'send materials and wait' \u2014 that request is the step where most people go silent and the 48-hour window dies. Instead the coordinator builds a best-guess draft from the signup artifact alone and delivers it as something to correct, not a request to fulfill. A 9-person cafe pastes last month's shifts into the signup box on Monday; Wednesday the manager opens a finished schedule with a note 'I guessed your weekend doubles and gave Maria her usual Tuesdays off \u2014 fix anything wrong and hit publish, took me 20 minutes.' Correcting a wrong draft is something an admin will do in five minutes; starting a blank one is what they put off until churn.",
+            "what_changed": "The 48-hour deliverable became a correctable draft built proactively from signup data, not a request for materials the admin must answer first.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "2",
+            "title": "Confirmation that fills its own gaps",
+            "description": "Every published shift texts the individual worker who taps 'Got it' or 'Can't make it,' and the admin's grid fills with green as replies land \u2014 but the real work happens around the non-responses. A shift with no reply auto-nudges the worker twice, and a 'Can't make it' instantly reposts that shift to everyone else as a grabbable open slot, so a red gap becomes a coverage offer the team races to claim rather than a dead spot that makes the schedule look broken. The admin never stares at a half-green grid wondering if the tool failed; they watch gaps heal themselves. A warehouse manager publishes Saturday; six workers get texts, one taps 'Can't make it \u2014 dentist,' that shift immediately pings the other five as 'open \u2014 first to claim it,' and two minutes later someone grabs it, so the manager sees a full green crew without lifting a finger \u2014 and all six now have shifts living in the app, each one personally tied in.",
+            "what_changed": "Non-responses and 'can't make it' now trigger an auto-nudge and one-tap shift-claiming market, so unconfirmed shifts heal instead of leaving the grid looking broken.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "A running tally of time it has given back",
+            "description": "Every Monday the tool emails the admin (and optionally their boss) a plain receipt of real actions it took last week \u2014 shifts auto-filled, swaps it resolved, reminders it sent \u2014 but the headline number is cumulative, not weekly: total hours reclaimed since you started, and your current streak of weeks with zero no-shows. This fixes the trap where a quiet week would otherwise email 'saved you 0.3 hours' and argue against renewal; a compounding ledger only ever grows, so the receipt always makes the case to keep paying. The first one is held back until the running total is large enough to land. A clinic office manager opens Monday's email: 'Since March the scheduler has saved you ~41 hours and you're on a 9-week no-show streak \u2014 last week: 14 shifts auto-filled, 3 swaps handled, 22 reminders sent,' and forwards it to the practice owner as the renewal argument, every single week, even slow ones.",
+            "what_changed": "The receipt's headline shifted from a volatile weekly number to a cumulative hours-saved total and no-show streak, so it never argues against renewal on a slow week.",
+            "tag": "SAFE"
+          }
+        ]
+      },
+      "judges": [
+        {
+          "tech": "reverse",
+          "xArm": "plain",
+          "yArm": "reverse",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 5,
+            "y_value": 5,
+            "reason": "Both sets are equally concrete (named examples, who-does-what is sharp throughout) and both add real substance, not padding. They split the ideas: X's id2 is the strongest single development in either set \u2014 it preserves the forcing-function engine (\"admin can't get a confirmed schedule without the team logging in\") that attacks the team-never-adopts root cause, while patching the silent-worker stall via auto-escalate/flag/backup; Y instead removes that gate (\"publishable and final the moment the admin posts it\"), which is more realistic but regresses on the very root cause that idea targets. Y wins id1 (also fixes unit-economics/48h-dead-zone) and id3 decisively (the value-floor insight \u2014 suppress a demoralizing \"0.2 hrs\" receipt during the exact churn window and switch to setup-progress, plus the boss-CC guardrail), both squarely on the early-churn goal. Y's broader on-goal value-add across all three ideas narrowly outweighs X's superior id2 fidelity, making it the slightly stronger set in a near-tie."
+          }
+        },
+        {
+          "tech": "scamper",
+          "xArm": "scamper",
+          "yArm": "plain",
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 4,
+            "x_value": 5,
+            "y_strength": 4,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Both sets meaningfully develop all three seeds, but X's upgrades attack the churn goal more directly and build deeper moats: idea 2 migrates the team's informal who-covers-for-whom social graph into the app (worker-to-worker self-fill), and idea 3 turns the receipt into an active churn-sensor that fires a live intervention when usage stalls \u2014 literally catching the account on its way out. Y is excellent and arguably more grounded, sharply closing real holes (the silent-worker \"worse-off\" failure mode, the credibility/auditability problem, hours-to-dollars), giving it a slight edge on concreteness and operational realism. But Y's developments lean defensive/credibility-focused while X's compound switching cost and operationalize churn-detection more aggressively, making X the stronger set toward the stated goal."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "xArm": "plain",
+          "yArm": "sixhats",
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 5,
+            "x_value": 5,
+            "y_strength": 4,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Both sets sharply diagnose each starting idea's core weakness and patch it concretely with named examples, but X is more thorough and more on-goal for the churn problem: it adds week-two durability via a reusable template the admin has already edited (idea 1), guarantees the schedule always converges to confirmed-or-flagged plus a standing return reason via worker-routed swaps (idea 2), and makes every receipt number auditable and money-denominated for the renewal-decider (idea 3). Y is excellent and arguably has the single deepest insight (the cumulative ledger that stops slow weeks arguing against renewal), but it covers less ground per idea \u2014 notably leaving the silent-non-responder case only \"nudged twice\" rather than resolved, where X closes it fully. X's developments attack more of the named root causes (novelty cliff, invisible value, low switching cost) per idea, giving it the edge on strength and substance."
+          }
+        }
+      ],
+      "lift": {
+        "devIsX": false,
+        "v": {
+          "better": "Y",
+          "x_strength": 4,
+          "x_concreteness": 4,
+          "x_value": 4,
+          "y_strength": 5,
+          "y_concreteness": 5,
+          "y_value": 5,
+          "reason": "Both sets share the same three mechanisms (done-for-you first week, mandatory worker tap-back, Monday time-saved receipt), all well-aimed at the four root causes. Set X is already strong and concrete with vivid worked examples. Set Y is the developed version, and the development adds real value rather than length: in each pair it identifies the single strongest objection to X's mechanism and resolves it with a concrete sub-mechanism. (1) X's done-for-you gets the team past week one but leaves a blank-grid week-two cliff and an admin who has never touched the controls \u2014 exactly where novelty-fade churn bites; Y leaves a reusable clone-able template and forces the admin to make one real edit on a screenshare, closing that gap and deepening activation + switching cost. (2) X's tap-back can leave the admin with a worse result than before (a silent worker yields an unconfirmed/stalled schedule, sabotaging the admin's core job); Y adds auto-escalation (reminder, at-risk flag, named backup) so the schedule always converges, and adds standing reasons (own shifts + one-tap swap routed to a teammate) for workers to return rather than tap once \u2014 fixing X's deepest flaw and turning a one-time tap into real repeat adoption. (3) X's round '~3.5 hours' can read like marketing and erode the very trust the receipt exists to build; Y makes every figure clickable/auditable and converts to dollars for the money-thinking renewal decider. Each addition is causally tied to the goal, concrete, and plausible, so Y wins on strength, concreteness, and value added."
+        }
+      },
+      "why": {
+        "arm_moves": [
+          {
+            "arm": "plain",
+            "primary_moves": [
+              "RISK",
+              "DATA",
+              "AMP"
+            ]
+          },
+          {
+            "arm": "reverse",
+            "primary_moves": [
+              "RISK",
+              "SCOPE",
+              "TIME"
+            ]
+          },
+          {
+            "arm": "scamper",
+            "primary_moves": [
+              "AMP",
+              "COMB"
+            ]
+          },
+          {
+            "arm": "sixhats",
+            "primary_moves": [
+              "TIME",
+              "RISK",
+              "AMP"
+            ]
+          }
+        ],
+        "seed_convergence": [
+          {
+            "seed_id": "1",
+            "all_arms_same_core_fix": false,
+            "common_fix": "Three arms (plain/reverse/scamper) converge on leaving a reusable recurring template/engine so week two is a one-click clone, not a blank grid; sixhats is the outlier, attacking onboarding silence instead (build a best-guess draft from the signup artifact so the admin never has to 'send and wait')."
+          },
+          {
+            "seed_id": "2",
+            "all_arms_same_core_fix": true,
+            "common_fix": "Resolve worker non-response so the admin's schedule never stalls or looks broken \u2014 and in 3 of 4 arms specifically re-offer a declined/empty shift to eligible teammates to claim, turning a red gap into self-healing coverage (which also deepens team adoption and switching cost)."
+          },
+          {
+            "seed_id": "3",
+            "all_arms_same_core_fix": false,
+            "common_fix": "No common fix: plain makes every number auditable + converts to dollars (DATA), reverse gates the email below a real-value floor so slow weeks never send a weak number (SCOPE), and scamper+sixhats switch to a cumulative all-time running total that only ever grows (AMP)."
+          }
+        ],
+        "technique_divergence": [
+          {
+            "technique": "reverse",
+            "relation_to_plain": "minor_variation",
+            "example": "Reaches plain's same destinations (warm week-2 grid, handle silent workers, auditable numbers) with extra failure-mode armor; the only genuinely new move is seed-3's value-floor gate that suppresses the email in weak weeks."
+          },
+          {
+            "technique": "scamper",
+            "relation_to_plain": "different_and_better",
+            "example": "Seed 2's 'Can't make it' becomes a worker-to-worker shift marketplace ('grab it'), attacking the GOAL's stated 'team never adopts' and 'low switching cost' root causes more directly than plain's admin-centric escalation."
+          },
+          {
+            "technique": "sixhats",
+            "relation_to_plain": "different_but_not_better",
+            "example": "Its seed-2 (gaps self-heal) and seed-3 (cumulative total) converge with scamper rather than beating plain; only seed-1's onboarding-silence angle ('draft before you ask') is a sharply original move plain didn't take."
+          }
+        ],
+        "frame_why": "The techniques mostly failed to out-develop plain because plain's built-in 'fix the obvious objection' move already harvests the highest-value improvement on each seed, so convergence simply tracks seed structure \u2014 a seed with one glaring flaw (seed 2) makes every lens find the same fix, a multi-flaw seed (seed 3) lets each lens grab a different weak point \u2014 leaving the named techniques to mostly add framing variety rather than superior develops, except where scamper's amplify-the-upside bias happened to hit the GOAL's adoption/switching-cost root causes harder."
+      }
+    },
+    {
+      "frame": "library",
+      "frameTitle": "Public library \u2014 grow weekly visits",
+      "seeds": [
+        {
+          "id": "1",
+          "title": "Recurring help desks for errands people repeat",
+          "description": "The library hosts standing, same-day-every-week appointment desks for tasks residents have to redo on a cycle, staffed by partner agencies who come to the building: a Tuesday tax-and-benefits clinic, a Thursday immigration-paperwork hour, a Saturday small-business filing desk. A gig worker who files quarterly taxes and a parent re-certifying for childcare benefits both come back because their next deadline lands on a date the desk is open, so the visit recurs with their paperwork cycle rather than ending after one trip. This works because it ties the building to obligations people cannot do online and must repeat, converting a have-to errand into a predictable weekly footfall."
+        },
+        {
+          "id": "2",
+          "title": "Lending the machines you can't download",
+          "description": "The library lends and houses equipment that only works in-person and rewards repeat sessions: a sewing and embroidery corner, a sound booth for podcasts and music, a 3D printer and laser cutter, and a seed-and-tool library. A resident sewing a quilt or recording a six-episode podcast cannot finish in one sitting, so they book the same machine three or four weeks running, and the staff member who taught them the printer becomes the reason they return for the next project. It draws people because the value is the physical gear and the supervised time on it, neither of which a phone or laptop can replace."
+        },
+        {
+          "id": "3",
+          "title": "Turn the floor into a place you'd choose to spend an afternoon",
+          "description": "The library remakes its main floor into a comfortable hang-out zone with talking allowed, sells real coffee, adds soft seating, power outlets, and long worktables, and keeps it open into the evening so it competes with a caf\u00e9 or co-working spot rather than enforcing silence. A freelancer who would otherwise pay for a caf\u00e9 desk, and a retiree who wants somewhere warm to read the paper and chat, both start treating Wednesday afternoons here as a habit because it's pleasant to linger and free. It attacks the 'quiet book warehouse' image head-on: the reason to come is the place itself, so people return weekly to dwell, not just to grab a book and leave."
+        }
+      ],
+      "coll": {
+        "plain": [
+          {
+            "seed_id": "1",
+            "title": "The desk that keeps your case open",
+            "description": "Partner agencies still run standing same-day-every-week clinics in the building, but each desk now works a case across visits instead of closing it in one trip: when a resident's tax, benefits, immigration, or business filing can't be finished today, the same staffer schedules the missing piece for a named date the desk is open and hands them a one-page 'bring this back' slip, so the next visit is already booked before they leave. A parent re-certifying for childcare benefits who is missing a pay stub comes back next Tuesday to the same person to close it, then again when the case worker flags a renewal window; a gig worker doing quarterly taxes gets a March follow-up plus a 'come in February to assemble receipts' working session, filling the dead weeks between deadlines. This raises weekly active visits because the recurrence no longer waits on a rare annual deadline\u2014it rides the multi-step, follow-up nature of the paperwork itself and the relationship with one staffer who already knows the file.",
+            "what_changed": "Turned each one-shot errand into a multi-visit case with a pre-booked next session, so recurrence comes from the paperwork's follow-up steps rather than rare quarterly/annual deadlines.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Book your next session before you leave the machine",
+            "description": "The library lends in-person-only gear\u2014sewing and embroidery, a podcast and music booth, 3D printer and laser cutter, a seed-and-tool library\u2014but now organizes each loan as a guided project arc rather than a single bookable slot: the staffer who taught you the machine helps you scope a 3-to-5-session project, blocks your recurring same-day-each-week slot on that one machine for the whole run, and at the end of every session sets the next session's goal and reserves the seat, so you walk out already booked. A resident recording a six-episode podcast holds Thursday 6pm in the booth for six weeks and gets a 'next week we edit episode two' handoff each time; someone sewing a quilt locks the same machine and mentor for a month. Weekly active visits rise because the project is deliberately too big to finish in one sitting, the next visit is committed in advance instead of left to whether they re-book, and the named mentor becomes the reason to show up.",
+            "what_changed": "Added a commitment device\u2014a multi-session project arc with the next slot reserved before the user leaves\u2014so visits recur by prior booking instead of relying on people choosing to re-book.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Make Wednesday-here a standing thing, not just a nice place",
+            "description": "The main floor still becomes a talking-allowed hangout\u2014real coffee, soft seating, outlets, long worktables, open into the evening\u2014but a fixed weekly rhythm is layered on top so lingering hardens into a calendared habit: the same slot each week carries a low-effort recurring draw that's about the place and the people, not an errand\u2014a Wednesday-evening freelancers' coworking table where regulars hold the same seats, a standing afternoon paper-and-chat circle for retirees, a weekly board-game or repair-cafe night\u2014while a separated quiet zone keeps readers from being driven out by the noise. A freelancer comes every Wednesday because their table and the same faces are reliably there, not on a whim; a retiree treats Thursday's chat circle as their week's fixed social anchor. This lifts weekly active visits by converting fragile, mood-dependent lingering into a same-day-every-week social appointment, while the dedicated quiet area resolves the cafe-versus-readers conflict the open floor would otherwise create.",
+            "what_changed": "Anchored the comfortable floor to a fixed weekly social rhythm (and carved out a quiet zone) so a passive 'might drop by' habit becomes a reliable same-day appointment without turning into an errand desk.",
+            "tag": "BOLD"
+          }
+        ],
+        "reverse": [
+          {
+            "seed_id": "1",
+            "title": "The deadline desk that never goes dark",
+            "description": "Partner agencies still staff standing same-day-every-week clinics (Tuesday tax-and-benefits, Thursday immigration paperwork, Saturday small-business filing), but two things make the promise reliable enough to build a habit on. First, sensitive sessions move off the open floor into a small screened consult room with a door, so a person handing over their immigration file or benefits income isn't doing it in earshot of strangers. Second, every clinic has a named library staff backup trained to run intake and basic forms, plus a posted rule that if a partner cancels the desk still opens for document drop-off and rebooking. A parent re-certifying childcare benefits books the private room, and even the week the county caseworker is sick, she arrives to a lit desk that takes her paperwork and locks in her slot instead of a dark table that teaches her never to rely on it again.",
+            "what_changed": "Added a private screened consult room for sensitive paperwork and a trained library-staff backup so a partner no-show never leaves people facing a dark desk.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Gear that trains its own next teacher",
+            "description": "The library keeps lending in-person-only equipment (sewing and embroidery, a podcast sound booth, 3D printer and laser cutter, seed-and-tool library), but two rules stop a handful of power users from quietly owning it and stop one staffer from being the single point of failure. Booking is project-based with a rolling cap: you reserve a machine for a defined run of weeks, but once your block ends you drop to the back of the queue so a new person gets in, and no-shows free the slot automatically. And anyone who completes a project earns a 'show the next person' credential: trained users run short certification sessions for newcomers, building a bench of five or six people who can teach the laser cutter instead of one. A quilter finishes her four-week run, certifies, and the month the gear tech quits she's one of the people keeping the printer queue moving and machines un-jammed.",
+            "what_changed": "Added rolling project-based booking caps that recycle scarce machines to newcomers and a peer-certification ladder that turns trained users into backup teachers, killing the single-staffer bottleneck.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "A loud floor, a kept-quiet wing, and a reason for this Wednesday",
+            "description": "The main floor still becomes a lingering zone with real coffee, soft seating, power, long tables, talking allowed, and evening hours, but the silence isn't abolished, it's relocated: a physically separated quiet wing (own room or screened-off back, its own door) is protected and even signposted from the loud floor, so the retiree who came for forty years of hush keeps a real place and the library nets new visitors instead of trading one crowd for another. And because 'pleasant and free' alone doesn't make anyone choose this Wednesday over any Wednesday, the lingering floor carries light recurring same-time anchors that don't need a quiet room: a Wednesday-evening freelancer co-working table with a host, a standing afternoon conversation table for newcomers practicing the local language. The freelancer comes Wednesdays because his people are at that table then, and the quiet reader two doors down never has to hear it.",
+            "what_changed": "Added a physically separated protected quiet wing so the social floor doesn't drive off the existing silent base, plus recurring same-time gatherings that give a reason to come on a specific day rather than just someday.",
+            "tag": "BOLD"
+          }
+        ],
+        "scamper": [
+          {
+            "seed_id": "1",
+            "title": "The desk books your next deadline before you leave",
+            "description": "When you finish at one of the standing partner desks, the staffer pulls up your cycle and reserves your next required visit on the spot, and the library holds that slot for you. A gig worker who just filed quarterly taxes walks out with their next quarterly appointment already on a Tuesday three months out; a parent re-certifying for childcare benefits leaves with their renewal date booked, so the deadline that used to be a private worry is now a held seat on a known day. The recurrence stops depending on anyone remembering, because the building schedules the comeback the moment the current errand is done.",
+            "what_changed": "The visit recurs because the partner desk pre-books your next obligatory appointment into a held slot instead of leaving you to remember the deadline yourself.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Your half-finished project lives at the library",
+            "description": "The gear stays the draw, but now your work-in-progress and your reserved machine time both stay in the building between sessions: the staff store your partly-stitched quilt in a labeled bin and hold your sewing-corner slot for next Thursday, or keep your recorded podcast tracks on the booth machine with the booth re-booked for you. A quilter mid-project or someone three episodes into a six-episode podcast can't take the unfinished thing home and poke at it on a laptop, so finishing means coming back to the same machine on the same day. The return isn't a hope that they'll feel like it again; it's the only place the half-done work and the tool to finish it exist.",
+            "what_changed": "Returning becomes structurally necessary because the unfinished project and the booked machine-time are held at the library and can't be taken home.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "A floor you'd linger on, with a standing night to come back for",
+            "description": "The comfortable main floor stays the point, talking allowed, real coffee, soft seating, power, long tables, open into the evening, but it's split into a livelier front and a quieter back so a noisy table doesn't drive off the reader, and one recurring evening is anchored to a fixed weeknight so lingering has a day to land on. A freelancer who'd otherwise rent a caf\u00e9 desk drifts in any afternoon, and a retiree shows up every Thursday because that's the night the same regulars gather at the long table over coffee, so the warm, free, pleasant-to-stay-in room now has a standing reason to be there on a particular day. The place itself is still the draw; the weekly anchor just gives the habit a slot.",
+            "what_changed": "The lingering floor keeps the same comfort substrate but gains a fixed-weeknight anchor and a loud-front/quiet-back split, turning open-ended dwelling into a same-day weekly habit.",
+            "tag": "BOLD"
+          }
+        ],
+        "sixhats": [
+          {
+            "seed_id": "1",
+            "title": "The standing-appointment desk that rebooks your next deadline",
+            "description": "Partner agencies staff fixed same-day-every-week desks in the building (Tuesday tax-and-benefits, Thursday immigration paperwork, Saturday small-business filing), and before each visitor leaves, the staffer books their NEXT cyclical deadline into the same weekly slot right then. To keep it from feeling like a waiting-room at the DMV and to handle sensitive documents, the help happens at a quiet bookable side-booth off the main floor, not an open counter. A gig worker who files quarterly taxes walks out with a confirmed slot three months ahead on the Tuesday his next payment is due; a parent re-certifying childcare benefits leaves with the date of her next renewal already held. Each visit ends by scheduling the next, so the recurrence is locked in rather than left to memory, and the wait for an appointment seeds them into the rest of the building.",
+            "what_changed": "The visit now ends by booking the resident's next cyclical deadline into the same slot, converting a hoped-for return into a held appointment.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Finish-your-project cohorts on the gear you can't download",
+            "description": "The library lends in-person-only equipment (a sewing-and-embroidery corner, a podcast and music sound booth, a 3D printer and laser cutter, a seed-and-tool library) but sells it as a multi-week project run rather than a one-off rental: when a resident starts something that can't finish in one sitting, the staff member who trained them books them a standing weekly session at the same machine with the same instructor until the project is done. A resident sewing a quilt signs up for a four-week Thursday-evening quilting run with the same staffer, and someone recording a six-episode podcast holds the booth for six consecutive Mondays. Because the booking is a committed series tied to a finish line and a named instructor, the return is scheduled, not hoped-for, which also keeps expensive machines booked instead of idle and prevents one hobbyist from monopolizing the only booth.",
+            "what_changed": "Rentals become committed multi-week instructor-led series running to a finish line, so the next visit is already on the calendar.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "A third place with a standing weekly draw and a quiet wing kept intact",
+            "description": "The library converts ONE zone of its main floor into a talking-allowed lounge with real coffee, soft seating, power, and long worktables open into the evening, but it anchors that zone with a recurring weekly draw at a set time (a Wednesday-evening regulars' session, rotating between a writers' table, a local-makers swap, a board-game night) so people return for a TIME, not just a vibe. To avoid evicting the readers it already has, the rest of the floor is acoustically zoned and stays quiet. A freelancer treats Wednesday evening here as her standing co-working night because the same crowd shows up; a retiree comes for the warm seat and the regulars he now knows, while a student still finds a silent table fifty feet away. The reason to come back weekly is a scheduled gathering plus a pleasant place to linger, and the quiet users are not pushed out.",
+            "what_changed": "A recurring set-time weekly gathering anchors the lounge so the habit attaches to a time, while acoustic zoning preserves the quiet space the change would otherwise destroy.",
+            "tag": "BOLD"
+          }
+        ]
+      },
+      "judges": [
+        {
+          "tech": "reverse",
+          "xArm": "reverse",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Both sets are strong, concrete, and convergent (especially on idea 3, where both add a separated quiet zone plus recurring same-time social anchors). Y edges ahead because its additions most directly serve the literal goal of weekly active visits: idea 1 fixes the seed's deepest flaw (annual deadlines only recur once a year) by riding multi-step follow-ups that fill the dead weeks, and ideas 2-3 commit the next visit in advance. X is excellent and arguably contributes more novel structure on idea 2 (anti-capture cap, distributed teaching bench) plus the sharpest single insight on idea 1 (privacy/reliability), but several of its moves harden existing recurrence rather than increase its frequency, so it wins fewer of the three matchups."
+          }
+        },
+        {
+          "tech": "scamper",
+          "xArm": "plain",
+          "yArm": "scamper",
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 4,
+            "y_value": 4,
+            "reason": "Both sets apply the same three moves (book-next-visit, recurring machine sessions, fixed weekly floor anchor + quiet zone), so this is a contest of execution against the literal goal of WEEKLY visits. X wins on id1: it diagnoses that the original recurrence rode rare deadlines and manufactures intermediate visits (\"come in February to assemble receipts,\" multi-step case follow-ups filling dead weeks), whereas Y merely auto-rebooks the same quarterly cadence three months out. X also develops id3 with several concrete recurring draws (held-seat coworking table, paper-and-chat circle, repair-cafe night) versus Y's single weeknight. Y's id2 is arguably the sharper single insight (the half-done work physically lives at the library so it can only be finished there), making id2 a tie, but X edges the set overall on developed substance."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "xArm": "sixhats",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 5,
+            "reason": "Both sets add the same strong core mechanic across all three ideas (book-the-next-visit-before-leaving, named instructor/mentor, committed multi-week series, and a preserved quiet zone), and both are equally concrete with sharp personas and who-does-what detail. They diverge most on idea 1: X merely locks in the same low-frequency recurrence (a slot three months out), which barely raises WEEKLY visits, whereas Y reframes the desk to work a case across visits \u2014 generating intermediate visits from incomplete paperwork and a between-deadline prep session \u2014 directly attacking the goal's emphasis on weekly active visits. That makes Y's development add the most real substance toward the actual goal, edging out X despite X's slightly tighter operational framing on ideas 2 and 3."
+          }
+        }
+      ],
+      "lift": {
+        "devIsX": true,
+        "v": {
+          "better": "X",
+          "x_strength": 5,
+          "x_concreteness": 5,
+          "x_value": 5,
+          "y_strength": 4,
+          "y_concreteness": 3,
+          "y_value": 3,
+          "reason": "The two sets are the same three ideas: Y is the concise starting version, X the developed one. Applying a strip-test per pair, X's extra material is load-bearing mechanism, not padding, and it targets the goal's true crux \u2014 manufacturing a WEEKLY cadence. Pair 1: Y relies on residents returning when their next deadline lands, but tax/benefits deadlines are quarterly/annual, not weekly; X fixes this by working one case across visits, pre-booking the next visit with a 'bring this back' slip, and filling dead weeks with prep sessions tied to one named staffer. Pair 2: Y depends on voluntary re-booking; X pre-commits the recurring slot for a scoped 3-5 session project arc and reserves the next seat at each session's end. Pair 3: Y relies on mood-dependent lingering; X adds standing reserved-seat weekly draws AND resolves the caf\u00e9-vs-readers noise conflict Y's open floor would create. In every pair the development converts a fragile or off-cadence return driver into a committed weekly one. X also wins on concreteness (named slips, blocked slots, specific cadences). Y remains a strong, clean, actionable set on its own, but does less developmental lifting. X is stronger for the goal."
+        }
+      },
+      "why": {
+        "arm_moves": [
+          {
+            "arm": "plain",
+            "primary_moves": [
+              "ENF",
+              "TIME",
+              "COMB"
+            ]
+          },
+          {
+            "arm": "reverse",
+            "primary_moves": [
+              "RISK",
+              "SCOPE",
+              "ENF"
+            ]
+          },
+          {
+            "arm": "scamper",
+            "primary_moves": [
+              "ENF",
+              "SUB",
+              "TIME"
+            ]
+          },
+          {
+            "arm": "sixhats",
+            "primary_moves": [
+              "ENF",
+              "TIME",
+              "RISK"
+            ]
+          }
+        ],
+        "seed_convergence": [
+          {
+            "seed_id": "1",
+            "all_arms_same_core_fix": false,
+            "common_fix": "Three arms (plain/scamper/sixhats) converge on ENF: before the visitor leaves, lock the next cyclical visit into a held slot so recurrence stops depending on memory. Reverse diverges to RISK (privacy consult room + 'desk never goes dark' backup staffing). Note: plain instantiates ENF best for the WEEKLY goal by also filling dead weeks between deadlines with follow-up sessions, while scamper/sixhats only book the next quarterly deadline (one visit per quarter)."
+          },
+          {
+            "seed_id": "2",
+            "all_arms_same_core_fix": false,
+            "common_fix": "Plain/sixhats converge on ENF+TIME (sell a committed multi-week project run on the same machine with a named instructor). Scamper diverges with a stronger ENF via SUB: store the half-finished work in the building so the library becomes the only place the artifact and tool both exist. Reverse diverges entirely to SCOPE+RISK (rolling cap against monopolizers, peer-certification against single-staffer failure) rather than driving more visits."
+          },
+          {
+            "seed_id": "3",
+            "all_arms_same_core_fix": true,
+            "common_fix": "Add a fixed-time recurring weekly draw so people return for a TIME not a vibe, plus carve out a protected/acoustically-zoned quiet area so the lounge doesn't evict existing readers (TIME + RISK). All four arms land on this identical two-part fix near-verbatim."
+          }
+        ],
+        "technique_divergence": [
+          {
+            "technique": "reverse",
+            "relation_to_plain": "different_but_not_better",
+            "example": "Seed 1's screened consult room and 'desk still opens for drop-off if the partner cancels' harden failure modes (RISK), but for a GROWTH goal they protect the plan from breaking rather than drive new weekly visits."
+          },
+          {
+            "technique": "scamper",
+            "relation_to_plain": "different_and_better",
+            "example": "Seed 2's 'your half-finished quilt lives in a labeled bin and the booth keeps your tracks' removes the at-home substitute entirely (SUB) \u2014 a stronger enforcement than plain's mere slot-reservation. (Its seeds 1 and 3 are near-identical to plain.)"
+          },
+          {
+            "technique": "sixhats",
+            "relation_to_plain": "minor_variation",
+            "example": "Seed 1 adds a quiet bookable side-booth for sensitive documents on top of plain's identical 'rebook the next deadline' ENF core \u2014 a small black-hat risk add, not a new lever."
+          }
+        ],
+        "frame_why": "This goal exposes essentially one dominant lever \u2014 converting one-off visits into committed recurring ones (ENF) \u2014 which plain finds directly, so the techniques either re-derive that same enforcement move (converge, especially seed 3) or apply their native bias to an off-goal layer (reverse to robustness, sixhats to risk-coverage), and the only real win is scamper's 'eliminate' lens matching seed 2, the one seed with a removable home-substitute it could attack."
+      }
+    },
+    {
+      "frame": "cupwaste",
+      "frameTitle": "Downtown \u2014 cut single-use coffee-cup waste",
+      "seeds": [
+        {
+          "id": "1",
+          "title": "The Cup Is on the Receipt",
+          "description": "Mechanism: the district passes a rule that every cafe must ring up the disposable cup as its own visible line item the customer pays at the register, while the same drink in a reusable or in-house mug is the cheaper, pre-set default the POS suggests first. The lever is price + default-flip: the cup stops being invisible and free, and 'no cup' becomes the path of least resistance at the counter. Who does what: the district sets the charge and supplies the POS prompt; baristas no longer ask 'for here or to go' but ring the to-go cup as an add-on; the customer actively chooses to pay for disposable. Enforcement: it is a mandatory surcharge collected per cup, not an optional cafe choice, and the cafe keeps a portion as an offset for the lost margin. Example: a $0.35 'cup' line prints under the latte; order in your own tumbler and the screen has already knocked $0.35 off before the barista touches it, so the reusable customer literally watches the cup cost vanish. Distinct from the others because nothing is pooled or pre-staged: it works purely by making the existing disposable cost felt at the moment of payment."
+        },
+        {
+          "id": "2",
+          "title": "Borrow-Anywhere Cup Fleet",
+          "description": "Mechanism: a shared pool of standardized, durable cups that any participating cafe hands out filled, and the customer returns to ANY cafe or street return-bin in the district, redeeming a refundable deposit. The lever is pooled-asset + return economics, attacking the 'no shared system' and 'clean/remember' root causes: you never have to own, carry, or wash a cup, and you are never locked to the cafe you bought from. Who does what: a district-run operator owns the cup inventory and runs a single nightly wash-and-restock route across all cafes; each cafe is a both a checkout point and a drop-off point; the customer pays a deposit on the way out and gets it back on return. Enforcement: the deposit is real money held at purchase (charged to card or cash), auto-refunded on any return, and forfeited if the cup is never brought back, so the cup has a felt value the way a grocery cart coin does. Example: pay a $5 refundable deposit, sip your coffee three blocks away, drop the cup in a return slot outside a totally different cafe, and your $5 is back on your card within the hour. Distinct because the cup is communal infrastructure, not your possession and not a surcharge \u2014 the wash logistics are the operator's internal plumbing, invisible to the customer."
+        },
+        {
+          "id": "3",
+          "title": "Reusables Pre-Staged Where You Already Are",
+          "description": "Mechanism: employers, office buildings, gyms, and transit hubs in the district stock branded reusable cups at their own exits and stamp/clean them on premises, so the cup is waiting for the customer at the start of the commute rather than something they must remember to pack at home. The lever is provisioning-at-source via a different actor (the building/employer, not the cafe or the customer), attacking the 'carry/clean/remember' root cause head-on by moving the cup to the point where coffee trips actually begin. Who does what: the district recruits and subsidizes employers to install a grab-a-cup rack and a small commercial dishwasher by the lobby door; the building staff run the wash cycle; the employee grabs a clean cup on the way out and drops it back in the lobby bin on the way back in. Enforcement: it is tied to the employer's existing facilities and a participation subsidy/tax credit, and racks are placed at the threshold people physically pass through, so 'remembering' is replaced by 'it's literally in the doorway.' Example: you leave your office at 9am, grab a clean cup off the lobby rack like grabbing an umbrella from the stand, fill it at any nearby cafe, and toss it in the lobby's return bin when you get back \u2014 you never owned it, never carried it from home, never washed it. Distinct from the fleet because the cups are stocked and cleaned by the workplaces people start from, not by a cafe-side pooled operator, and distinct from the surcharge because it changes WHERE the cup lives rather than what it costs."
+        }
+      ],
+      "coll": {
+        "plain": [
+          {
+            "seed_id": "1",
+            "title": "The Cup Line That Grows On You",
+            "description": "The district still mandates the disposable cup as its own paid line item with the reusable/in-house mug as the cheaper pre-set default the POS rings first, but two things change so the charge actually bites instead of getting shrugged off. First, the receipt stops leading with the charge and leads with the saving plus a running tally: 'cup $0.40 \u2014 you've paid $11.20 for cups this month' on the disposable path, versus 'cup $0.00 \u2014 you've kept $9.60 this month, 24 cups avoided' on the reusable path, so the number people feel is their own accumulating total, not a one-time forty cents. Second, the charge isn't flat forever: the district steps it up on a published schedule (40 cents this year, 60 next) and prints the next bump right on the slip, so the trend is visible before it lands. The cafe keeps its margin-offset portion; the rest the district earmarks visibly ('your cup charges fund the district's bins/wash route'), printed as a line so the payer sees where it goes. Example: a daily latte-to-go drinker who never reacted to forty cents sees by week three a slip reading 'cups this month: $8.00, rising to $12 next year' \u2014 and the screen beside it shows the tumbler price already $8 lighter for the month \u2014 and that monthly figure, not the per-cup pittance, is what flips them. Still purely a price-and-default mechanism: nothing is pooled, pre-staged, or deposited; the only new force is making the cumulative cost (and its upward trajectory) impossible to not-notice.",
+            "what_changed": "Made the surcharge actually bite by surfacing each customer's running monthly cup total and a published rising rate, so the felt cost is a growing personal number rather than an ignorable per-cup pittance.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "The Cup Fleet That Pays You to Rebalance It",
+            "description": "Still a district operator's pool of standardized durable cups handed out filled at any cafe and returnable to any cafe or street bin, with the operator running the nightly wash-and-restock route \u2014 but two fixes attack the failure that sinks most return schemes. First, the killer problem isn't loss, it's drift: cups pile up at downhill drop-offs (transit exits, the busy lunch block) and origin cafes run dry by 10am, so the operator publishes a live return value per location. Drop a cup at a glutted transit bin and you get your base deposit back; drop it at a cafe the system knows is running low and you get base plus a small bounty (a few cents, or a credit toward your next drink). Customers become the redistribution layer the operator would otherwise pay a midday van to do. Second, the $5 cash hold is its own friction, so the deposit becomes a tap-to-borrow card pre-authorization \u2014 nothing actually leaves your account, the hold simply releases the moment any bin scans the cup back \u2014 keeping the felt 'this is worth real money' pressure without the sting of being out $5. Example: it's 9:30am, your neighborhood cafe is already short on cups, your phone (or the bin's screen) shows that cafe lit up as a 'bring one here, +30\u00a2' spot \u2014 so instead of the transit bin you pass, you walk the half block over, the cafe re-fills it on the spot, and your pre-auth clears. The wash logistics stay the operator's invisible plumbing; the cup is still communal infrastructure, not your possession and not a surcharge \u2014 the only new force is letting the return price float so the crowd fixes the operator's hardest logistics problem.",
+            "what_changed": "Fixed the fatal redistribution drift (cups glut at drop-offs, origin cafes run dry) by making the return value float so customers rebalance the fleet, and swapped the cash deposit for a friction-free card pre-auth.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Reusables At Your Door, Both Directions",
+            "description": "Employers, office buildings, gyms, and transit hubs still stock and wash branded reusable cups at their own thresholds with district subsidy, so the cup is waiting where coffee trips begin \u2014 but the seed had a broken loop: you grab a cup leaving the lobby and fill it at a cafe, so how does it ever get back to that building's rack? The fix is to design the cup's whole day around the building's two thresholds, not one. Morning: grab a clean cup off the lobby rack, fill at any cafe. Evening: you walk back through that same lobby and drop it in the return bin \u2014 the cup goes home to the building that owns it, and the building's staff run the overnight wash so the rack is full again at 9am. For the commute home, the same rack restocks late-afternoon so you can grab one on the way out at 5pm too. The leftover problem \u2014 cups that wandered off because someone didn't return to their building that day \u2014 is handled by piggybacking on the district's existing nightly route: a building short on cups by morning gets topped up, a building with a surplus from visitors gets swept, so each building's rack self-levels without anyone owning the swap. Example: 9am you grab a cup off your office's lobby rack like an umbrella from the stand, fill it at the corner cafe; 6pm you pass back through your lobby and drop it in the bin; the night cleaning crew runs it through the lobby dishwasher with the rest, and tomorrow's rack is full \u2014 and if your floor's coffee crowd emptied the rack faster than returns came back, the district's overnight van quietly tops it up. Still distinct: the cups live and get cleaned at the workplaces people start and end their day from, not a cafe-side operator and not a surcharge \u2014 the new force is closing the return loop on the building's own evening threshold and letting the existing route level the residual imbalance.",
+            "what_changed": "Closed the seed's broken return loop by anchoring the cup's return to the same building's evening threshold (with afternoon restock and the district route leveling residual drift), so cups actually get home and washed instead of wandering off.",
+            "tag": "SAFE"
+          }
+        ],
+        "reverse": [
+          {
+            "seed_id": "1",
+            "title": "The Cup Charge That Pays You Back",
+            "description": "The district still makes every cafe ring the disposable cup as its own paid line and pre-selects the reusable/in-house mug as the cheaper default \u2014 but the per-cup money no longer just disappears as a tax. Each charge drops into a district coffee wallet tied to the customer's payment card or phone number, and that balance can only be spent two ways: knocked off future drinks when you bring or borrow a reusable, or redeemed for a cheap district-issued tumbler the cafe hands over on the spot. So the cup line is felt as 'money I'm parking that I get back the second I stop using disposables,' not a penalty. To stop baristas quietly waiving it for speed and tips, the cafe's kept offset portion is paid out monthly against its POS-logged disposable count versus its drink count \u2014 under-ringing shrinks the cafe's own cut, so the register, not the barista, becomes the enforcer. Example: you buy three lattes to-go this week and watch $1.05 stack up in your wallet; on Friday the screen offers to swap that $1.05 for a $4 district tumbler, you take it, and from then on every drink you order in it is already 35 cents cheaper before the barista touches the screen.",
+            "what_changed": "The surcharge money is rerouted into a customer-held wallet that funds the reusable instead of vanishing as a tax, and the cafe's offset is made contingent on POS-verified compliance so baristas can't quietly nullify it.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Tap-and-Forget Cup Fleet",
+            "description": "Same district-owned pool of standardized durable cups, handed out filled at any cafe and returnable to any cafe or street bin \u2014 but the $5 cash hold at the register is gone, because it slowed the line and scared off tourists and the unbanked. Instead the customer taps their card or scans a code once to open a no-charge account; each cup is tagged and checked out to that account, auto-checked-in the instant it's dropped in any bin's reader, and only billed the cup's replacement cost if it isn't returned within a set window \u2014 so 99% of customers never feel money move at all, while chronic non-returners still get charged. The operator's wash route is no longer one blind nightly loop: the return bins report their fill levels live, so the van empties the overflowing transit-exit bins first and back-fills cups uphill to the cafes the data shows are running dry. And the whole program is gated on a published reuse number \u2014 if the average cup isn't getting reused past the break-even point where it beats the disposables it replaced, the district pauses expansion rather than flooding the street with under-used hardware. Example: you tap once on your first-ever cup, walk three blocks, drop it in a bin outside a different cafe that beeps green, and you're done \u2014 no hold, no refund to wait for; meanwhile a cup that's been used forty times and a bin that's 90% full both show up on the operator's morning route automatically.",
+            "what_changed": "The upfront cash deposit becomes a frictionless tagged-account auto-return with a no-show backstop, plus live fill-aware rebalancing and a hard reuse-rate gate that prevents the fleet from quietly becoming worse than disposables.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Cups That Live at the Doorways, Not at Home",
+            "description": "Reusable cups are still pre-stocked at the thresholds where commutes actually begin \u2014 but 'source' is widened past employers to ANY high-traffic doorway (transit gates, gym exits, dorm lobbies, the district parking garage, the library) so freelancers, tourists, and the jobless aren't shut out, and the racks are stocked with the very same tagged district fleet cups rather than a separate branded set. That fusion fixes the one-way drift that kills a closed building loop: a cup grabbed at your office lobby doesn't have to come back to that exact lobby \u2014 drop it at any cafe, street bin, or other doorway and it counts as returned, and the operator's existing route is what re-seeds your lobby rack overnight, so the building never runs empty and stray cups have a way home instead of becoming litter. Crucially, the building no longer runs its own dishwasher or polices its own rack \u2014 that labor is the killer that makes facilities teams let it lapse \u2014 the operator services the doorway rack on the same wash-and-restock circuit it already drives, so the building only lends the physical spot by the door. Example: you grab a clean cup off the transit-station rack like an umbrella from a stand, fill it at any cafe, and that night drop it in a bin three neighborhoods away near your apartment; the operator's van scoops it, washes it with the rest of the fleet, and re-stocks the transit rack before the morning rush \u2014 nobody at the station ever touched a sink.",
+            "what_changed": "The closed building loop is fused with a district-wide return-and-restock fleet so strayed cups route home instead of being lost, the 'source' is broadened to any public doorway so non-office trips are covered, and the wash/restock labor is lifted off building staff onto a shared serviced route.",
+            "tag": "WILD"
+          }
+        ],
+        "scamper": [
+          {
+            "seed_id": "1",
+            "title": "The Cup Charge That Pays You Back",
+            "description": "The district still mandates that every disposable cup rings up as its own visible line the customer pays, with the reusable/in-house mug pre-selected as the cheaper default the POS suggests first. Two things change. First, the per-cup charge climbs through the day for the same person: your first to-go cup is cheap, your second costs more, your third more again, so the heaviest cup users feel it most instead of everyone paying a flat blip they tune out. Second, the money the district collects doesn't just vanish into an offset \u2014 each time you skip the cup, the receipt prints a running 'cups avoided this month' tally and a small credit that banks up against your future coffee, so the reusable choice visibly pays you rather than merely costing you nothing. Who does what: the district sets the climbing charge, the credit rate, and supplies the POS prompt and the on-receipt tally tied to a phone number or loyalty tap; the cafe rings the to-go cup as the escalating add-on and keeps a cut to cover lost margin; the customer watches their avoided-cup credit grow. Example: you bring your tumbler at 8am and the screen has already knocked the cup off and printed 'You've skipped 14 cups \u2014 $4.90 banked, free drink at 20.' Your coworker grabs his third to-go cup of the day and the line reads $0.65, not $0.35.",
+            "what_changed": "The flat penalty becomes a per-person escalating charge that funds a visible, accumulating credit, so skipping the cup actively pays the customer instead of merely not costing them.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "2",
+            "title": "Borrow-Anywhere Cup Fleet",
+            "description": "Still a shared pool of standardized durable cups any participating cafe hands out filled and any cafe or street bin takes back, run by one district operator with a single nightly wash-and-restock route. The deposit mechanics flip to kill the friction at the counter. Instead of handing over $5 cash up front, you tap once to open a tab tied to your card or phone \u2014 nothing is actually charged unless you fail to bring a cup back inside a set window (say five days), at which point the operator auto-bills you for the unreturned cup. So the felt value is still real, but the frictionless default at purchase stays frictionless: you walk out with coffee having paid only for coffee. And the return folds into a trip you already make \u2014 your next coffee run is the return: hand the old cup across the counter, the barista drops it in the wash bin and fills a fresh one, your tab clears, no separate detour to a return slot. Who does what: the operator owns inventory, runs the nightly route, and holds the open tabs; each cafe is checkout, drop-off, and the swap point on your next visit; the customer taps once and just keeps swapping cup-for-cup. Example: Monday you tap and grab a filled cup, pay $4 for the latte and nothing more. Wednesday you're back at a different cafe, hand over Monday's cup, get Wednesday's filled, tab still at zero. Skip a week and forget it entirely? $5 quietly lands on your card.",
+            "what_changed": "The upfront cash deposit becomes a charge-only-if-you-don't-return tab and the return collapses into the next purchase, removing the two frictions (paying up front, making a return trip) that kept people on disposables.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Reusables Pre-Staged Where You Already Are",
+            "description": "Employers, gyms, transit hubs, and office buildings still stock branded reusable cups at their own exits so the cup is waiting at the start of the commute, not something to remember from home \u2014 but the building's cups are no longer a closed loop it owns and must fully fund. The racks are stocked from and feed back into the same district-wide cup network, so a cup grabbed off your lobby rack can be dropped at any cafe, street bin, or other building's lobby, and a cup from anywhere can land in yours. That solves the leak problem \u2014 cups wander off and never come back in a closed building pool \u2014 because there is no 'wrong' place to return one. And the building flips from cost-center to paid participant: instead of a one-time dishwasher subsidy and then a maintenance headache, the building earns a recurring credit for every verified cup-cycle that passes through its rack, counted by the same tap/scan that tracks the fleet. Who does what: the district runs the shared inventory and the nightly cross-route that rebalances racks and bins; the building hosts the threshold rack and either washes on premises or just hands cups to the operator's route, and gets paid per cycle; the employee grabs a clean cup like an umbrella from the stand, fills it at any cafe, and drops it literally anywhere in the district. Example: you grab a cup off your office rack at 9am, fill it three blocks away, and on your way to lunch drop it in a street bin by the park \u2014 meanwhile your building's dashboard ticks up another paid cycle, and tonight's route refills your lobby from cups returned all over downtown.",
+            "what_changed": "The building's cups join the district-wide return network instead of being a closed pool, killing leakage, and the building is paid per verified cup-cycle rather than subsidized once, turning maintenance into an ongoing incentive.",
+            "tag": "WILD"
+          }
+        ],
+        "sixhats": [
+          {
+            "seed_id": "1",
+            "title": "The Cup Is on the Receipt",
+            "description": "The district sets a single mandatory per-cup charge that every cafe's POS rings as its own line item, and pre-selects the in-house or reusable mug as the default order so the to-go cup is an add-on the customer must actively choose. The charge is set high enough to be felt, not symbolic, and the cafe keeps a slice to cover lost margin while the rest funds the district's waste program, with that destination printed on the receipt so the money visibly does something. The new piece: each customer's account or loyalty tag carries a running tally of cups skipped and dollars not spent, so the reusable customer watches a reward grow instead of dodging a one-time fee. Example: you order a latte in your tumbler; the screen has already knocked the cup charge off before the barista touches it, the receipt reads 'cups avoided this month: 14 / $4.90 kept,' and the line below notes the disposable charge goes to district recycling.",
+            "what_changed": "Added a visible running tally of cups-skipped and dollars-kept so avoiding the cup becomes an accumulating reward rather than a one-time fee dodged.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "2",
+            "title": "Borrow-Anywhere Cup Fleet",
+            "description": "A district-run operator owns a pool of standardized durable cups, hands them out filled at any participating cafe, and takes them back at any cafe counter or street return-bin, running one nightly wash-and-restock route that rebalances stock so dense return spots don't hoard cups while quiet blocks run dry. Instead of holding a real $5 deposit every single coffee, the customer taps a card once to join; borrowing and returning are then friction-free, and money is only charged if a cup isn't returned within a set window, so the felt value survives without the per-cup sting. Example: you link your card at any cafe one time, grab your filled cup, sip it three blocks away, drop it in a slot outside a totally different cafe, and nothing is charged; keep it past the deadline and the cup's value lands on your card automatically. Every cup in someone's hand carries the system's mark, so the network advertises itself.",
+            "what_changed": "Replaced the per-cup $5 deposit hold with a one-time card link that charges only on non-return, killing the transaction friction while keeping the cup's felt value.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "3",
+            "title": "Reusables Pre-Staged Where You Already Are",
+            "description": "The district recruits and subsidizes employers, gyms, and transit hubs to install a grab-a-cup rack and a small commercial dishwasher right at the threshold people pass through, so a clean cup waits at the start of the commute; building staff run the wash cycle on premises and own the cups end to end. To stop racks emptying because cups never come back, the building's own accountability hooks do the recovery: grabbing a cup logs against the badge that opened the door, and the cleaning crew that already empties bins sweeps stray cups back to the rack at end of day, so return is the building's routine, not the customer's chore. Example: you badge out of your office at 9am, grab a clean cup off the lobby rack like an umbrella from the stand, fill it at any nearby cafe, and either drop it in the lobby bin on your way back or the evening crew collects the one left on your desk; the rack is full again by morning. The cups live and get cleaned at the workplaces people start from, never owned, never carried from home.",
+            "what_changed": "Added a building-side recovery loop \u2014 badge-linked grabs plus the existing cleaning crew's end-of-day sweep \u2014 so empty racks get refilled without relying on customers to remember to return.",
+            "tag": "WILD"
+          }
+        ]
+      },
+      "judges": [
+        {
+          "tech": "reverse",
+          "xArm": "plain",
+          "yArm": "reverse",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Both sets are highly developed and concrete, but Y's additions each name and kill a real program-failure the seed glossed over: register-as-enforcer (POS disposable-vs-drink ratio so under-ringing shrinks the cafe's cut) for id1, a break-even reuse gate that pauses expansion if cups aren't reused enough for id2, and removing the building's own-dishwasher labor (the killer that makes facilities teams let it lapse) plus widening \"source\" to any doorway for equity in id3. Y also lands a fuller SAFE/BOLD/WILD spread versus X's SAFE/BOLD/SAFE. X's single most original move \u2014 letting the fleet's return price float so the crowd does the operator's hardest rebalancing \u2014 is sharper than Y's smarter-van version, and X's id3 stays more faithful to idea 3's distinctiveness, but X leaves id1's barista-waiver gap and id3's facility-labor killer unaddressed, so Y edges it overall."
+          }
+        },
+        {
+          "tech": "scamper",
+          "xArm": "scamper",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 5,
+            "reason": "Both sets are concrete with sharp who-does-what and numeric examples, but Y more consistently diagnoses each seed's true failure mode and fixes it within the idea's own logic. Y's idea 2 is the standout in either set: it reframes the killer problem as drift (cups pile up downhill, origin cafes dry up by 10am) rather than loss, and crowdsources the operator's hardest logistics via a floating, location-based return bounty. Y also keeps idea 3 distinct while cleanly closing the return loop via the building's two thresholds, whereas X's bold version collapses idea 3 into idea 2's network and leans harder on per-person intraday tracking; Y's developments add more real substance per the goal."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "xArm": "plain",
+          "yArm": "sixhats",
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 5,
+            "x_value": 5,
+            "y_strength": 4,
+            "y_concreteness": 4,
+            "y_value": 3,
+            "reason": "Set X diagnoses each seed's specific failure mode and engineers two distinct fixes per idea: the cup-receipt gains both a cumulative monthly tally AND a published escalating-charge schedule; the fleet's standout insight names \"drift, not loss\" as the killer and turns customers into a paid redistribution layer (the operator's hardest logistics cost) plus a no-sting pre-auth; idea 3 closes the broken return loop via the building's two daily thresholds. Set Y develops the same ideas competently and reads more polished, but generally adds only one mechanism each (tally, one-time card link, badge-logging) and leaves the fleet's rebalancing as the operator's job rather than solving it \u2014 less added substance on the hardest problem. X wins on value-added and concreteness while staying faithful to each idea's distinct lever."
+          }
+        }
+      ],
+      "lift": {
+        "devIsX": false,
+        "v": {
+          "better": "Y",
+          "x_strength": 4,
+          "x_concreteness": 5,
+          "x_value": 3,
+          "y_strength": 5,
+          "y_concreteness": 5,
+          "y_value": 5,
+          "reason": "X and Y are the same three ideas (receipt-surcharge, communal cup-fleet, workplace-staged reusables), so the judgment turns entirely on whether Y's development adds real mechanism or just length. All three Y deltas are mechanism-level and attack named failure modes. Pair 1: Y adds a cumulative personal monthly tally and a published, slip-printed escalation schedule (40c-60c) \u2014 this directly converts the shruggable flat 40c into a felt, rising total, hitting the root cause \"customers don't feel the cost.\" Pair 2 (strongest delta): Y diagnoses the true failure of return schemes \u2014 not loss but drift (cups pool downhill, origin cafes run dry by 10am) \u2014 and adds a floating return-value bounty that makes customers the redistribution layer, plus a tap-to-borrow pre-auth replacing the $5 cash hold; new force, fixes the hardest logistics problem. Pair 3: X3 has a real logical hole (how does a lobby-grabbed cup get back to that building's rack?); Y3 closes the loop via the evening threshold return, overnight building wash, and residual self-leveling on the existing district route. X is already excellent and maximally concrete (named actors, dollar figures, vivid examples), so concreteness ties at 5. But Y matches that concreteness while adding genuine robustness and behavioral force, so it scores higher on strength and far higher on value_added. None of Y's additions are hollow restatement, so this is not a length artifact \u2014 Y is the stronger set."
+        }
+      },
+      "why": {
+        "arm_moves": [
+          {
+            "arm": "plain",
+            "primary_moves": [
+              "RISK",
+              "DATA",
+              "TIME"
+            ]
+          },
+          {
+            "arm": "reverse",
+            "primary_moves": [
+              "SUB",
+              "ENF",
+              "AUD"
+            ]
+          },
+          {
+            "arm": "scamper",
+            "primary_moves": [
+              "COMB",
+              "TIME",
+              "SUB"
+            ]
+          },
+          {
+            "arm": "sixhats",
+            "primary_moves": [
+              "ENF",
+              "RISK",
+              "DATA"
+            ]
+          }
+        ],
+        "seed_convergence": [
+          {
+            "seed_id": "1",
+            "all_arms_same_core_fix": true,
+            "common_fix": "Reframe the per-cup fee from a one-time invisible blip into an accumulating personal number \u2014 a running 'cups avoided / dollars saved this month' tally that makes the reusable choice feel like a growing reward rather than a penalty."
+          },
+          {
+            "seed_id": "2",
+            "all_arms_same_core_fix": true,
+            "common_fix": "Kill the $5 cash deposit-at-counter friction: replace it with a one-tap card pre-auth / no-charge account that auto-clears on return and only bills the cup's value if it is never returned within a window."
+          },
+          {
+            "seed_id": "3",
+            "all_arms_same_core_fix": false,
+            "common_fix": "No single fix: plain and sixhats KEEP the closed building loop and close it (evening lobby-threshold return / badge accountability + cleaning-crew sweep, building owns and washes cups), while reverse and scamper DISSOLVE the building into the district-wide tagged fleet (return anywhere, operator washes on its existing route, building becomes just a host spot / paid participant) \u2014 i.e. they fix the broken-return-loop by collapsing seed 3 into seed 2's pooled-fleet mechanism."
+          }
+        ],
+        "technique_divergence": [
+          {
+            "technique": "reverse",
+            "relation_to_plain": "different_but_not_better",
+            "example": "On seed 1 reverse adds genuine anti-waiver enforcement plain lacks (cafe's cut paid against POS-logged disposable-vs-drink count so the register, not the barista, enforces), but on seed 3 it abandons the seed's building-owned identity by folding everything into the operator's fleet \u2014 gaining nothing plain didn't, while losing seed fidelity."
+          },
+          {
+            "technique": "scamper",
+            "relation_to_plain": "minor_variation",
+            "example": "Seed 1 is the same tally+escalation as plain, only re-sequenced (charge climbs through the day per person rather than across years); seed 3 reaches the same fleet-fusion as reverse \u2014 different surface framing, same core fixes."
+          },
+          {
+            "technique": "sixhats",
+            "relation_to_plain": "nearly_identical",
+            "example": "Seed 2 is the identical tap-once / bill-only-on-non-return fix as plain, and seed 1's 'cups avoided this month' tally is plain's reframe restated \u2014 sixhats lands a subset of plain, sometimes more conservatively (keeps the closed building loop on seed 3)."
+          }
+        ],
+        "frame_why": "The techniques did not out-develop plain because each seed had a single dominant weak point (fee-invisibility for 1, deposit-friction for 2) that forced the same fix regardless of method, so the arms converged; they diverged only on seed 3, which had no forced fix \u2014 and there reverse and scamper diverged not by beating plain but by drifting to a common attractor (collapsing the building loop into seed 2's pooled fleet), i.e. divergence-by-loss-of-identity rather than divergence-by-improvement."
+      }
+    }
+  ]
+}

@@ -1,0 +1,693 @@
+{
+  "summary": "Extract the concrete \"what was exactly tried\" + REAL examples (verbatim ideas, judge quotes, mechanism labels, prompt edits, fixtures) from the 7 saved experiment result files, for a detailed visual deep-dive.",
+  "agentCount": 7,
+  "logs": [
+    "extracted 7/7 experiments"
+  ],
+  "result": {
+    "extracts": [
+      {
+        "key": "track-a-quality-loop",
+        "title": "Track A: 5-round prompt-wordsmithing loop on idea-generation prompts failed to lift idea substance; blind A/B preferred round-1",
+        "what_was_tried": "A 5-round generate-judge-improve loop that edited only the idea-GENERATION prompt files (track-a/prompts/: generate.seed.md, innovator.md, wild_card.md, output-rules.md). Each round generated 4 cells (2 topics x 2 personas: cafe-afternoon-revenue and b2b-saas-early-churn, each via innovator + wild_card), dual round-blind judges scored them on a compliance/substance-split rubric and emitted weaknesses, and an improver rewrote the prompt wording to attack those weaknesses. The recurring target was persona convergence (innovator and wild_card landing the same mechanisms), so the wordsmithing added/sharpened rules like generate.seed.md's \"Distinct mechanisms... the costume trap — wear a different surface or target yet pull the same lever,\" wild_card.md's \"Decoration mistaken for mechanism\" warning, and \"Beat the obvious default.\" 36 agents total across the loop.",
+        "how_measured": "Dual round-blind judges per round (2 votes) scoring compliance=mean(C1,C2,C3) and substance=mean(S1 novelty, S2 mechanism-specificity, S3 relevance, S4 batch diversity); the honest result is a final BLIND round-1-vs-round-5 A/B with labels stripped, positions swapped, judged fresh — substance must beat round-1 blind or the tuning didn't move real quality.",
+        "examples": [
+          {
+            "type": "quote",
+            "label": "Blind A/B judge reasoning (prefers r1) — verbatim",
+            "left": "On the SaaS-churn problem, X fields a genuinely diverse lock-in/switching-cost cluster aimed at retention (memory a CSV can't carry #4, status you'd lose #3, knowledge notes for the next person #5, the reusable-setup pile #7, social-pull schedule #6), whereas Y collapses roughly half its SaaS ideas into near-duplicate onboarding-activation variants (poll-draft, import rota, kickoff link, draft-like-a-game, rival-export untangle, schedules-first) and offers only one real lock-in idea (#6). Since the stated problem is early churn, X's mechanisms hit the target more directly and with more distinct who-does-what. The cafe halves are closer... so X wins on substance overall."
+          },
+          {
+            "type": "quote",
+            "label": "Blind A/B judge reasoning (prefers tie) — verbatim",
+            "left": "Across an explicit three-axis tally the sets offset. Novelty leans Y a hair (more distinct novel mechanisms with no X analog: leave-a-note shift knowledge base, status-you'd-lose reputation lock-in, the-pile-you'd-abandon; cafe nap counter, aperitivo flip, parking-meter table pricing as genuinely different occasions). Mechanism specificity leans X a hair... whereas a few Y entries drift slogan-ward — \"week worth looking at,\" \"pay in fewer pings\"). Relevance is even... so neither set is clearly higher in substance. (Y's vivid analogies are a compliance strength, not a substance one, and were not double-counted.)"
+          },
+          {
+            "type": "pair",
+            "label": "Substance regressed, not improved (round 1 vs round 5 in-loop judge)",
+            "left": "Round 1: compliance=4.79 substance=3.85 (2 votes)",
+            "right": "Round 5: compliance=4.66 substance=3.76 (2 votes)"
+          },
+          {
+            "type": "list",
+            "label": "Verbatim mechanism-census labels — the persona-collapse the wordsmithing kept failing to fix (R5 weaknesses)",
+            "items": [
+              "b2b wild_card largely re-skins the b2b innovator set rather than going wilder: teammates-trade-shifts (=innovator #4), calendar/channel delivery (=innovator #2), schedule-first-ask-later (=innovator #1/#7), and rival-export-untangle (=innovator #3 import) all reappear. Same mechanisms, new phrasing, so novelty (S1) and diversity (S4) both collapse on that cell.",
+              "Within b2b innovator, ~5 of 8 ideas fold into a single mechanism family ('remove setup friction to reach the first finished week': #1 poll-draft, #3 import-rota, #7 stalled-team-draft, #8 kickoff-link, plus #2 channel-delivery sharing the adoption-without-login idea with #4). Eight distinct pitches, roughly two real mechanism families.",
+              "[substance] Vivid examples mask under-specified mechanisms (S2 inflation). 'Pay out saved hours as a coffee round funded from the subscription' (b2b wild_card #3), 'free hours expire Sunday' (#8), and 'stream the quiet room as paid background' (cafe wild_card #5) wrap a concrete sentence around a slogan.",
+              "the idle-barista paid brewing class appears in BOTH cafe sets (innovator #6, wild_card #7), undercutting the premise that the wild persona generates more distinct ideas."
+            ]
+          },
+          {
+            "type": "list",
+            "label": "Verbatim prompt text wordsmithed to attack the collapse (generate.seed.md + wild_card.md)",
+            "items": [
+              "generate.seed.md 'Distinct mechanisms': name each seed's core lever as a five-word who-does-what action before committing; if two names match, it's one lever. Seeds collapse when they differ only in *what they surface, count, or measure* (a tally is a tally), in louder or polished wording, or — the costume trap — wear a different surface or target yet pull the same lever.",
+              "generate.seed.md 'Beat the obvious default': strip your method and ask if a domain generalist would name the same move unprompted. If so — or if it's the move *any* persona lands on regardless of method — it's a warmup, not a find. Replace it.",
+              "wild_card.md 'Decoration mistaken for mechanism': A vivid simile ('like Instagram') or a promised vibe (it 'brags', 'narrates the story', 'reacts live', 'feels alive') names an effect, not a lever — a stale move under either is still a stale move.",
+              "wild_card.md 'Converging on one weird note': If seeds cluster on one lever — even via different stimuli or personas — you've collapsed. Rotate the lever, not just the stimulus."
+            ]
+          },
+          {
+            "type": "quote",
+            "label": "The frame the ideas were judged against (b2b-saas-early-churn, verbatim)",
+            "left": "A small B2B SaaS team-scheduling tool (~400 paying teams) loses about 4% of accounts every month, mostly within the first 60 days; the founder wants to cut early churn."
+          }
+        ],
+        "numbers": [
+          {
+            "label": "Round 1 substance",
+            "value": "3.85"
+          },
+          {
+            "label": "Round 5 substance",
+            "value": "3.76 (down -0.09)"
+          },
+          {
+            "label": "In-loop substance trajectory (R1-R5)",
+            "value": "3.85 / 3.59 / 3.56 / 3.87 / 3.76 (flat-to-down)"
+          },
+          {
+            "label": "In-loop compliance trajectory (R1-R5)",
+            "value": "4.79 / 4.75 / 4.44 / 4.53 / 4.66"
+          },
+          {
+            "label": "Blind A/B substance: round-1",
+            "value": "4"
+          },
+          {
+            "label": "Blind A/B substance: round-5",
+            "value": "3.5"
+          },
+          {
+            "label": "Blind A/B compliance (r1 vs r5)",
+            "value": "4 vs 4 (tie)"
+          },
+          {
+            "label": "Blind A/B verdict (two judges)",
+            "value": "prefers = [r1, tie] — round-5 never won"
+          },
+          {
+            "label": "Agents in loop",
+            "value": "36"
+          }
+        ],
+        "verdict": "null_result",
+        "verdict_label": "Prompt-wordsmithing did not lift idea substance — blind A/B preferred round-1 (or tied)",
+        "takeaway": "Five rounds of editing the generation prompts moved substance from 3.85 to 3.76 in-loop (flat-to-down, not up), and the honest blind round-1-vs-round-5 A/B — labels stripped, positions swapped — preferred round-1 on substance (4 vs 3.5) with the second judge calling it a tie; round-5 never won. Compliance stayed high throughout (4.4-4.8), exactly the rubric's predicted failure mode of a compliance jump masquerading as quality. The root weakness the wordsmithing kept failing to fix is structural persona convergence: across every round the wild_card cell re-skinned the innovator cell's mechanisms (e.g. R5: teammates-trade-shifts = innovator #4, calendar delivery = innovator #2), so polished new wording could not create new mechanisms. This empirically confirms the project memory note that the ideation quality bottleneck is structural, not prompt-tunable.",
+        "_key": "A"
+      },
+      {
+        "key": "track-b-dynamic-viz-quality-loop",
+        "title": "Track B: 5-round render-judge-improve loop on the dynamic live-wall prototype (view.dynamic.html), with a blind baseline-vs-final A/B",
+        "what_was_tried": "A single self-contained HTML prototype (view.dynamic.html — a dark sticky-note \"idea wall\" that consumes a live SSE event stream) was put through 5 rounds of render -> judge -> improve. Each round screenshots the prototype across 5 states (empty, framing, scored, churn, 80) via wall_replay.py, a UX+code judge scores it 1-5 and lists 2-3 concrete fixable issues, then an \"improve\" agent edits the file in place under hard constraints (vanilla only, no libraries = automatic code<=2, keep the exact SSE handler contract, keep dark sticky aesthetic + dynamic behaviors: FLIP reorder-on-score, score heat, rank badges, compost tray, activity line). Concrete viz changes chased across rounds: injecting the dead \"winners band\" section-label (defined in CSS but never injected by JS in round 1); switching scored cards from a 4px bottom heat bar to a whole-card heat tint (heatColor applied to background); normalizing the heat ramp to the live min/max instead of a hardcoded 40-95 range; moving the heat low-end off the green axis to stop colliding with the \"kept\" green text and seed/hybrid kind-dots; adding score-band dividers (90s/80s/70s/<70) to break \"the rest\" tail; and styling the compost/\"cut — set aside\" cut tray.",
+        "how_measured": "Per-round: 1 UX+code judge (1-5) over 5 rendered states. Honest result = blind A/B of round-0 baseline vs round-5 final, rendered to anonymized Set X / Set Y, run by 2 judges position-swapped; UX scores averaged across swaps. 18 agents total.",
+        "examples": [
+          {
+            "type": "quote",
+            "label": "Verbatim blind-A/B judge reasoning (judge that preferred FINAL)",
+            "left": "Set Y wins systematically across every populated state. It uses rank badges plus color tiers (gold top, muted lower/cut) so winners are instantly visible and the 80-idea board has real top-to-bottom scan structure, whereas Set X renders every card in the same amber weight as a uniform wall where winners are indistinguishable and the 80-board is hard to scan. Y also handles cuts more cleanly (cut cards visibly desaturated/de-emphasized vs. X leaving them near-identical to live ones) and centers its empty/framing checkpoint so it reads as an intentional confirm moment rather than X's stray top-left card."
+          },
+          {
+            "type": "quote",
+            "label": "Verbatim blind-A/B judge reasoning (split judge — final wins where the tool lives, baseline edges framing)",
+            "left": "The sets are close and nearly identical in the empty/framing states (X edges those slightly by centering the lightbulb and the checkpoint card, whereas Y pins the checkpoint to the top-left corner). But in the populated states where the tool actually lives, Y wins the most important job: its 80-card board color-grades every card by score tier (gold winners at top -> orange/tan mid -> purple cuts at bottom, monotonic with the visible badges), so distribution, winners, and cuts are all scannable in one glance, plus churn shows score deltas for a dynamic feel. X only isolates a small 'Top picks' group and leaves the remaining ~70 cards as a uniform dark mass with a ragged, gappy grid, making the full board harder to scan; its sole clear advantage is the framing/empty-state polish."
+          },
+          {
+            "type": "pair",
+            "label": "Round 1 #1 issue -> Round 2 carryover: the winners-band score/rank contradiction",
+            "left": "R1: 'Winners row score/rank contradiction (highest impact): the 15px bold score is the dominant element but is non-monotonic and disagrees with the rank badge (95 is badged #2; #4=45 scores lower than many unranked cards)... Fix: de-emphasize the raw score once a card is ranked (make the #N badge the dominant element for ranked cards)'",
+            "right": "R2: 'Winners-band score inversion: ranked cards are ordered by authoritative rank (#1=56, #2=95, #3=55), so the gold #1 winner sits ABOVE non-winners scoring 94/93/92 in \"the rest.\"... Fix: drop the raw score entirely on ranked cards... or relabel the band \"SELECTED\" so it doesn't read as \"top-scored\"'"
+          },
+          {
+            "type": "pair",
+            "label": "Heat signal: round 2 weak-bar fix -> round 3 range-compression fix",
+            "left": "R2: 'Heat signal is too weak to do its job: a 4px bar on the card's bottom edge is effectively invisible at the 80-card zoom... Fix: thicken the bar or tint the whole card by score (heatColor already exists — apply it to background instead of a sliver).'",
+            "right": "R3: 'Heat compression in the mid-score cluster: heatColor() maps a FIXED 40-95 range onto olive->orange, so when scores bunch in the 70s those cards render as nearly identical muddy orange... Fix: normalize heat to the live min/max of currently-scored ideas instead of the hardcoded 40/95'"
+          },
+          {
+            "type": "pair",
+            "label": "Round 4 -> Round 5: heat-vs-semantic color collision, then long-tail dividers",
+            "left": "R4: 'Heat ramp shares hues with semantic colors. The olive->orange score-heat background runs straight through the same green/orange the UI uses for meaning... Acute case: \\'Cold-brew growler refills\\' (score 55, kept) renders dark-green \\'kept\\' on an olive-green card... Fix: move the heat low-end to a cool/neutral hue off the green axis'",
+            "right": "R5: 'Score-band dividers and the compost bar are too low-contrast to do their job. The 90s/80s/70s/<70 tier labels and the \\'cut — set aside\\' bar are small dim text (#6a5a30 / #7a5c40) on the dark background; on the 80-board they nearly vanish... Fix: brighten the band labels, add a subtle full-width rule/background tint per band, and give the compost bar a clearer pill/contrast'"
+          },
+          {
+            "type": "list",
+            "label": "Real ideas on the board the judges were scoring (verbatim title [kind/tag] :: description + score)",
+            "items": [
+              "Pastry rescue box [seed/BOLD] :: Bag up the morning's unsold pastries at 3pm for half price; turns waste into a reason to walk in — score 95 (#3)",
+              "Kids draw, parents stay [seed/BOLD] :: Free crayons and a wall to pin drawings on; parents on the school run linger and order — score 94",
+              "Cold-brew growler refills [seed/SAFE] :: Sell branded growlers, refill cold brew cheap in the afternoon; regulars stock their fridge and your slow hours move volume — score 55, kept (the R4 collision case)",
+              "Cold-brew growler refills — variant [variant/WILD] :: Push it wilder — what if it ran all week, not just afternoons?",
+              "Silent-hour study deal [seed/WILD] :: Declare 2-4pm phone-free and discount drip 30%; the vibe itself becomes the draw for students",
+              "Barista's-choice mystery cup [seed/BOLD] :: A $3 afternoon-only mystery drink the barista improvises; cheap experiment that turns dead time into theater"
+            ]
+          },
+          {
+            "type": "list",
+            "label": "Mechanism labels / viz vocabulary used across rounds (the concrete artifact features)",
+            "items": [
+              "winners band / pinned winners band (CSS .section-label.winners — dead code in R1, never injected by JS)",
+              "rank badges (#N) + color tiers: gold winners at top -> orange/tan mid -> purple cuts at bottom",
+              "score heat (heatColor): 4px bottom bar -> whole-card background tint -> normalized to live min/max",
+              "FLIP reorder-on-score (reflow() with getBoundingClientRect FLIP-first/last passes; R1/R3 flagged O(n^2) jank, fix = rAF-coalesce)",
+              "score-band dividers (90s / 80s / 70s / <70 tier labels) added to chunk 'the rest' long tail (~75 cards / ~2800px)",
+              "compost tray / 'cut — set aside' bar for cut ideas; kind-dots (green seed / purple variant / orange hybrid)",
+              "churn shows score deltas; activity line; centered empty/framing checkpoint as 'intentional confirm moment'"
+            ]
+          }
+        ],
+        "numbers": [
+          {
+            "label": "Blind A/B UX — baseline (round-0)",
+            "value": "3.25"
+          },
+          {
+            "label": "Blind A/B UX — final (round-5)",
+            "value": "3.75"
+          },
+          {
+            "label": "Blind A/B UX lift",
+            "value": "+0.50 (3.25 -> 3.75)"
+          },
+          {
+            "label": "Blind judge votes (prefers)",
+            "value": "['final', 'baseline'] — 1 of 2 swapped judges preferred final outright"
+          },
+          {
+            "label": "Per-round UX trajectory",
+            "value": "R1=3, R2=4, R3=4, R4=4, R5=4"
+          },
+          {
+            "label": "Per-round code trajectory",
+            "value": "R1=4, R2=5, R3=4, R4=4, R5=5"
+          },
+          {
+            "label": "Rounds",
+            "value": "5 (render-judge-improve), all render_ok=true"
+          },
+          {
+            "label": "States rendered per round",
+            "value": "5 (empty, framing, scored, churn, 80)"
+          },
+          {
+            "label": "Total agents",
+            "value": "18"
+          }
+        ],
+        "verdict": "win",
+        "verdict_label": "Blind A/B win: +0.50 UX (3.25 -> 3.75)",
+        "takeaway": "Iterating a concrete visual artifact (not a prompt) through render-judge-improve produced a real, blind-measured UX gain: the round-5 board color-grades all 80 cards by score tier with gold-at-top winners, purple-at-bottom cuts, and score-band dividers, making winners/distribution/cuts scannable in one glance, vs the round-0 uniform-amber wall where winners were indistinguishable. The gain was honest but modest (+0.50, split 1-of-2 judges) — and the same defect recurred across rounds (the rank-vs-score contradiction surfaced R1 and R2; heat legibility R2/R3/R5), showing per-round single-judge fixes traded one scannability problem for the next rather than fully closing them.",
+        "_key": "B"
+      },
+      {
+        "key": "track-c-structural-persona-fix",
+        "title": "Track C: structural persona fix (disjoint lanes + ban-obvious + divergence pass) did not lift idea quality",
+        "what_was_tried": "Three structural edits aimed at the \"persona convergence\" root cause. (1) Added a \"Your lane (stay in it)\" section to each persona giving it ONE disjoint region of idea space and an explicit cede-list — Innovator owns \"re-engineering the thing that already exists\" and must cede far-domain mechanisms (Wild Card's lane) and failure-inversions (Provocateur's lane); Wild Card owns \"the absurd/random stimulus and the perspective raid\" and must cede systematic domain sweeps (Connector) and reconfiguring offering/pricing (Innovator). (2) Added a \"Ban the obvious five\" gate to both personas: \"list internally the five answers anyone would give this problem in the first thirty seconds. Those are now FORBIDDEN.\" (3) Added a mandatory \"Step 3.5 — Divergence pass\" to generate.seed: label each seed's core mechanism in 2-4 words and replace any duplicate so a batch of count has count distinct mechanisms — \"not three mechanisms wearing eight costumes.\" Measured base-vs-fix to see if substance/diversity rose.",
+        "how_measured": "Blind base-vs-fix A/B over n=2 topics (cafe-afternoon-revenue, b2b-saas-early-churn), substance broken into novelty/mechanism/relevance/compliance axes, X/Y randomized per judge; PLUS a joint-labeled mechanism census as a manipulation check (one shared label vocabulary applied identically to both collections, prose stripped to core move). Verdict driven by the blind substance A/B; census only checks WHY. n=2 frames, so only a LARGE delta is interpretable.",
+        "examples": [
+          {
+            "type": "quote",
+            "label": "Judge reason — the null-result thesis in one line (cafe topic)",
+            "left": "B3 'marble in jar' is just the morning-to-afternoon return token in poetic packaging — novel framing of a non-novel mechanism that also overlaps Y's own A3. X is consistently more concrete and root-cause-focused... so it leads mechanism and relevance.",
+            "caption": "Blind judge on the cafe topic; this judge preferred base (X). Fix bought novelty by reskinning, not by new mechanism."
+          },
+          {
+            "type": "quote",
+            "label": "Census audit — fix reskins the SAME mechanisms (b2b topic)",
+            "left": "Audit finding: both collections land at 9 distinct mechanisms - the diversity intervention did NOT increase mechanism count. Collection 2 is more vividly FRAMED (WILD metaphors: keepsake card, break-room glass, wager, muster) but its surface variety reskins mechanisms already present (make-value-visible, import-game-mechanic, ambient-presence); it is not more mechanically diverse.",
+            "caption": "Joint census note, b2b topic. The manipulation check confirms the divergence pass did not produce structurally new moves."
+          },
+          {
+            "type": "quote",
+            "label": "Census audit — after stripping prose the fix is LESS diverse (cafe topic)",
+            "left": "After stripping prose, C2 is NOT more diverse than C1 (8<9) — the diversity-intervention signature (C2 distinct spiking from generous splitting) does not hold up.",
+            "caption": "Cafe topic census. Fix (C2) = 8 distinct mechanisms vs base (C1) = 9, once evocative framing is collapsed to the core move."
+          },
+          {
+            "type": "pair",
+            "label": "Prompt edit (verbatim): what the fix ADDED to generate.seed — and the census's verdict on it",
+            "left": "BASE: Step 3 ends at 'Honor the persona's watch out for warnings — they are the failure modes that kill seed batches.' (no Step 3.5)",
+            "right": "FIX added Step 3.5 — Divergence pass (mandatory): 'If two seeds share a core mechanism, keep the stronger one and replace the other... A batch of count should have count distinct mechanisms — not three mechanisms wearing eight costumes.' Census finding: it produced exactly three mechanisms wearing eight costumes.",
+            "caption": "The fix's own anti-convergence instruction vs the census showing convergence persisted."
+          },
+          {
+            "type": "pair",
+            "label": "Prompt edit (verbatim): the Wild Card 'Your lane' + ban-obvious text added by the fix",
+            "left": "BASE Wild Card: signature moves only (Crazy 8s, Random entry, Persona raids, Wild tagging) — no lane boundary, no obvious-default ban.",
+            "right": "FIX added: 'Your lane (stay in it)... You own ONE region: the absurd/random stimulus and the perspective raid... a seed should look ALIEN next to a normal business brainstorm.' plus 'Ban the obvious five... Your first three ideas are always obvious rule is now a HARD gate, not a nudge.'",
+            "caption": "Disjoint-lane + hard-gate edit. Net effect on substance was zero."
+          },
+          {
+            "type": "list",
+            "label": "Fix's named WILD ideas judges flagged as novelty-bought-at-relevance-cost (closest thing to verbatim idea titles in the file)",
+            "items": [
+              "'chase the 4 o'clock light' (B6) — judged 'vibe/positioning that sell roughly one coffee or one seat... no real revenue engine'",
+              "'slowest cafe in town' (B5) — same novelty-without-revenue critique",
+              "'marble in jar' (B3) — 'the morning-to-afternoon return token in poetic packaging'",
+              "mailed laser-etched keepsake card (b2b) — 'vivid yet operationally heavy and only loosely tied' to first-week activation",
+              "break-room hardware glass (b2b)",
+              "whole-team coffee wager (b2b)",
+              "'Sunday muster' (b2b) — census collapsed it to a plain swap board once the timed-race framing was stripped"
+            ],
+            "caption": "The fix's distinctive WILD entries drove novelty +0.75 but cost relevance −0.5 / mechanism −0.25 — substance net zero."
+          },
+          {
+            "type": "list",
+            "label": "Joint census mechanism vocabulary (cafe) — same labels applied to both base and fix",
+            "items": [
+              "time-shift demand",
+              "repurpose idle oven",
+              "rent idle capacity",
+              "sell calm as product",
+              "cut afternoon labor cost",
+              "dynamic markdown",
+              "import external crowd",
+              "sell new idle-hours service",
+              "separate afternoon identity",
+              "afternoon subscription",
+              "relocate to crowd"
+            ],
+            "caption": "Shared 11-label vocabulary; both collections drew from this same pool — base distinct=9, fix distinct=8."
+          }
+        ],
+        "numbers": [
+          {
+            "label": "Substance (mean of 3 axes) base",
+            "value": "3.83"
+          },
+          {
+            "label": "Substance (mean of 3 axes) fix",
+            "value": "3.83 (net zero — exact tie)"
+          },
+          {
+            "label": "Novelty base → fix",
+            "value": "3.25 → 4.0 (+0.75)"
+          },
+          {
+            "label": "Mechanism base → fix",
+            "value": "4.0 → 3.75 (−0.25)"
+          },
+          {
+            "label": "Relevance base → fix",
+            "value": "4.25 → 3.75 (−0.5)"
+          },
+          {
+            "label": "Compliance base → fix",
+            "value": "4.5 → 4.5 (flat)"
+          },
+          {
+            "label": "Blind overall preference",
+            "value": "base wins 3 of 4 (prefers_overall = base, fix, base, base)"
+          },
+          {
+            "label": "Census distinct mechanisms — cafe (base/fix)",
+            "value": "9 / 8 (fix LOWER after stripping prose)"
+          },
+          {
+            "label": "Census distinct mechanisms — b2b (base/fix)",
+            "value": "9 / 9 (tied — no diversity gain)"
+          },
+          {
+            "label": "Census obvious-default count — cafe (base/fix)",
+            "value": "6 / 4 (ban-obvious gate did prune stock moves)"
+          },
+          {
+            "label": "Census obvious-default count — b2b (base/fix)",
+            "value": "0 / 0"
+          },
+          {
+            "label": "Sample size / interpretability",
+            "value": "n=2 frames; only a LARGE delta interpretable (Track A substance bounced 3.56-3.87 in noise)"
+          }
+        ],
+        "verdict": "null_result",
+        "verdict_label": "No quality lift — fix reshuffled novelty for relevance, substance unchanged (3.83=3.83)",
+        "takeaway": "The structural persona fix (disjoint lanes + ban-obvious-five + mandatory divergence pass) did not raise idea quality. Blind substance held exactly flat (3.83=3.83) because the fix traded gains on one axis for losses on others: novelty +0.75 was canceled by relevance −0.5 and mechanism −0.25, and base still won 3 of 4 blind preference votes. The joint-labeled census (a manipulation check, not the outcome) explains why: the fix's vivid WILD framing — 'marble in jar,' 'chase the 4 o'clock light,' the laser-etched keepsake card — reskinned mechanisms already present rather than producing new ones, so distinct-mechanism count did not rise (cafe 9→8, b2b 9=9). The intervention even violated its own Step 3.5 instruction ('not three mechanisms wearing eight costumes'). The one real effect was the ban-obvious gate pruning stock moves (cafe obvious-defaults 6→4), but that did not translate into new substance. Caveat: n=2, so only a large delta would have been interpretable; this is a flat result, not a measured regression. Prompt-tuning the personas does not fix the convergence bottleneck — it needs a structural fix to how voices diverge, not richer instructions.",
+        "_key": "C"
+      },
+      {
+        "key": "trackD-input-diversification",
+        "title": "Track D: Input diversification (disjoint frame slices per persona) — null result",
+        "what_was_tried": "Instead of tuning prompts, each of the two personas was handed a DISJOINT slice of the problem frame (different root causes + HMW directions), so the two makers could not converge on the same inputs. Baseline gave both personas the full frame; the fix partitioned it. The mapping (verified against the SLICES + FRAMES tables in trackD.workflow.js, with innovator=Maker A, wild_card=Maker B): CAFE — innovator(A) got RC \"Staff and ovens sit idle in the afternoon but still cost money.\" + \"Regulars have no habit or trigger to return later.\" with HMW \"Turn idle afternoon capacity into a sellable product\" + \"Make the slow hours feel like a feature\"; wild_card(B) got RC \"No commuter foot traffic after lunch.\" + \"Known as a morning coffee stop, not an afternoon destination.\" with HMW \"Give morning customers a reason to return in the afternoon\" + \"Attract a different afternoon crowd without alienating regulars\". SAAS — innovator(A) got RC \"Teams never reach the 'aha' (a first fully-scheduled week) before novelty fades.\" + \"Time-saved value is invisible.\" with HMW \"Get a whole team active in week one, not just the admin\" + \"Make the time-saved value visible early\"; wild_card(B) got ONLY the lock-in slice: RC \"Only the admin logs in; the team never adopts.\" + \"Switching cost is low early; a competitor is one CSV export away.\" with HMW \"Raise the cost of leaving without locking people in\" + \"Detect a team about to churn and intervene\". Each persona produced N=8 ideas; 16 per collection, over 2 topics.",
+        "how_measured": "Blind substance A/B: each of 2 topics judged twice with X/Y order swapped (relevance held as guard), better_substance = novelty+mechanism+relevance; plus a separate \"mechanism diversity census\" using ONE shared vocabulary across both collections, reporting distinct_all16 (overall variety, the real diagnostic) and cross_maker_collisions (manipulation check). n=2 frames.",
+        "examples": [
+          {
+            "type": "pair",
+            "label": "SAAS slice handed to wild_card (Maker B) — the cause of the null result",
+            "left": "Inputs: ONLY RC 'Only the admin logs in; the team never adopts.' + 'Switching cost is low early; a competitor is one CSV export away.' / HMW 'Raise the cost of leaving without locking people in' + 'Detect a team about to churn and intervene'",
+            "right": "Outcome (census note, verbatim): 'this lower number reflects within-maker convergence (Maker B used raise-switching-cost 4 of 8 times), not broader coverage.' Convergence relocated INSIDE the maker, not removed."
+          },
+          {
+            "type": "quote",
+            "label": "SAAS judge reason — lock-in slice bought novelty at relevance's expense",
+            "left": "Conversely Y bought novelty at the cost of relevance via its lock-in cluster — Y-B is half lock-in (B3/B4/B7/B8: rank, dress-rehearsal-for-quitting, weird-rules, exit-door) which are the cleverest-feeling ideas but bet on accumulated value the first-60-day churning cohort hasn't built yet, while X stays more evenly on-target; relevance leans X."
+          },
+          {
+            "type": "quote",
+            "label": "SAAS judge reason (swapped order) — within-collection repetition penalty, single most on-target idea",
+            "left": "X's Maker B spends 4 of 8 ideas (B3, B4, B7, B8) on the same export/lock-in moment, repeating one concept three times, which costs X on novelty... but X offsets this with the single most on-target idea in either set (A4, importing the team's existing messy spreadsheet to kill the setup wall), keeping relevance roughly even."
+          },
+          {
+            "type": "quote",
+            "label": "CAFE judge reason — where the lever DID help (fix=Y won on coverage)",
+            "left": "Y repeats less (only a couple of overlapping pairs) and adds genuine singletons that broaden the attack — nap-and-sip recharge slots, a ticketed speakeasy listening room, scarcity tide-chart, beat-the-barista timer, pre-sold supper boxes — without scattering into unrelated micro-topics... Y did pay a small relevance price on ~3 soft-revenue gimmicks (book swap, mug trade-in for credit, the honesty bar which cuts cost rather than growing revenue), but that minority hit is smaller than X's structural repetition, so Y has the higher substance."
+          },
+          {
+            "type": "list",
+            "label": "Cross-maker collision drop (manipulation check — fired tautologically, as predicted)",
+            "items": [
+              "cafe: base 5 cross_maker_collisions → fix 2 (lever engaged)",
+              "saas: base 4 cross_maker_collisions → fix 2 (lever engaged)",
+              "BUT distinct_all16 stayed flat: saas 8→8, cafe only 10→11",
+              "verdict_note pre-flag, verbatim: 'collisions down, distinct_all16 flat, substance flat = lever engaged, didn't help.'"
+            ]
+          }
+        ],
+        "numbers": [
+          {
+            "label": "substance base → fix",
+            "value": "3.75 → 3.83 (+0.08, within noise)"
+          },
+          {
+            "label": "census distinct_all16 base → fix",
+            "value": "9 → 9.5 (flat)"
+          },
+          {
+            "label": "relevance base → fix",
+            "value": "4.0 → 3.75 (−0.25, all from saas −0.5)"
+          },
+          {
+            "label": "novelty base → fix",
+            "value": "3.25 → 3.75 (+0.5, all from cafe)"
+          },
+          {
+            "label": "mechanism / compliance",
+            "value": "4.0 / 4.25 both conditions (unchanged)"
+          },
+          {
+            "label": "cross_maker_collisions (cafe / saas)",
+            "value": "5→2 / 4→2 (manipulation check fired)"
+          },
+          {
+            "label": "prefers tally (2 topics x 2 orders)",
+            "value": "fix, fix, tie, base"
+          },
+          {
+            "label": "n frames",
+            "value": "2 (cafe-afternoon-revenue, b2b-saas-early-churn)"
+          }
+        ],
+        "verdict": "null_result",
+        "verdict_label": "Lever engaged but didn't help — substance flat, diversity flat",
+        "takeaway": "Partitioning the frame into disjoint per-persona slices cut cross-maker collisions tautologically (cafe 5→2, saas 4→2) but did NOT raise overall diversity (distinct_all16 9→9.5) or substance (3.75→3.83). The mechanism of failure is visible in the saas census: handing wild_card (Maker B) only the switching-cost/lock-in slice relocated convergence INSIDE that maker — 'Maker B used raise-switching-cost 4 of 8 times, not broader coverage' — so the inputs were diverse but the outputs were not. The lever was also inconsistent across frames: it helped cafe (novelty +0.5, relevance held) but hurt saas (relevance −0.5 from a clever-but-off-target lock-in cluster, novelty flat), netting to noise. Net: input diversification does not fix the structural persona-convergence bottleneck.",
+        "_key": "D"
+      },
+      {
+        "key": "track-e-mechanism-first-protocol",
+        "title": "Track E: \"Mechanism first\" description protocol vs baseline (ideas held constant)",
+        "what_was_tried": "Two added paragraphs were appended to the \"Rewrite as coffee-talk\" section of the Description Writing Protocol, with everything else held identical. Paragraph 1 — \"**Mechanism first.** The first sentence states the concrete mechanism in plain words — who does what, with what, and what changes. Not a metaphor, not a positioning slogan (\"the slowest cafe in town\"), not an analogy (\"like a submarine crew turning their keys at once\"). State the literal move so the reader can picture the actual thing happening. The vivid hook that made you like the idea is not the idea — the mechanism under it is.\" Paragraph 2 — \"**Metaphor is seasoning, never the carrier.** A vivid image or comparison may follow the mechanism to make it stick, but only after the mechanism is already clear, and never as the only place the mechanism appears. Acid test: delete every metaphor, analogy, and comparison from your description — can the reader still say exactly what concretely happens? If not, the mechanism was hiding inside the figure of speech; rewrite it into plain words first, then add the image back only if it earns its place.\" The reader test was also sharpened from \"can they understand it?\" to \"can they restate in one plain sentence what the idea IS and HOW it works? If they would come away with only a vibe or a vibe-y name, it fails.\"",
+        "how_measured": "Blind A/B with ideas held constant: 10 curated vivid/metaphor-inviting stubs, each described under both protocols; primary metric = non-circular mechanism-recovery fidelity (read description -> restate mechanism -> score vs ground truth), corroborated by a blind pairwise clarity vote. 8 agents.",
+        "examples": [
+          {
+            "type": "pair",
+            "label": "Fixture #1 — \"The Second Sunrise\"",
+            "caption": "Ground truth: From 2-5pm the cafe sells a fixed 'afternoon set' at $9 — any drip coffee plus a small savoury pastry baked in a separate 1:30pm batch, orderable only 2-5pm so it can't pull morning customers.",
+            "left": "From 2 to 5pm the cafe sells one fixed 'afternoon set' for $9: any drip coffee plus a small savoury pastry from a fresh batch baked at 1:30pm, separate from the morning sweets. Because the set only exists in the afternoon, it gives tired 3pm people a reason to come in without pulling anyone away from the morning rush it can't compete with.",
+            "right": "From 2 to 5pm the cafe sells a fixed $9 'afternoon set' — any drip coffee plus a small savory pastry baked in its own 1:30pm batch, separate from the morning sweet pastries, and orderable only in that window. A worker dragging at 3pm grabs a hot coffee and a fresh savory bite for one price, which fills the dead mid-afternoon stretch without pulling anyone away from the morning rush."
+          },
+          {
+            "type": "pair",
+            "label": "Fixture #2 — \"Punch-Card Inversion\"",
+            "caption": "Ground truth: A loyalty stamp card that earns a stamp only on 2-5pm purchases (morning earns nothing); ten afternoon stamps = a free afternoon drink, steering existing regulars into a SECOND daily visit rather than rewarding the visit they already make.",
+            "left": "It's a loyalty stamp card that only earns a stamp on purchases made between 2 and 5pm, and ten afternoon stamps get you a free afternoon drink; a morning latte earns nothing on this card. So instead of rewarding the visit your regulars already make, it nudges them to come back a second time in the slow afternoon to chase the stamp.",
+            "right": "A loyalty stamp card that earns a stamp only on purchases made between 2 and 5pm, where ten afternoon stamps get you a free afternoon drink and morning purchases earn nothing. Because a regular's existing 8am coffee doesn't count, the card nudges them to come back a second time later in the day, turning one daily visit into two and filling the quiet hours."
+          },
+          {
+            "type": "pair",
+            "label": "Fixture #6 — \"The Lighthouse Email\"",
+            "caption": "Ground truth: Every Monday the app emails each team member (not just the admin) a personal one-line digest of how many hours of scheduling back-and-forth the tool saved them specifically last week, computed from their own accepted shifts and avoided reschedules, with one button to view their schedule.",
+            "left": "Every Monday the scheduling app emails each team member personally, not just the boss, a one-line note like 'we saved you about 2 hours of back-and-forth last week' calculated from their own accepted shifts and the reschedules they dodged, with one button to view their schedule. It makes every person feel the tool's value directly, so the whole team stays engaged instead of the admin being the only one who ever sees the benefit.",
+            "right": "Every Monday the app emails each team member — not just the admin — a personal one-line digest of how many hours of scheduling back-and-forth the tool saved them specifically last week, figured from their own accepted shifts and avoided reschedules, with one button to view their schedule. A nurse opens it to read 'we saved you 2.5 hours last week,' which gives every individual teammate a reason to log in, since the product's value only shows up once non-admins actually use it."
+          },
+          {
+            "type": "quote",
+            "label": "Run note from the result JSON (verdict_note)",
+            "caption": "Self-reported framing of the experiment's headroom",
+            "left": "Track E isolates the description WRITE-UP (same ideas, two protocols). Primary = mechanism-recovery fidelity (read description -> restate mechanism -> score vs ground truth, non-circular). Corroboration = blind pairwise clarity. Fixtures curated to be vivid/metaphor-inviting so the failure mode can fire. Headroom is small; report straight."
+          }
+        ],
+        "numbers": [
+          {
+            "label": "Mechanism-recovery fidelity (base)",
+            "value": "5.0 / 5"
+          },
+          {
+            "label": "Mechanism-recovery fidelity (fix)",
+            "value": "5.0 / 5 (tied)"
+          },
+          {
+            "label": "Clarity (base)",
+            "value": "4.9"
+          },
+          {
+            "label": "Clarity (fix)",
+            "value": "4.8"
+          },
+          {
+            "label": "Blind pairwise clarity (base / fix / tie)",
+            "value": "3 / 7 / 0"
+          },
+          {
+            "label": "Fixtures (curated vivid stubs)",
+            "value": "10"
+          },
+          {
+            "label": "Agents",
+            "value": "8"
+          }
+        ],
+        "verdict": "marginal",
+        "verdict_label": "Marginal — fidelity tied at ceiling, slight pairwise preference for the fix",
+        "takeaway": "Holding ideas constant and forcing the failure mode with vivid metaphor-inviting fixtures, the \"Mechanism first / Metaphor is seasoning\" protocol did NOT move the primary metric: mechanism-recovery fidelity tied at the 5.0 ceiling (base 5 = fix 5), and clarity even dipped slightly (4.9 -> 4.8). The only signal favoring the fix is the blind pairwise clarity vote, 7-3 for fix. Even on stubs designed to be carried by metaphor, the baseline coffee-talk descriptions already stated the literal mechanism well enough to recover it, so the extra protocol text earns a mild prose-quality preference rather than a fidelity gain. The before/after pairs show the actual edit is cosmetic-to-modest: the fix tends to lead with the literal move and append a concrete persona (\"A worker dragging at 3pm...\", \"A nurse opens it to read 'we saved you 2.5 hours last week'\") where the base often led with the same mechanism but trailed off into impact narration. Headroom was self-reported as small; verdict reported straight as marginal.",
+        "_key": "E"
+      },
+      {
+        "key": "plain-vs-starter",
+        "title": "Plain single-call brainstorm beats the frame+2-persona starter default on blind idea substance",
+        "what_was_tried": "The GATE test for moving the ideation skill to a lean default: ONE plain brainstorm call vs the current starter default (frame + 2 personas: innovator + wild_card). PLAIN arm prompt: \"brainstorm BROADLY and produce exactly 16 varied, concrete ideas... Do NOT use any formal technique, framework, persona, or framing exercise; just brainstorm well in one pass. Vary SAFE/BOLD/WILD across the set.\" STARTER arm: each persona runs as the `generate.seed` operator reading generate.seed.md + the persona file (innovator.md / wild_card.md) against a supplied \"Active frame\" (problem + root causes + HMW directions + key trade-off/TRIZ), producing 8 raw seed ideas each = 16 combined. Both arms read the SAME real references/output-rules.md (mechanism-first, coffee-talk, concrete, self-contained), so the only variable is the generation machinery. Run over 2 frames: cafe-afternoon-revenue and b2b-saas-early-churn.",
+        "how_measured": "Blind, position-swapped A/B: judge1 sees X=plain/Y=starter, judge2 sees X=starter/Y=plain (judge \"knows nothing about how either was produced\"); 4 substance axes scored separately (novelty, mechanism, relevance, compliance), substance = novelty+mechanism+relevance; plus a separate distinct-mechanism census (one shared vocabulary, label all 32 pooled ideas, count distinct labels per 16). N=16 ideas/condition, 2 frames.",
+        "examples": [
+          {
+            "type": "quote",
+            "label": "Judge: starter personas CONVERGE — hard duplicate + clustering (cafe)",
+            "left": "The decisive axis is novelty via within-collection repetition: Y wastes slots on a hard duplicate (Y1 ≈ Y9, morning receipt/stub redeemable 2-5pm) plus heavy clustering (3 morning-trigger entries Y1/Y7/Y9; Y6/Y15 both price-drops-as-room-empties; Y2/Y12 both idle-ovens; Y3/Y10 both sell-the-seat), which the rubric explicitly penalizes as a novelty failure, whereas X covers ~16 distinct mechanisms with no hard duplicate and reaches categories Y omits (parents segment X5, menu-pivot X9, pickup-locker X16)."
+          },
+          {
+            "type": "quote",
+            "label": "Census note: starter triples the morning-voucher move (cafe)",
+            "left": "Collection 1 = 14 distinct mechanisms; Collection 2 = 11 distinct mechanisms. C2 has lower overall variety, driven mainly by tripling the morning-voucher/loyalty move (M1 at #1, #7, #9) plus doubling dynamic-pricing, sell-the-seat, and external-group-fills-room."
+          },
+          {
+            "type": "quote",
+            "label": "Judge: 'burns three of sixteen slots on near-verbatim repeats' (cafe, swapped position — here X=starter)",
+            "left": "The discriminator is within-collection repetition: X burns three of sixteen slots on near-verbatim or heavily overlapping repeats (1 is essentially 9; 6 is essentially 15; 3 heavily overlaps 10), which is a direct novelty/coverage failure by the task's own rule, whereas Y spreads across more distinct occasions (parents/nap-time, offices, food-waste clearance, savory/wine pivot, parcel-pickup traffic) with only mild overlap."
+          },
+          {
+            "type": "quote",
+            "label": "Judge: starter bought novelty at the cost of relevance — wrong time horizon (b2b-churn)",
+            "left": "Y is genuinely more inventive (lock-in via learned swap-memory, a wilting schedule, client-booking dependency, a guided goodbye), so it wins raw novelty even after docking for repetition — but its most original ideas are clustered and duplicated (5/12/13 all lean on the same learned-memory lock-in, 3/9 both surface \"hours you got back,\" and 1/2/11/16 all circle \"teammate claims their own shift\"). Critically, Y bought that novelty at the cost of relevance: its novelty leaders (5, 6, 12, 13) are switching-cost/late-retention mechanisms that need months of accumulated history — 12 literally says \"a year\" — so they barely touch first-60-day churn, the stated problem."
+          },
+          {
+            "type": "list",
+            "label": "Census shared mechanism vocabulary (b2b-churn) — actual labels",
+            "items": [
+              "M1 auto-populate initial state from existing customer data (calendar/spreadsheet import)",
+              "M2 prefill from template/peer pattern",
+              "M3 auto-generate state from constraints (algorithmic)",
+              "M4 push value-output to non-users (view-only digest)",
+              "M5 direct each member to a personal actionable hook (claim/confirm/swap your own shift)",
+              "M6 one-step bulk team activation",
+              "M7 gate/block completion until N teammates participate",
+              "M8 concierge/high-touch human does the work",
+              "M9 founder-facing early-warning detection",
+              "M12 lock-in via accumulated learned value (internal)",
+              "M13 lock-in via external-party dependency",
+              "M14 exit-interception / honest-friction at cancel",
+              "M16 affective alive/decaying status signal",
+              "M18 surface quantified value/ROI as engagement reward",
+              "M-swap peer-to-peer bottom-up shift trading (C1-only, genuinely unique move)"
+            ]
+          },
+          {
+            "type": "quote",
+            "label": "Census: starter CONCENTRATES even at a tie (b2b-churn 12/12)",
+            "left": "a legitimate tie at 12/12 overall variety. The discriminating texture is NOT in the integers (both shed exactly 4 to repeats) but in concentration: C2 converges harder, with a 3-idea personal-actionable-hook cluster (M5: #1/#2/#11) plus two paired mechanisms (M12, M18), whereas C1's repeats are four scattered pairs. Equal diversity, C2 more concentrated on one mechanism."
+          }
+        ],
+        "numbers": [
+          {
+            "label": "Substance — plain",
+            "value": "4.09"
+          },
+          {
+            "label": "Substance — starter",
+            "value": "3.88"
+          },
+          {
+            "label": "Relevance — plain",
+            "value": "4.5"
+          },
+          {
+            "label": "Relevance — starter",
+            "value": "3.88"
+          },
+          {
+            "label": "Distinct mechanisms /16 — plain",
+            "value": "13"
+          },
+          {
+            "label": "Distinct mechanisms /16 — starter",
+            "value": "11.5"
+          },
+          {
+            "label": "Mechanism axis — plain",
+            "value": "4.38"
+          },
+          {
+            "label": "Mechanism axis — starter",
+            "value": "4.25"
+          },
+          {
+            "label": "Novelty axis — plain",
+            "value": "3.38"
+          },
+          {
+            "label": "Novelty axis — starter",
+            "value": "3.5"
+          },
+          {
+            "label": "Compliance — plain",
+            "value": "4.5"
+          },
+          {
+            "label": "Compliance — starter",
+            "value": "4.38"
+          },
+          {
+            "label": "Blind judges preferring plain",
+            "value": "4 of 4 (plain,plain,plain,plain)"
+          },
+          {
+            "label": "Distinct mechanisms cafe (plain/starter)",
+            "value": "14 / 11"
+          },
+          {
+            "label": "Distinct mechanisms b2b-churn (plain/starter)",
+            "value": "12 / 12"
+          },
+          {
+            "label": "N per condition",
+            "value": "16 ideas; 2 frames"
+          }
+        ],
+        "verdict": "win",
+        "verdict_label": "Win — green-light the lean default",
+        "takeaway": "One plain brainstorm call ties-or-beats the frame+2-persona starter on blind substance (4.09 vs 3.88) with relevance UP not down (4.5 vs 3.88) and more distinct mechanisms (13 vs 11.5); all 4 blind position-swapped judges preferred plain. The starter's machinery makes the two personas CONVERGE — burning slots on near-verbatim repeats and clustering on one move (e.g. tripling the morning-voucher, a 3-idea personal-hook cluster) — and where it is most creative it buys novelty at the cost of relevance (drifting to month-scale lock-in mechanisms that miss the first-60-day churn window). Caveat per the file: n=2 frames, substance bounces ~0.3 in noise, so only a large/consistent delta is interpretable — which 4/4 preference + relevance lift provides.",
+        "_key": "GATE"
+      },
+      {
+        "key": "feed-iterate-visualize-journey-audit",
+        "title": "Import to iterate to visualize journey audit (pre-redesign)",
+        "what_was_tried": "An empirical CLI run drove the journey \"feed ideas from a source -> iterate step by step -> good visualizations\" against the real ideation skill. First a naive `add-idea` on a fresh topic was attempted (fails). Then a hand-built bootstrap landed ideas: `op-start -> add-frame placeholder -> add-ideas-batch` put 8 first-class ideas into the logbook. Iteration ran on them via `add-lineage-batch` (a transform child idea 9 with `relation=refinement_of` -> parent 1) and `add-assessments-batch` (scoring ideas 1-3, composite 78/71/64). Finally the wall was checked: after CLI import+iterate no `live-events.jsonl` existed, so 9+ `idea_generated` events were emitted BY HAND to make wall.png render.",
+        "how_measured": "3-stage audit (feed/iterate/visualize) + adversarial verify, 7 agents, n=1 empirical CLI run grounded in a real run.log + wall.png; verdicts checked against primary sources (SKILL.md, ideation_db.py, operators/, logbook.sqlite).",
+        "examples": [
+          {
+            "type": "quote",
+            "label": "FEED naive-path failure (the journey's first wall)",
+            "left": "Run log confirms naive failure: run.log lines 7-9 — naive add-idea on a fresh topic exits code 1 with the no-active-frame error ('the journey's first wall'). [Frame-FK: ideation_db.py _insert_idea lines 616-625 — if frame_id_at_birth is None and no active frame, it sys.exit's 'no active frame — run frame.discover ...']",
+            "caption": "Stage FEED, supported=no — quoting the evidence array verbatim"
+          },
+          {
+            "type": "quote",
+            "label": "FEED fabricated operator name (skill offers no real flow)",
+            "left": "The op-runs audit row records operator_name 'user.import' (run.log line 91) — a fabricated operator name with no operator file, proving even the validator had to invent one because the skill offers none.",
+            "caption": "Stage FEED, supported=no — the out-of-band scaffolding finding, verbatim"
+          },
+          {
+            "type": "quote",
+            "label": "VISUALIZE wall got nothing (import emits nothing)",
+            "left": "VISUALIZE is broken for imports specifically because import emits nothing: run.log 96-100 — after CLI import+iterate, NO live-events.jsonl existed (the wall got nothing). Emits are orchestrator-only ... The wall only rendered (run.log 116-119, wall.png) after 9 idea_generated events were emitted BY HAND.",
+            "caption": "Stage VISUALIZE, supported=partial — verbatim from the evidence array"
+          },
+          {
+            "type": "list",
+            "label": "Actual ideas + assessments that came out (richest real content in the file)",
+            "items": [
+              "#1 winner: \"Self-serve refund portal\"",
+              "#2 winner: \"Top-10 ticket deflection docs\"",
+              "transform child idea 9: \"Refund portal + instant store credit\" (lineage relation=refinement_of -> parent 1)",
+              "score heat: \"BELOW 70\" card scored 64; \"NOT YET SCORED\" cards",
+              "assessments composite 78/71/64 on ideas 1-3",
+              "stats band: \"Ideas: 9 / Active: 9\"",
+              "8 imported ideas all kind=seed, status=active, origin_op_run=1"
+            ],
+            "caption": "Pulled from wall.png description (VISUALIZE verify_note) + ITERATE evidence; no full descriptions exist in the file"
+          },
+          {
+            "type": "list",
+            "label": "Per-stage verdicts (feed / iterate / visualize)",
+            "items": [
+              "FEED = NO: no first-class skill path to bring a user's own ideas in; SKILL.md Invocation lists only topic:intent/--playbook/--no-checkpoints/--list-topics/--show-state; default falls through to 'starter' and generates ~20 fresh ideas, silently discarding the user's",
+              "ITERATE = YES: imported rows are first-class — every transform/evaluate/decide kind-gate includes seed and all cohort SQL (_query_all_active, _query_all_active_capped, _query_all_seeds, _query_diversity_top) keys on status/kind, never provenance",
+              "VISUALIZE = PARTIAL: wall IS capable (wall.png renders SELECTED FINAL RANKING band, score heat, transform child) but import/iterate path is not wired to it — CLI/operators never emit, serve.py reads only live-events.jsonl and never opens logbook.sqlite"
+            ],
+            "caption": "stage verdicts: feed=no, iterate=yes, visualize=partial (logs array, line 5)"
+          }
+        ],
+        "numbers": [
+          {
+            "label": "FEED supported",
+            "value": "no"
+          },
+          {
+            "label": "ITERATE supported",
+            "value": "yes"
+          },
+          {
+            "label": "VISUALIZE supported",
+            "value": "partial"
+          },
+          {
+            "label": "Ideas imported via bootstrap",
+            "value": "8"
+          },
+          {
+            "label": "Assessment composites (ideas 1-3)",
+            "value": "78 / 71 / 64"
+          },
+          {
+            "label": "Operator files (no import/ingest among them)",
+            "value": "26"
+          },
+          {
+            "label": "Events hand-emitted to make wall render",
+            "value": "15 (incl. 9 idea_generated)"
+          },
+          {
+            "label": "Audit agents",
+            "value": "7"
+          },
+          {
+            "label": "Empirical runs",
+            "value": "n=1 CLI run"
+          }
+        ],
+        "verdict": "mixed",
+        "verdict_label": "Two-thirds real, and the missing third breaks the whole loop",
+        "takeaway": "Two-thirds real, and the missing third breaks the whole loop. You can iterate on imported ideas perfectly (every operator and cohort query treats them as first-class rows) and the wall is genuinely capable of visualizing them well — but there is no supported flow to FEED ideas from an external source, and import+iterate via the CLI never reaches the wall on its own. The naive path fails with \"no active frame\" (run.log 7-9); the only path that lands ideas is a hand-run CLI dance whose audit row records a fabricated operator name 'user.import'; and after import+iterate no live-events.jsonl exists, so the wall stayed blank until events were emitted by hand. The minimal in-ecosystem fix: a generate.import operator (riding the existing Step-5 emit loop) + a frame step + a planner branch + an invocation form, fixing FEED and the VISUALIZE-for-imports gap in one move.",
+        "_key": "VAL"
+      }
+    ]
+  }
+}

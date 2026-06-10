@@ -47,7 +47,7 @@ Reflect back what you heard in one sentence: *"So this sounds like a staging sur
 
 ### Step 2 — Scope & lifecycle
 
-Before picking columns or a storage format, work through three sub-questions about where this logbook lives, who owns it, and whether it will actually be used. Each sub-question feeds into the next and into downstream steps. Don't collapse these into one prompt — they build on each other, and users often revise their earlier answer once a later one forces the issue. Let them go back.
+Before picking columns or a storage format, work through four sub-questions about where this logbook lives, who owns it, whether it will actually be used, and what state architecture it needs (2.1–2.4 below). Each sub-question feeds into the next and into downstream steps. Don't collapse these into one prompt — they build on each other, and users often revise their earlier answer once a later one forces the issue. Let them go back.
 
 #### 2.1 Scope, location, lifetime
 
@@ -117,7 +117,7 @@ If either answer is vague, push back with one of:
 - **Sharpen the motivation.** *"If you can't picture concretely appending or querying, reconsider: is this tracking, or would a short prose doc be a better fit?"*
 - **Commit to a trial.** *"Let's build a minimal version anyway — but the sunset rule is `if no entries in 2 weeks, archive.` Agree to that?"*
 
-Proceed to Step 3 when both the append and query moments are concrete, or after an explicit commit-to-trial with the sunset rule recorded in governance. If the user cannot describe either moment concretely and declines the trial option, recommend a lighter alternative (markdown doc, chat state) and stop.
+Proceed to Step 2.4 when both the append and query moments are concrete, or after an explicit commit-to-trial with the sunset rule recorded in governance. (Step 2.4 — state architecture — still comes before Step 3; do not skip it.) If the user cannot describe either moment concretely and declines the trial option, recommend a lighter alternative (markdown doc, chat state) and stop.
 
 If the user insists on the logbook despite vague answers, proceed — but record the vague answers verbatim in the spec's `## Governance` as *"Usage pattern not yet articulated; revisit after first week. Sunset after 14 days of no writes."* This documents the exception so a future reader can see the upfront check was skipped intentionally.
 
@@ -212,7 +212,13 @@ If it is unclear which store is authoritative, the design is not finished. Ask a
 
 ### Step 5 — Create the two artifacts
 
-Before writing either file, re-verify the absolute path from 2.1 is writable and non-ephemeral. Run `test -w "$(dirname '<path>')" && echo ok || echo not-writable` to confirm the parent directory is writable. If the path matches an ephemeral pattern (`/tmp/…`, `/private/var/folders/…`, `/sessions/…`, or any sandboxed working directory), stop and ask once more, even if the user insisted during 2.1.
+Before writing either file, re-verify the absolute path from 2.1 is writable and non-ephemeral. The parent directory may not exist yet — that is fine and expected; you will create it. Test writability against the first ancestor that *does* exist rather than the (possibly missing) immediate parent:
+
+```bash
+p='<path>'; while [ ! -d "$(dirname "$p")" ]; do p="$(dirname "$p")"; done; test -w "$(dirname "$p")" && echo ok || echo not-writable
+```
+
+If this prints `not-writable`, stop and ask the user to create the directory or choose a different path — do not proceed with file creation. If it prints `ok` and the immediate parent of `<path>` does not exist, run `mkdir -p "$(dirname '<path>')"` before writing, and note in the spec's `## Address` section that the directory was created as part of setup. If the path matches an ephemeral pattern (`/tmp/…`, `/private/var/folders/…`, `/sessions/…`, or any sandboxed working directory), stop and ask once more, even if the user insisted during 2.1.
 
 The spec's `## Address` section must carry the absolute path from 2.1 and the line *"When the user moves this file, update the address here."* — this is already in the template below; do not drop it.
 
@@ -404,7 +410,7 @@ Do not try to generate a SKILL.md yourself — that is skill-creator's job, and 
 - **Hand-maintained second source of truth.** A logbook that sits alongside Jira or a doc that humans actually edit will rot. The logbook must be authoritative for its slice, or generated from one.
 - **Premature extraction from prose.** If the document's value is in its argument, sequencing, or evolving reasoning, don't flatten it into rows just because the entries look row-shaped.
 - **Over-engineering the first version.** Start with the lightest storage that fits. Migrate when the pain shows up. The concept and schema don't change across migrations — only the serialization does.
-- **Committing personal auth state into a shared spec.** If the spec is committed to a repo, any `status: pending-auth` bindings must stay as placeholders. Resolved IDs, credentials, and `status: active` are personal config — store them in a gitignored local file (e.g. `./.<name>/bindings.local.yaml`) or env vars, never in the spec itself. When writing a spec with `pending-auth` bindings, add this note to the bindings section: `# GOVERNANCE: This file is permanently read-only once committed. Never edit address or status here — store resolved config in a local gitignored override.`
+- **Committing personal auth state into a shared spec.** If the spec is committed to a repo, any `status: pending-auth` bindings must stay as placeholders. Resolved IDs, credentials, and `status: active` are personal config — store them in a gitignored local file (`<name>.logbook.local.yaml`, copied from the `.template` written in Step 5) or env vars, never in the spec itself. When writing a spec with `pending-auth` bindings, add this note to the bindings section: `# GOVERNANCE: This file is permanently read-only once committed. Never edit address or status here — store resolved config in a local gitignored override.`
 
 ## Grounding
 

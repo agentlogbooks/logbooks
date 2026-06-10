@@ -1,0 +1,7 @@
+run_id,round,fix_title,category,severity,from_score,to_score,accepted,applied_to_skill,note
+wf_91ee9671,0,baseline measurement,n/a,n/a,,3.97,n/a,n/a,6 personas + static audit; aggregate = 0.8*mean(persona overall) + 0.2*static consistency
+wf_91ee9671,1,Fix Step 2 intro count: three sub-questions -> four,structural-contradiction,high,3.97,3.86,false,true,"Rejected by noisy re-eval (3.86<3.97); corroborated by manual analysis + static audit, applied deliberately as count+flow fix"
+wf_91ee9671,2,Query quality checklist (ban positional awk / naive enum sorts),artifact,high,3.97,3.63,false,false,"Rejected (3.63<3.97); real issue but fix needs new template subsections — left for user as a documented finding"
+wf_91ee9671,3,Step 5 writability check fails when parent dir missing,instruction-fails-in-env,high,3.97,3.79,false,true,"Rejected by noisy re-eval (3.79<3.97); corroborated correctness bug, applied deliberately (ancestor-walk + mkdir -p)"
+wf_91ee9671,4,Introduce pending-auth binding concept in Step 4,dangling-instruction,high,3.97,3.77,false,deferred,"Rejected (3.77<3.97); wire-in-vs-remove is a feature-direction decision left to the human owner; wiring also incomplete (spec template still lacks a bindings section)"
+wf_91ee9671,5,Standardize local-override filename (Step 5 vs Anti-patterns),internal-consistency,med,3.97,4.09,true,true,"Accepted by loop (4.09>=3.97); the one fix the regression guard let through"

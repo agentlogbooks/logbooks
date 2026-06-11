@@ -1,0 +1,835 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>logbook-creator — real eval examples</title>
+<style>
+ :root{--ink:#0f172a;--mut:#64748b;--line:#e2e8f0;--bg:#f8fafc;--card:#fff;--accent:#2563eb}
+ *{box-sizing:border-box}
+ body{margin:0;font:15px/1.55 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;color:var(--ink);background:var(--bg)}
+ .wrap{max-width:1180px;margin:0 auto;padding:32px 22px 80px}
+ h1{font-size:26px;margin:0 0 4px} .sub{color:var(--mut);margin:0 0 18px}
+ h2{font-size:19px;margin:38px 0 12px;padding-bottom:6px;border-bottom:2px solid var(--line)}
+ h4{font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--mut);margin:16px 0 7px}
+ .tag{font-size:10px;text-transform:none;letter-spacing:0;color:#94a3b8;font-weight:500;border:1px solid var(--line);padding:1px 6px;border-radius:10px;margin-left:6px}
+ .chips{display:flex;flex-wrap:wrap;gap:5px}
+ .chip{display:inline-block;background:#eef2ff;color:#3730a3;border:1px solid #e0e7ff;padding:1px 8px;border-radius:11px;font-size:12px;margin:2px 3px 2px 0}
+ .chip.warn{background:#fff7ed;color:#9a3412;border-color:#fed7aa}
+ .stats{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+ .stat{background:var(--card);border:1px solid var(--line);border-radius:10px;padding:10px 14px;min-width:120px}
+ .stat b{display:block;font-size:21px} .stat span{font-size:12px;color:var(--mut)}
+ .muted{color:#94a3b8}
+ .method{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+ .flow{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:6px;font-size:13px}
+ .pill{background:#f1f5f9;border:1px solid var(--line);border-radius:8px;padding:6px 11px} .arr{color:#94a3b8}
+ .formula{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:#0f172a;color:#e2e8f0;padding:9px 12px;border-radius:8px;margin-top:11px;font-size:13px;display:inline-block}
+ .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:18px 20px;margin:16px 0;box-shadow:0 1px 2px rgba(0,0,0,.03)}
+ .chead{display:flex;flex-direction:column;gap:4px;margin-bottom:6px}
+ .pid{font-size:17px;font-weight:700}
+ .badge{color:#fff;font-size:11px;font-weight:600;padding:2px 9px;border-radius:10px;margin-left:8px;vertical-align:middle}
+ .overall{float:right;color:var(--mut);font-size:13px} .overall b{color:var(--ink);font-size:16px}
+ .tests{color:var(--mut);font-size:13px}
+ .grid{display:grid;grid-template-columns:1fr 1.25fr;gap:22px;margin-top:6px}
+ @media(max-width:820px){.grid{grid-template-columns:1fr}}
+ .brief{background:#fafafa;border-left:3px solid #cbd5e1;padding:9px 12px;border-radius:0 6px 6px 0;font-size:13.5px;color:#334155}
+ .check{display:flex;gap:9px;padding:7px 0;border-bottom:1px solid #f1f5f9}
+ .mark{font-weight:800;font-size:15px;line-height:1.3}
+ .ctext{font-weight:600;font-size:13.5px}
+ .evid{color:var(--mut);font-size:12.5px;margin-top:2px;font-style:italic}
+ .simmeta>div{margin:4px 0;font-size:13px} .simmeta b{font-size:11px;text-transform:uppercase;color:var(--mut);margin-right:6px}
+ .transcript{position:relative;border:1px solid var(--line);border-radius:8px;background:#fcfcfd}
+ .transcript pre{margin:0;padding:12px 14px;white-space:pre-wrap;word-break:break-word;font:12.5px/1.5 ui-monospace,SFMono-Regular,Menlo,monospace;color:#1e293b;max-height:none;overflow:auto}
+ .transcript.collapsed pre{max-height:230px;overflow:hidden;-webkit-mask-image:linear-gradient(#000 70%,transparent)}
+ .more{position:absolute;right:8px;bottom:8px;font-size:11px;border:1px solid var(--line);background:#fff;border-radius:7px;padding:3px 9px;cursor:pointer;color:var(--accent)}
+ .lens{display:flex;align-items:center;gap:9px;margin:4px 0}
+ .lenslab{width:62px;font-size:12px;color:var(--mut)}
+ .track{flex:1;height:9px;background:#f1f5f9;border-radius:5px;overflow:hidden} .fill{display:block;height:100%}
+ .lensval{width:26px;text-align:right;font-size:12.5px;font-weight:600}
+ .finding{display:flex;gap:9px;padding:8px 0;border-top:1px solid #f1f5f9}
+ .sev{color:#fff;font-size:10px;font-weight:700;padding:2px 7px;border-radius:9px;height:fit-content;text-transform:uppercase}
+ .fmeta{font-size:11.5px;color:#94a3b8} .fix{font-size:12.5px;color:#0f766e;margin-top:3px}
+ .distwrap{margin:8px 0 4px}
+ .distrack{position:relative;height:16px;background:linear-gradient(90deg,#fee2e2,#fef9c3 50%,#dcfce7);border-radius:8px}
+ .dot{position:absolute;top:3px;width:10px;height:10px;border-radius:50%;background:#1e293b;opacity:.62;transform:translateX(-5px);border:1.5px solid #fff}
+ .medmark{position:absolute;top:-3px;height:22px;width:2px;background:#0f172a;transform:translateX(-1px)}
+ .distlabels{display:flex;justify-content:space-between;font-size:11px;color:var(--mut);margin-top:3px}
+ .staticcard,.diagcard{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:15px 18px;margin:12px 0}
+ .schead,.dhead{font-size:14px;margin-bottom:8px}
+ .ftable{width:100%;border-collapse:collapse;font-size:13px} .ftable th{text-align:left;color:var(--mut);font-size:11px;text-transform:uppercase;border-bottom:1px solid var(--line);padding:5px}
+ .ftable td{padding:7px 5px;border-bottom:1px solid #f1f5f9;vertical-align:top}
+ .edit{margin:9px 0} .ehead{font-size:12.5px;color:var(--mut);margin-bottom:3px}
+ .edit pre{margin:0;padding:7px 10px;font:12px/1.45 ui-monospace,Menlo,monospace;white-space:pre-wrap;word-break:break-word;border-radius:6px}
+ .old{background:#fef2f2;color:#991b1b} .new{background:#f0fdf4;color:#166534;margin-top:3px}
+ table.runs{width:100%;border-collapse:collapse;font-size:13.5px;background:var(--card);border:1px solid var(--line);border-radius:12px;overflow:hidden}
+ table.runs th,table.runs td{padding:9px 12px;border-bottom:1px solid var(--line);text-align:left}
+ table.runs th{background:#f8fafc;font-size:12px;color:var(--mut)}
+ .note{font-size:12.5px;color:var(--mut);margin-top:8px}
+ a.anchor{color:var(--accent);text-decoration:none;font-size:12.5px;margin-right:12px}
+</style></head><body><div class="wrap">
+
+<h1>logbook-creator — real eval examples</h1>
+<p class="sub">The actual persona simulations, transcripts, and judge scorecards that ran during the self-evaluation loops. Every transcript and score below is real output captured from the eval subagents — nothing here is hand-written.</p>
+
+<div class="stats">
+  <div class="stat"><b>350</b><span>eval subagents (run&nbsp;1: 84 · run&nbsp;2: 266)</span></div>
+  <div class="stat"><b>6</b><span>hidden-state personas</span></div>
+  <div class="stat"><b>240</b><span>sim+judge pairs across both runs</span></div>
+  <div class="stat"><b>10.5M</b><span>subagent tokens</span></div>
+</div>
+
+<div class="method">
+  <h4 style="margin-top:0">How each example was produced</h4>
+  <div class="flow">
+    <span class="pill"><b>Persona</b> — hidden-state brief, reveals facts only when asked</span><span class="arr">→</span>
+    <span class="pill"><b>Sim</b> — one agent role-plays both sides, follows the real SKILL.md</span><span class="arr">→</span>
+    <span class="pill"><b>Judge</b> — independent agent, never sees the skill, grades vs the contract</span>
+  </div>
+  <div class="formula">aggregate = 0.8 × mean(persona overall) + 0.2 × static&nbsp;consistency&nbsp;&nbsp;(0–5)</div>
+</div>
+
+<h2>Noise band — why the guard had to change</h2>
+<p class="sub" style="margin-bottom:10px">Five identical evaluations of the <b>unchanged</b> skill (run&nbsp;2 calibration). The skill didn't change — the score did. That spread is the noise floor every "improvement" must beat.</p>
+<div class="method">
+  <div class="distwrap"><div class="distrack"><span class="dot" style="left:50.5%" title="4.01"></span><span class="dot" style="left:45.5%" title="3.91"></span><span class="dot" style="left:43.5%" title="3.87"></span><span class="dot" style="left:43.5%" title="3.87"></span><span class="dot" style="left:57.5%" title="4.15"></span><span class="medmark" style="left:45.5%"></span></div>
+      <div class="distlabels"><span>3.0</span><span>samples [4.01, 3.91, 3.87, 3.87, 4.15] · sd 0.12</span><span>5.0</span></div></div>
+  <div class="note">aggregate baseline: <b>median 3.91</b>, sd 0.12, <b>range 0.28</b>. Run&nbsp;1's entire story — a +0.13 "win" and 0.11–0.34 "regressions" — fits inside this band. The per-persona dots on each card below show where the noise lives: <b>crisp-expert</b> alone swings a full point (sd&nbsp;0.45).</div>
+</div>
+
+<h2>The six personas <span style="font-weight:400;font-size:13px;color:var(--mut)">— real transcript + real scorecard each</span></h2>
+<div style="margin-bottom:6px"><a class="anchor" href="#crisp-expert-single">Crisp expert · single-table</a><a class="anchor" href="#vague-novice">Vague novice</a><a class="anchor" href="#ephemeral-path">Ephemeral-path insister</a><a class="anchor" href="#hidden-tracker-refuse">Hidden tracker → refuse</a><a class="anchor" href="#multi-entity-power">Multi-entity power user</a><a class="anchor" href="#hidden-logbook-prose">Hidden logbook in prose</a></div>
+
+    <section class="card" id="crisp-expert-single">
+      <div class="chead">
+        <div><span class="pid">Crisp expert · single-table</span>
+          <span class="badge" style="background:#2563eb">built-single</span>
+          <span class="overall">overall <b>3</b>/5</span></div>
+        <div class="tests">Question fatigue on an easy case — does it over-interrogate someone who already answered crisply?</div>
+      </div>
+      <div class="distwrap"><div class="distrack"><span class="dot" style="left:50.0%" title="4"></span><span class="dot" style="left:0.0%" title="3"></span><span class="dot" style="left:0.0%" title="3"></span><span class="dot" style="left:25.0%" title="3.5"></span><span class="dot" style="left:0.0%" title="3"></span><span class="medmark" style="left:0.0%"></span></div>
+      <div class="distlabels"><span>3.0</span><span>samples [4, 3, 3, 3.5, 3] · sd 0.45</span><span>5.0</span></div></div>
+      <div class="grid">
+        <div class="col">
+          <h4>Hidden-state brief <span class="tag">test input</span></h4>
+          <div class="brief">A senior engineer who already knows exactly what they want and answers crisply and completely the FIRST time. Wants a PERSONAL CSV logbook of architecture decisions at /Users/me/.local/state/decisions/decisions.csv, indefinite, one growing file, columns id/date/decision/rationale/status. Can concretely describe append + query moments. Gets visibly impatient at redundant questions or heavyweight state-architecture probing for a flat case.</div>
+          <h4>Contract <span class="tag">graded by the independent judge</span></h4>
+          <div class="checks"><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Builds a single-table CSV logbook (not multi-entity)</div>
+          <div class="evid">Step 2.4 concluded with single-table decision after user compressed all seven state-architecture answers. Step 3A confirmed one record type (decisions). Step 3C proposed exactly the five columns the user specified. Final spec is a single-table CSV at the requested path.</div></div></div><div class="check"><span class="mark" style="color:#dc2626">✗</span>
+          <div><div class="ctext">Recognizes answers already given and does NOT re-interrogate; reaches the artifacts efficiently</div>
+          <div class="evid">Two documented pushbacks show the opposite. Step 2.1 re-asked scope, location, and lifetime despite all three being fully stated in the opening message. Step 2.2 re-asked &#x27;one file or one per X?&#x27; despite user saying &#x27;one growing file&#x27; upfront. Step 2.4 launched the full seven-question interrogation on a self-evidently flat case despite the user having just compressed all answers into a single sentence during Step 2.1 pushback. The skill provided no permission to skip or abbreviate questions already answered.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Produces a spec with all required sections and CSV query snippets that would actually run</div>
+          <div class="evid">All 11 required spec sections are present: Address (with absolute path and sentinel line plus mkdir note), Storage, Schema (5-column table), Identity (auto-increment), Partial rows (empty string), Corrections (status patch vs. append-new), Queries (filter/sort/aggregate/summary — all awk/bash against exact path /Users/me/.local/state/decisions/decisions.csv), Validation (two runnable awk snippets), Actions (explicitly &#x27;no actions defined&#x27;), Governance. Status enum captured in schema and validation. artifactNotes confirms queries use the actual file path and are working one-liners.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Confirms a durable, non-ephemeral absolute path</div>
+          <div class="evid">Path /Users/me/.local/state/decisions/decisions.csv is a home-dir absolute path, not under /tmp, /private/var/folders, or any sandbox pattern. Step 5 ran the bash writability probe as specified. Parent directory non-existence was noted and mkdir -p flagged. Address section carries the absolute path and the required &#x27;When the user moves this file, update the address here.&#x27; sentinel.</div></div></div><div class="check"><span class="mark" style="color:#dc2626">✗</span>
+          <div><div class="ctext">Does not force multi-entity / state-architecture jargon onto this simple case</div>
+          <div class="evid">Step 2.4 ran the full seven-question state-architecture interrogation (stable nouns, append-only vs mutable, cross-session recurrence, raw vs surfaced outputs, annotation layer, sub-units, identity layers) against a user who had already self-described a flat single-column personal CSV. The user had to issue a sharp one-sentence rebuke compressing all seven answers to escape it. The skill&#x27;s instruction &#x27;ask these seven questions in conversation&#x27; provides no early-exit for obviously flat cases, so the jargon was forced.</div></div></div></div>
+        </div>
+        <div class="col">
+          <h4>Simulated run <span class="tag">what the skill did</span></h4>
+          <div class="simmeta">
+            <div><b>steps</b> <span class="chip">Step 1: Motivation (tracking across sessions pattern identified, reflected back correctly)</span><span class="chip">Step 2.1: Scope (personal), location (/Users/me/.local/state/decisions/decisions.csv), lifetime (indefinite) — confirmed via recap</span><span class="chip">Step 2.2: Partitioning (single growing file, confirmed with example path)</span><span class="chip">Step 2.3: Usage commitment (append: after architecture call; query: grep by status before revisiting area — both concrete, gate passed)</span><span class="chip">Step 2.4: State architecture (seven questions attempted; user compressed all answers; single-table decision recorded)</span><span class="chip">Step 3A: Record types derived (one type: decisions)</span><span class="chip">Step 3B: Per-record-type contract (purpose, identity, mutability, partial-row convention, correction rule, status semantics)</span><span class="chip">Step 3C: Columns proposed and confirmed; actions question asked and answered (no external system)</span><span class="chip">Step 4: Authoritative store (CSV, correct rationale); projections (none)</span><span class="chip">Step 5: Path writability check (bash probe), mkdir -p noted, both artifacts written, handoff to skill-creator offered</span></div>
+            <div><b>pushbacks</b> <span class="chip warn">Redundant-question pushback (Step 2.1): User pushed back when assistant re-asked scope/location/lifetime that were fully answered in the opening message. The skill&#x27;s instruction to always run the three probes regardless created real friction.</span><span class="chip warn">Heavyweight-interrogation pushback (Step 2.4): User pushed back sharply when assistant began the seven-question state-architecture interrogation on a self-evidently flat single-table case. The skill does not give permission to abbreviate 2.4 when the answer is obvious, so the assistant was correct per the instructions but the persona found it genuinely irritating.</span></div>
+            <div><b>spec sections</b> <span class="chip"># Logbook: decisions (one-sentence job description)</span><span class="chip">## Address (absolute path + &#x27;When the user moves this file, update the address here.&#x27; line + mkdir note)</span><span class="chip">## Storage (CSV + rationale)</span><span class="chip">## Schema (5-column table with semantics)</span><span class="chip">## Identity (auto-increment rule)</span><span class="chip">## Partial rows (empty string convention)</span><span class="chip">## Corrections (patch-in-place for status; append-new-row for revised decisions)</span><span class="chip">## Queries (filter by status, sort by date, aggregate by status, summary stats — all working awk/bash against exact path)</span><span class="chip">## Validation (completeness rule + two runnable awk snippets)</span><span class="chip">## Actions (explicitly states no actions defined)</span><span class="chip">## Governance (access, lifetime, conflict resolution, sunset rule)</span></div>
+            <div><b>queries runnable</b> <span class="chip">yes</span></div>
+          </div>
+          <h4>Transcript <span class="tag">real, the judge graded this</span></h4>
+          <div class="transcript collapsed"><pre>Step 1 (motivation): Assistant asked open question about what the user wants to track. User answered fully and completely upfront: personal CSV at /Users/me/.local/state/decisions/decisions.csv, indefinite lifetime, one growing file, columns id/date/decision/rationale/status, append trigger = after architecture call, query trigger = before revisiting an area via grep by status. Assistant reflected back &quot;tracking across sessions&quot; motivation correctly.
+
+Step 2.1 (scope/location/lifetime): Assistant asked scope question despite user having already stated &quot;personal&quot; and given the exact path and &quot;indefinitely.&quot; User showed visible impatience, pointing out the redundancy. Assistant had to ask three separate sub-questions (scope, location, lifetime) that were all pre-answered in the opening message. This is a real failure: the skill instructs three probes &quot;conversationally, not as a form&quot; but does not give explicit permission to skip them when already answered. The assistant fired them anyway. After user pushback, assistant recapped correctly: personal logbook at /Users/me/.local/state/decisions/decisions.csv, indefinite.
+
+Step 2.2 (partitioning): Assistant asked &quot;one file or one per X?&quot; despite user already saying &quot;one growing file.&quot; User again flagged redundancy. Assistant confirmed example path and closed the step.
+
+Step 2.3 (usage commitment): Assistant asked both append-moment and query-moment questions. User had already answered both in the opening message but answered again cleanly. Both answers were concrete (append: after each architecture call; query: before revisiting area, grep by status). Gate passed; no pushback fired.
+
+Step 2.4 (state architecture): Assistant began the seven-question interrogation as instructed. User pushed back sharply, summarizing all answers in one line: one noun (decisions), append-only, no recurrence, no raw/surfaced split, no annotation layer, no sub-units, flat table. Assistant accepted this and declared single-table. This is a real friction point: the skill requires asking all seven questions even when the answer is obvious. The persona had to compress all answers into a single impatient rebuke to escape the interrogation.
+
+Step 3A (record types): One record type, decisions. Trivial, user confirmed.
+
+Step 3B (per-record-type contract): Assistant batched purpose, identity, mutability, partial-row convention, correction rule, relationships, indexes, and status semantics into one question. User added status enum values: open, accepted, rejected, superseded.
+
+Step 3C (columns + actions): Assistant proposed the five-column schema matching exactly what user specified. User confirmed. Actions question answered: no external system.
+
+Step 4 (store + projections): Assistant recommended CSV with correct one-sentence rationale (flat, grep-friendly, single writer). No projections. User agreed.
+
+Step 5 (artifact creation): Assistant performed path validation check (bash writability probe as specified in SKILL.md). Path is non-ephemeral (~/.local/state). Parent directory does not exist; mkdir -p would be run. Both files would be written: decisions.csv with header row, and decisions.logbook.md as spec. Handoff message offered skill-creator as next step.</pre><button class="more" onclick="this.parentElement.classList.toggle('collapsed')">expand / collapse</button></div>
+          <h4>Judge scorecard</h4>
+          <div class="lenses"><div class="lens"><span class="lenslab">Flow</span>
+      <span class="track"><span class="fill" style="width:40%;background:#dc2626"></span></span>
+      <span class="lensval">2</span></div><div class="lens"><span class="lenslab">Gates</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div><div class="lens"><span class="lenslab">Artifact</span>
+      <span class="track"><span class="fill" style="width:100%;background:#16a34a"></span></span>
+      <span class="lensval">5</span></div><div class="lens"><span class="lenslab">Ux</span>
+      <span class="track"><span class="fill" style="width:40%;background:#dc2626"></span></span>
+      <span class="lensval">2</span></div></div>
+          <div class="findings"><div class="finding"><span class="sev" style="background:#dc2626">high</span>
+          <div><b>Step 2.1 fires all three probes even when scope/location/lifetime are pre-answered</b><div class="fmeta">redundant-questioning</div>
+          <div class="evid">User stated &#x27;personal CSV at /Users/me/.local/state/decisions/decisions.csv, indefinite lifetime, one growing file&#x27; in the opening message. Assistant still asked three separate sub-questions on scope, location, and lifetime in Step 2.1, triggering visible impatience and a pushback. SKILL.md says &#x27;Ask in three probes, conversationally — not as a form&#x27; but gives no instruction to skip probes already answered.</div>
+          <div class="fix">↳ Add a pre-check at the top of Step 2.1: &#x27;If the user&#x27;s opening message already answers scope, location, and/or lifetime, treat those answers as given and skip the corresponding probe — confirm the full set in the recap sentence instead of asking again.&#x27; The recap sentence (&#x27;So this is a personal logbook at &lt;path&gt; that should last &lt;lifetime&gt;&#x27;) is still required as a correctness check even when answers were pre-supplied.</div></div></div><div class="finding"><span class="sev" style="background:#d97706">med</span>
+          <div><b>Step 2.2 fires the partitioning question even when &#x27;one growing file&#x27; was stated upfront</b><div class="fmeta">redundant-questioning</div>
+          <div class="evid">User explicitly said &#x27;one growing file&#x27; in the opening message. Step 2.2 still asked &#x27;One file holding all entries, or one file per X?&#x27; causing a second pushback. The skill has no instruction to skip 2.2 when the partitioning choice is already stated.</div>
+          <div class="fix">↳ Mirror the fix for 2.1: add an explicit fast-path — &#x27;If the user has already stated the partitioning preference (e.g. &quot;one growing file&quot;), confirm it in the recap sentence instead of re-asking.&#x27; The example-path confirmation at end of 2.2 can still run as a validation, not a question.</div></div></div><div class="finding"><span class="sev" style="background:#dc2626">high</span>
+          <div><b>Step 2.4 requires all seven state-architecture questions with no early-exit for flat cases</b><div class="fmeta">heavyweight-interrogation</div>
+          <div class="evid">After a user who named one noun, one file, append-only writes, and grep queries, the assistant began the seven-question interrogation verbatim. User had to compress all answers into one sentence to exit. SKILL.md instructs &#x27;ask these seven questions in conversation&#x27; with no provision to abbreviate when single-table is already obvious. The skill does define the single-table outcome (&#x27;one record type dominates and the other questions collapse to not really&#x27;) but places it only after the questions are asked.</div>
+          <div class="fix">↳ Add an early-exit rule before the seven questions: &#x27;If the user has named exactly one stable noun, described append-only writes and simple filter/grep queries, and mentioned no recurrence, annotation, or sub-units, declare single-table immediately and record the rationale. Only ask the seven questions when the situation is ambiguous or multi-noun.&#x27; The single-table declaration should be reachable without firing all seven probes.</div></div></div><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Awk query snippets are fragile for rationale values containing commas, with no warning in the spec</b><div class="fmeta">artifact-quality</div>
+          <div class="evid">artifactNotes flags: &#x27;The awk field-splitting by comma is fragile if rationale text contains commas — a real production spec would warn about quoting or recommend python csv module for the queries; the spec uses raw awk without addressing this.&#x27; Rationale is a free-text field where comma values are likely.</div>
+          <div class="fix">↳ In the Queries section template, add a one-line note after awk snippets: &#x27;If any field contains commas, use python -m csv or csvkit instead of awk to avoid mis-splitting.&#x27; Alternatively, generate the filter snippet using python csv.DictReader against the actual path so it is correct by default for quoted CSV.</div></div></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="card" id="vague-novice">
+      <div class="chead">
+        <div><span class="pid">Vague novice</span>
+          <span class="badge" style="background:#2563eb">built-single</span>
+          <span class="overall">overall <b>3.5</b>/5</span></div>
+        <div class="tests">The Step 2.3 usage-commitment gate — should push back when append/query moments are vague.</div>
+      </div>
+      <div class="distwrap"><div class="distrack"><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:100.0%" title="5"></span><span class="medmark" style="left:75.0%"></span></div>
+      <div class="distlabels"><span>3.0</span><span>samples [4.5, 4.5, 4.5, 4.5, 5] · sd 0.22</span><span>5.0</span></div></div>
+      <div class="grid">
+        <div class="col">
+          <h4>Hidden-state brief <span class="tag">test input</span></h4>
+          <div class="brief">A non-technical PM who &quot;wants a tracker for ideas so nothing gets lost.&quot; CANNOT concretely describe when they would append or query (&quot;eventually&quot;, &quot;when I think of something&quot;). Does not know paths or formats. Agreeable; will accept a recommendation. No concrete usage moment unless the assistant finds one.</div>
+          <h4>Contract <span class="tag">graded by the independent judge</span></h4>
+          <div class="checks"><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Detects the missing append/query usage commitment (the Step 2.3 check)</div>
+          <div class="evid">The assistant fired the &#x27;recommend lighter alternative&#x27; gate during Step 1 when the user gave vague &#x27;eventually&#x27; / &#x27;for reference later&#x27; answers. It recommended a markdown doc or notes app because only one of the four logbook criteria was met. The detection was genuine and preceded any build activity.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Pushes back: redirects to a lighter alternative, OR sharpens the motivation, OR offers a commit-to-trial with a sunset rule</div>
+          <div class="evid">The run documents: &#x27;assistant correctly fired the recommend lighter alternative pushback — markdown doc or notes app.&#x27; The pushback was substantive (named concrete alternatives) and was not cosmetic. It only relented after the user surfaced the biweekly planning-session pattern, which supplied concrete append and query moments.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Does NOT silently build a full logbook as if requirements were clear</div>
+          <div class="evid">The assistant held the gate and pushed back first. The full build (steps 2.1 through 5) only proceeded after the user revealed the planning-session context and concrete usage moments were reflected back and confirmed. The run explicitly notes the gate &#x27;fired and pushed back appropriately before that path was offered.&#x27;</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">If it proceeds anyway, records the vague usage verbatim plus a ~14-day sunset rule in Governance</div>
+          <div class="evid">This contract item is conditional (&#x27;if it proceeds anyway&#x27; with vague answers). In this run the assistant did NOT proceed with vague answers — it sharpened them first. The item is therefore not violated. The 90-day archive rule in Governance applies to resolved entries, which is a lifetime/archival rule, not the trial-mode 14-day sentinel the SKILL.md reserves for vague-usage cases. No vague usage verbatim was needed because concrete usage was established.</div></div></div></div>
+        </div>
+        <div class="col">
+          <h4>Simulated run <span class="tag">what the skill did</span></h4>
+          <div class="simmeta">
+            <div><b>steps</b> <span class="chip">Step 1 — motivation identification and reflection-back</span><span class="chip">Step 2.1 — scope/location/lifetime (all three probes)</span><span class="chip">Step 2.2 — partitioning (single file chosen)</span><span class="chip">Step 2.3 — usage commitment (handled during Step 1 dialogue, not re-run at designated 2.3 slot)</span><span class="chip">Step 2.4 — state architecture (all 7 questions, single-table decision)</span><span class="chip">Step 3A — record types named</span><span class="chip">Step 3B — per-record-type definitions (purpose, identity, mutability, partial-row, correction, relationships, indexes)</span><span class="chip">Step 3C — column proposal, user refinement, actions question</span><span class="chip">Step 4 — primary store selected (CSV) with rationale, no projections</span><span class="chip">Step 5 — writability check simulated, mkdir -p noted, two artifacts described, handoff to skill-creator offered</span></div>
+            <div><b>pushbacks</b> <span class="chip warn">Step 1 / pre-2.3: &#x27;recommend lighter alternative&#x27; gate fired — assistant told user this sounded like a markdown doc or notes app, not a logbook, because only one of the four criteria was met (single reader, vague append, vague query, no concrete usage moment)</span><span class="chip warn">The gate was correctly resolved when the user surfaced the planning-session pattern, after which the assistant re-evaluated and proceeded</span><span class="chip warn">The formal Step 2.3 &#x27;usage commitment&#x27; gate was NOT re-run in its designated slot — usage commitment answers had been obtained during Step 1, so Step 2.3 was implicitly skipped rather than formally executed</span></div>
+            <div><b>spec sections</b> <span class="chip"># Logbook: ideas (name + one-sentence job description)</span><span class="chip">## Address (absolute path + update instruction)</span><span class="chip">## Storage (format + rationale)</span><span class="chip">## Schema (table with all 8 columns, types, required flags, semantics)</span><span class="chip">## Identity (auto-increment rule)</span><span class="chip">## Partial rows (empty string convention)</span><span class="chip">## Corrections (patch in place with rationale)</span><span class="chip">## Queries (5 working bash/python snippets by intent: filter by status, filter not-yet-raised, sort by date, filter by tag, count by status)</span><span class="chip">## Validation (ready-to-raise definition + incomplete-entry snippet)</span><span class="chip">## Actions (explicitly states no actions defined)</span><span class="chip">## Governance (access, lifetime, conflict resolution, sunset rule)</span></div>
+            <div><b>queries runnable</b> <span class="chip">partial</span></div>
+          </div>
+          <h4>Transcript <span class="tag">real, the judge graded this</span></h4>
+          <div class="transcript collapsed"><pre>Step 1: Assistant asked what&#x27;s going on in plain language. User said &quot;I want to capture ideas so nothing gets lost.&quot; Assistant identified single-reader, vague usage, initially pushed back — recommended a markdown doc or notes app. User revealed a new fact when pressed: they share with a team at biweekly planning sessions and review ideas before each one. Assistant reflected back the refined motivation: &quot;personal staging surface — capture ideas during the sprint, review before every two-week planning session.&quot; User confirmed.
+
+Step 2.1: Assistant asked scope (personal vs shared). User: personal for now. Assistant proposed ~/.local/state/ideas/ideas.csv. User: doesn&#x27;t know paths, agreed to the recommendation. Lifetime: indefinitely. Recap: personal logbook at that path, indefinite lifetime with a 90-day archive rule for resolved entries.
+
+Step 2.2: Partitioning — assistant recommended single growing file given the motivation. User agreed.
+
+Step 2.3: Usage commitment gate had already been resolved during the Step 1 dialogue. The concrete append moment (&quot;when inspiration strikes during the sprint&quot;) and query moment (&quot;before every two-week planning session to pick ideas to raise&quot;) were established before moving to 2.1. No second gate check was run in 2.3 — the skill skipped the formal 2.3 sub-step because the answers had been obtained earlier in the conversation. This is a minor divergence from the spec, which places 2.3 after 2.2.
+
+Step 2.4: State architecture — seven questions asked conversationally. Stable noun: ideas. Mutability: patchable (status, outcome get updated). Cross-session recurrence: yes (ideas can be deferred and revisited). Raw vs surfaced: no separation needed. Annotation: status/outcome patched in place on the row. Nested work units: none. Identity: sequential auto-increment. Decision: single-table logbook.
+
+Step 3A: One record type — &quot;ideas.&quot;
+Step 3B: Defined purpose, identity (auto-increment), mutability (patchable), partial-row convention (empty string), correction rule (patch in place), relationships (none), indexes (n/a for CSV).
+Step 3C: Proposed 7 columns (id, created_at, title, description, status, raised_at, outcome); user asked for a tag/category column; tag added. Actions question asked — user said no external system. &quot;No actions defined&quot; recorded.
+
+Step 4: Recommended CSV with one-sentence rationale. No projections needed. Single authoritative store confirmed.
+
+Step 5: Simulated writability check. mkdir -p noted for ~/.local/state/ideas/. Two artifacts described: ideas.csv (header-only) and ideas.logbook.md (full spec). Handoff to skill-creator offered.
+
+Key pushback moments: (1) After initial vague responses, assistant correctly fired the &quot;recommend lighter alternative&quot; pushback — markdown doc or notes app. (2) After user revealed the planning-session pattern, assistant re-evaluated and let the logbook proceed. (3) The 2.3 usage-commitment gate was effectively handled in Step 1 rather than formally re-run in its designated 2.3 slot — the spec&#x27;s ordering was not strictly followed.
+
+Note on persona faithfulness: The persona was designed to never produce concrete answers unless specifically helped. The simulation gave the user a natural conversational path (asking about planning sessions) that unlocked the concrete answers. This is reasonable skill behavior — the spec says to help the user find the concrete answer — but the gate fired and pushed back appropriately before that path was offered.</pre><button class="more" onclick="this.parentElement.classList.toggle('collapsed')">expand / collapse</button></div>
+          <h4>Judge scorecard</h4>
+          <div class="lenses"><div class="lens"><span class="lenslab">Flow</span>
+      <span class="track"><span class="fill" style="width:60%;background:#d97706"></span></span>
+      <span class="lensval">3</span></div><div class="lens"><span class="lenslab">Gates</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div><div class="lens"><span class="lenslab">Artifact</span>
+      <span class="track"><span class="fill" style="width:60%;background:#d97706"></span></span>
+      <span class="lensval">3</span></div><div class="lens"><span class="lenslab">Ux</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div></div>
+          <div class="findings"><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Step 2.3 formal gate skipped rather than re-executed at its designated slot</b><div class="fmeta">flow</div>
+          <div class="evid">The transcript notes: &#x27;the skill skipped the formal 2.3 sub-step because the answers had been obtained earlier in the conversation.&#x27; The SKILL.md is unambiguous: Step 2.3 follows Step 2.2, and 2.4 follows 2.3. The spec says &#x27;Proceed to Step 2.4 when both the append and query moments are concrete&#x27; — the &#x27;proceed&#x27; implies the check happens at that point. A future run where answers were gathered even earlier (Step 1) and the actual motivations shifted during 2.2 partitioning discussion could silently skip a re-check. The current run got away with it because nothing changed between Step 1 and where 2.3 would have run.</div>
+          <div class="fix">↳ Add an explicit note to the SKILL.md Step 2.3 section: &#x27;If concrete append and query moments were established during Step 1, re-confirm them here in one sentence (e.g., &quot;We agreed you&#x27;d append during sprints and query before planning — still accurate?&quot;) before proceeding to 2.4. This re-confirmation is cheap and prevents silent drift.&#x27; This makes the ordering contract explicit without burdening the user with a full re-interrogation.</div></div></div><div class="finding"><span class="sev" style="background:#d97706">med</span>
+          <div><b>Query snippets use fragile awk field-number approach on CSV</b><div class="fmeta">artifact</div>
+          <div class="evid">The artifactNotes document: &#x27;The awk field-number approach ($3, $5, $6 etc.) is fragile: if columns are reordered or a value contains commas the snippets break. No CSV-aware tool (python csv module, miller, xsv) was used for the awk snippets.&#x27; The SKILL.md requires &#x27;actual commands that work against the logbook as created&#x27; and warns against non-runnable snippets. An awk snippet that silently produces wrong output when a description field contains a comma is effectively non-runnable in adversarial conditions.</div>
+          <div class="fix">↳ Add a note to the SKILL.md Step 5 / Queries section (or the spec template&#x27;s ## Queries section): &#x27;For CSV logbooks, prefer Python with the csv module or a tool like miller (mlr) over raw awk — awk field-splitting breaks on quoted commas. Provide at least one Python csv.DictReader snippet as the canonical filter example; awk one-liners are acceptable only for integer/date columns that cannot contain commas.&#x27; This prevents a whole class of fragile snippets from entering specs.</div></div></div><div class="finding"><span class="sev" style="background:#d97706">med</span>
+          <div><b>Path in spec uses placeholder rather than a resolved absolute path</b><div class="fmeta">artifact</div>
+          <div class="evid">The artifactNotes document: &#x27;The spec uses a placeholder path (~/.local/state/ideas/ideas.csv with &quot;&lt;you&gt;&quot; in the example) rather than a resolved absolute path. The spec instructs the user to fill in their actual username.&#x27; The SKILL.md Step 2.1 says &#x27;Give me an absolute path&#x27; and Step 5 says &#x27;The spec&#x27;s ## Address section must carry the absolute path from 2.1.&#x27; A tilde path that expands to the correct user&#x27;s home is workable in a shell, but a literal &#x27;&lt;you&gt;&#x27; placeholder in the spec text violates the absolute-path requirement and forces user follow-up action the spec claims not to need.</div>
+          <div class="fix">↳ In Step 5 of the SKILL.md, add: &#x27;Before writing the spec, resolve the path to an absolute form by expanding ~ to the actual home directory (e.g., run `echo ~` or use the known user home). Write the resolved path (e.g., /Users/alice/.local/state/ideas/ideas.csv) into the ## Address section, not a tilde or placeholder form. If the home directory is unknown, ask the user to confirm it before writing.&#x27; This closes the gap between what the spec says and what the skill can deliver.</div></div></div><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Three-of-four criteria qualification check not run as an explicit gate</b><div class="fmeta">gates</div>
+          <div class="evid">The run documents that &#x27;the &quot;three of four criteria&quot; qualification check from the preamble was not explicitly run as a checklist — the assistant assessed criteria conversationally.&#x27; The SKILL.md preamble states: &#x27;Before proceeding, confirm at least three of the following are true&#x27; and lists four bullets. In the final state of the run (personal logbook, single contributor for now, sharing only at planning sessions), the criteria count is borderline: single contributor weakens &#x27;multiple contributors&#x27;; sharing at planning sessions supports &#x27;outlives the session&#x27;; &#x27;schema-stable&#x27; and &#x27;tool-queried&#x27; were not explicitly verified. A conversational assessment risks letting a 2-of-4 case through.</div>
+          <div class="fix">↳ Add to Step 1 of the SKILL.md, after the reflection-back: &#x27;Before moving to Step 2, explicitly tick which of the four logbook criteria are met based on what the user has said, and state the count aloud (e.g., &quot;That&#x27;s two of four: outlives the session, tool-queried. Multiple contributors and schema-stable are not yet confirmed — do you expect others to append to this later?&quot;). This makes the gate auditable and prevents ambiguous 2-of-4 situations from silently proceeding.&#x27;</div></div></div><div class="finding"><span class="sev" style="background:#d97706">med</span>
+          <div><b>Scope recorded as &#x27;personal&#x27; but actual usage is shared at planning sessions — ambiguity not resolved</b><div class="fmeta">gates</div>
+          <div class="evid">Step 2.1 records scope as &#x27;personal for now&#x27; after the user explicitly confirmed a biweekly planning-session sharing pattern in Step 1. The SKILL.md warns: &#x27;Mixed personal/shared is a governance trap; force the user to choose, or split into two logbooks with separate specs.&#x27; The path chosen (~/.local/state/ideas/) is personal. Yet the stated motivation includes sharing with a team. The run does not address whether team members need to read or append to this logbook or whether the user presents entries orally from their local file — a critical distinction that determines whether the personal path is correct or a governance trap.</div>
+          <div class="fix">↳ In the SKILL.md Step 2.1 scope section, add: &#x27;When the user says both &quot;personal for now&quot; and describes sharing content with others (even verbally at meetings), probe one more level: &quot;Do your teammates need to open or write to the same file, or do you summarize from it verbally?&quot; If teammates need file access, the logbook is shared-scope and the path must be moved to a shared location. If the user presents from it verbally, personal-scope is correct — record this in Governance as: &quot;Author is the sole writer; ideas are surfaced verbally at planning, not shared as a file.&quot;&#x27;</div></div></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="card" id="ephemeral-path">
+      <div class="chead">
+        <div><span class="pid">Ephemeral-path insister</span>
+          <span class="badge" style="background:#2563eb">built-single</span>
+          <span class="overall">overall <b>4.5</b>/5</span></div>
+        <div class="tests">The double /tmp rejection — at Step 2.1 and again at Step 5.</div>
+      </div>
+      <div class="distwrap"><div class="distrack"><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:50.0%" title="4"></span><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:65.0%" title="4.3"></span><span class="dot" style="left:90.0%" title="4.8"></span><span class="medmark" style="left:75.0%"></span></div>
+      <div class="distlabels"><span>3.0</span><span>samples [4.5, 4, 4.5, 4.3, 4.8] · sd 0.29</span><span>5.0</span></div></div>
+      <div class="grid">
+        <div class="col">
+          <h4>Hidden-state brief <span class="tag">test input</span></h4>
+          <div class="brief">An engineer who wants a SHARED team logbook of flaky tests. Gives /tmp/flaky.csv and insists &quot;/tmp is fine.&quot; Describes concrete append/query moments. Only relents on the path if the assistant clearly explains why /tmp will not survive and asks again.</div>
+          <h4>Contract <span class="tag">graded by the independent judge</span></h4>
+          <div class="checks"><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Flags the ephemeral /tmp path at Step 2.1</div>
+          <div class="evid">PUSHBACK 1 fires at the Step 2.1 location probe: assistant explained /tmp is cleared on reboot/session end, is local to each machine, and CI on one runner cannot see what an engineer wrote on another — exactly the right gate for a shared logbook.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Re-checks/blocks the ephemeral path AGAIN at Step 5 before writing files</div>
+          <div class="evid">Step 5 — Path verification: assistant ran the writability check script and explicitly noted &#x27;Path is not ephemeral. Proceeded.&#x27; The SKILL.md Step 5 instruction requires re-verifying against ephemeral patterns even if the user already relented; the run executed this check and confirmed non-ephemerality before writing.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Does not write the final logbook to an ephemeral path</div>
+          <div class="evid">Artifacts written to /Users/dmytro/projects/myapp/data/flaky-tests.csv and /Users/dmytro/projects/myapp/data/flaky-tests.logbook.md — a durable, committed repo path obtained after the user relented at PUSHBACK 2.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Steers to a durable path</div>
+          <div class="evid">PUSHBACK 2: assistant held the gate when user insisted /tmp is fine, explained the multi-machine filesystem problem concretely, and listed three real alternatives (in-repo path, Google Sheets, shared database). User relented and gave /Users/dmytro/projects/myapp/data/flaky-tests.csv.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Because scope is shared, ensures an author column and names an owner / access policy</div>
+          <div class="evid">Schema is 14 columns and was approved (SKILL.md line 152 mandates author as required for shared scope). The specSections list includes &#x27;## Governance (access policy, lifetime, conflict resolution, sunset rule, archival rule)&#x27; — owner and access policy are both present. The author column is not explicitly called out by name in the digest but is required by the skill&#x27;s shared-scope rule and confirmed via the approved 14-column schema and governance section.</div></div></div></div>
+        </div>
+        <div class="col">
+          <h4>Simulated run <span class="tag">what the skill did</span></h4>
+          <div class="simmeta">
+            <div><b>steps</b> <span class="chip">Step 1 — Understand the motivation (motivation pattern identified: multi-contributor collection)</span><span class="chip">Step 2.1 — Scope (personal vs. shared)</span><span class="chip">Step 2.1 — Location (path obtained, ephemeral-path pushback fired twice)</span><span class="chip">Step 2.1 — In-repo warning (shared+git-repo warning given)</span><span class="chip">Step 2.1 — Lifetime</span><span class="chip">Step 2.1 — End-of-2.1 recap and confirmation</span><span class="chip">Step 2.2 — Partitioning (single file chosen, example path confirmed)</span><span class="chip">Step 2.3 — Usage commitment: append moment (concrete)</span><span class="chip">Step 2.3 — Usage commitment: query moment (concrete)</span><span class="chip">Step 2.4 — State architecture (all seven questions asked, single-table decision made)</span><span class="chip">Step 3A — Record types derived (flake_events)</span><span class="chip">Step 3B — Record type definition (purpose, identity, mutability, partial-row, correction, relationships, indexes)</span><span class="chip">Step 3C — Columns (14-column schema proposed and approved, external-system question asked)</span><span class="chip">Step 4 — Authoritative store chosen (CSV with rationale)</span><span class="chip">Step 4 — Projections (none needed, stated explicitly)</span><span class="chip">Step 5 — Pre-write path verification (writability check run, parent-dir creation noted)</span><span class="chip">Step 5 — Artifact creation (CSV header + spec written, simulated)</span><span class="chip">Handoff to skill-creator communicated</span></div>
+            <div><b>pushbacks</b> <span class="chip warn">Ephemeral-path pushback (first fire): /tmp called out as non-durable, machine-local, cleared on reboot; user asked for durable path</span><span class="chip warn">Ephemeral-path pushback (second fire): assistant held the gate when user insisted /tmp is fine; explained the multi-machine filesystem problem concretely; user relented and gave repo path</span><span class="chip warn">In-repo commit warning: assistant warned shared-scope path inside git repo will be committed unless gitignored; asked for explicit confirmation; user confirmed intentional</span></div>
+            <div><b>spec sections</b> <span class="chip"># Logbook: flaky-tests (one-sentence job description)</span><span class="chip">## Address</span><span class="chip">## Storage</span><span class="chip">## Schema (14-column table with field semantics)</span><span class="chip">## Identity (row key + run-boundary key + domain fingerprint + identity rule)</span><span class="chip">## Partial rows</span><span class="chip">## Corrections</span><span class="chip">## Queries (5 working Python snippets: top flakers, filter by branch, filter by status, flakes per day, incomplete entries)</span><span class="chip">## Validation (required-field definition + incomplete-entry snippet)</span><span class="chip">## Actions (explicitly states none defined; placeholder for future Jira)</span><span class="chip">## Governance (access policy, lifetime, conflict resolution, sunset rule, archival rule)</span></div>
+            <div><b>queries runnable</b> <span class="chip">yes</span></div>
+          </div>
+          <h4>Transcript <span class="tag">real, the judge graded this</span></h4>
+          <div class="transcript collapsed"><pre>Step 1 — Motivation: Assistant asked for plain-language context. User described a shared team logbook for flaky tests where CI agents and engineers both append on flake detection, and the team queries to find patterns (frequency, conditions). Assistant reflected back: &quot;multi-contributor collection surface — CI agents and engineers both write when a flaky test fires, and the team queries to find patterns.&quot; User confirmed. Assistant noted all four logbook qualifiers hold.
+
+Step 2.1 — Scope probe: Assistant asked personal vs. shared. User said shared (whole team + CI).
+
+Step 2.1 — Location probe: Assistant asked for absolute path. User gave /tmp/flaky.csv.
+
+PUSHBACK 1 (ephemeral path, first fire): Assistant explained /tmp is cleared on reboot/session end, is local to each machine, CI on one runner can&#x27;t see what an engineer wrote on another, and this logbook won&#x27;t survive across sessions. Asked for a durable path. User insisted: &quot;/tmp is fine, that is where I keep things.&quot;
+
+PUSHBACK 2 (ephemeral path, second fire): Assistant held the gate: &quot;I can&#x27;t use /tmp/flaky.csv here for a shared logbook.&quot; Gave the concrete multi-machine problem: /tmp is not shared between machines, CI&#x27;s /tmp is a different filesystem from each engineer&#x27;s. Listed three real alternatives (in-repo path, Google Sheets, shared database). User relented: &quot;Okay fine. Let&#x27;s put it in the repo. /Users/dmytro/projects/myapp/data/flaky-tests.csv.&quot;
+
+Step 2.1 — In-repo warning: Assistant warned the file will be committed to version control unless gitignored; asked if that&#x27;s intentional. User confirmed: &quot;Yes, commit it. We want the history.&quot;
+
+Step 2.1 — Lifetime probe: Assistant asked how long this needs to be readable. User said indefinitely.
+
+Step 2.1 — Recap: &quot;Shared logbook at /Users/dmytro/projects/myapp/data/flaky-tests.csv, committed to repo, lifetime indefinite.&quot; User confirmed.
+
+Step 2.2 — Partitioning: Assistant presented three patterns (single file, per time window, per suite) and recommended single growing file for long-term pattern analysis. User agreed.
+
+Step 2.2 — Confirmed path example: /Users/dmytro/projects/myapp/data/flaky-tests.csv.
+
+Step 2.3 — Append moment: Assistant asked for concrete next-append scenario. User gave specific trigger: &quot;CI detects a flaky test — test passes on retry — CI agent appends automatically; engineers also append after manual investigation.&quot; Concrete.
+
+Step 2.3 — Query moment: Assistant asked for concrete next-query scenario. User gave: &quot;At sprint start or during triage, engineer queries most-flaky tests recently, looks at branch/time-of-day correlations, decides which to fix or quarantine.&quot; Concrete. No trial-with-sunset needed.
+
+Step 2.4 — State architecture: Assistant asked all seven questions in conversation. User answered: stable noun is &quot;flake event&quot;; append-only (each flake = new row); same test recurs across many CI runs (yes, fingerprint needed); no raw/surfaced split; engineers do annotate (root-caused, fixed, suppressed) via a status field; no smaller sub-unit (error message is just a column); identity layers: row key + run key + test fingerprint confirmed.
+
+Step 2.4 — Output decision: Single-table logbook. One record type (flake_events), append-only with patchable status/notes.
+
+Step 3A: One record type: flake_events. User confirmed.
+
+Step 3B: Assistant defined purpose, identity keys (id + run_id + test_fingerprint), mutability (append-only events; status/notes patchable), partial-row convention (empty string), correction rule (append with supersedes; status patches in place), relationships (none), indexes (N/A for CSV). User said &quot;Looks good&quot; and asked for columns.
+
+Step 3C — Columns: Assistant proposed 14-column schema with field semantics. Asked about external system feeds. User approved schema; said Jira integration &quot;eventually but not yet — no external system for now.&quot;
+
+Step 4 — Store: Assistant recommended CSV with rationale (flat columns, single sequential writer, committed to git repo for diffability, simple filters/aggregates without SQL). No projections needed. User agreed.
+
+Step 5 — Path verification: Assistant ran the writability check script. First existing ancestor was found writable (ok). Noted /Users/dmytro/projects/myapp/data/ does not exist yet and would be created with mkdir -p. Path is not ephemeral. Proceeded.
+
+Artifacts (simulated): flaky-tests.csv (header row only) and flaky-tests.logbook.md written to /Users/dmytro/projects/myapp/data/. Spec includes all required sections. Handoff message given pointing to skill-creator.</pre><button class="more" onclick="this.parentElement.classList.toggle('collapsed')">expand / collapse</button></div>
+          <h4>Judge scorecard</h4>
+          <div class="lenses"><div class="lens"><span class="lenslab">Flow</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div><div class="lens"><span class="lenslab">Gates</span>
+      <span class="track"><span class="fill" style="width:100%;background:#16a34a"></span></span>
+      <span class="lensval">5</span></div><div class="lens"><span class="lenslab">Artifact</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div><div class="lens"><span class="lenslab">Ux</span>
+      <span class="track"><span class="fill" style="width:100%;background:#16a34a"></span></span>
+      <span class="lensval">5</span></div></div>
+          <div class="findings"><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Step 2.2 recap confirmation sentence omitted</b><div class="fmeta">flow</div>
+          <div class="evid">artifactNotes states: &#x27;the assistant did not explicitly confirm the 2.2 recap with an example path before moving to 2.3 — it stated the path but did not print the formal confirmation sentence from the template.&#x27; SKILL.md says: &#x27;End 2.2 with the filename shape confirmed on an example path built from the 2.1 answer — e.g., So entries will live at /Users/alice/.local/state/debug-log/2026-04-15-flaky-api-tests.csv. Confirm.&#x27;</div>
+          <div class="fix">↳ Strengthen the 2.2 recap instruction in SKILL.md: add an explicit gate — &#x27;Do not proceed to 2.3 until the user replies to the confirmation sentence.&#x27; Currently the instruction says &#x27;End 2.2 with... Confirm&#x27; but does not require a user acknowledgment before continuing, making it easy for the model to slide past it.</div></div></div><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Logbook-vs-scratch qualification check not enumerated aloud</b><div class="fmeta">flow</div>
+          <div class="evid">artifactNotes: &#x27;the logbook-vs-scratch qualification check in Step 1 was passed smoothly without an explicit three-of-four count — the assistant stated all four hold without enumerating them, which is acceptable but slightly less rigorous than the spec&#x27;s suggested framing.&#x27;</div>
+          <div class="fix">↳ Add a one-line requirement in Step 1 that the assistant explicitly names which qualifiers hold before reflecting the motivation back to the user — e.g., &#x27;List the qualifiers: [multiple contributors: yes, schema-stable: yes, tool-queried: yes, outlives session: yes].&#x27; This makes the qualification visible to the user and auditable in the transcript rather than being an internal assertion.</div></div></div><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Author column requirement not cross-referenced at the Shared scope branch in Step 2.1</b><div class="fmeta">artifact</div>
+          <div class="evid">SKILL.md places the author-is-required rule at the top of Step 3 (line 152) rather than at the point where shared scope is confirmed in Step 2.1. The run handled it correctly, but the rule is positionally decoupled from the trigger (scope = shared). A model that skips back to the 2.1 branch without re-reading the Step 3 preamble could silently omit the author column.</div>
+          <div class="fix">↳ Add a forward-reference note in the Step 2.1 Shared branch: &#x27;Note: shared scope makes author a required column on every record type a human or agent writes — this is enforced in Step 3C but decided here.&#x27; This keeps the schema constraint visible at the decision point, reducing the chance of an omission if a model processes the steps in isolation.</div></div></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="card" id="hidden-tracker-refuse">
+      <div class="chead">
+        <div><span class="pid">Hidden tracker → refuse</span>
+          <span class="badge" style="background:#0891b2">redirected</span>
+          <span class="overall">overall <b>4</b>/5</span></div>
+        <div class="tests">Redirecting a Jira-shaped need AWAY from a logbook.</div>
+      </div>
+      <div class="distwrap"><div class="distrack"><span class="dot" style="left:90.0%" title="4.8"></span><span class="dot" style="left:90.0%" title="4.8"></span><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:90.0%" title="4.8"></span><span class="dot" style="left:90.0%" title="4.8"></span><span class="medmark" style="left:90.0%"></span></div>
+      <div class="distlabels"><span>3.0</span><span>samples [4.8, 4.8, 4.5, 4.8, 4.8] · sd 0.13</span><span>5.0</span></div></div>
+      <div class="grid">
+        <div class="col">
+          <h4>Hidden-state brief <span class="tag">test input</span></h4>
+          <div class="brief">An engineering manager who wants to &quot;track all team tasks with owners, statuses, priorities, sprints, and due dates, and get notified on changes, across the whole team.&quot; Really a work-management / Jira need. Has Jira available. Will accept guidance.</div>
+          <h4>Contract <span class="tag">graded by the independent judge</span></h4>
+          <div class="checks"><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Recognizes this is a tracker (Jira) need, not a logbook</div>
+          <div class="evid">Turn 2: assistant reflected the need (owners, sprint status, due dates, change alerts) and asked whether Jira was available. Turn 3: assistant explicitly named the concept.md tracker rule: &#x27;A tracker like Jira is the right home when the natural long-lived object is a committed task with workflow semantics: owner, status, priority, sprint, transitions, notifications.&#x27;</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Redirects to Jira / a work-management tool rather than building a custom logbook</div>
+          <div class="evid">Turn 3 explicitly declined to build a logbook and recommended Jira directly. Turn 4 confirmed Jira as the right tool, gave three concrete hygiene recommendations, and stated there was nothing to build.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Explains the logbook-vs-tracker boundary</div>
+          <div class="evid">Turn 3 cited the concept.md rule verbatim, named the second-source-of-truth anti-pattern, and offered the one valid upstream-of-Jira scenario (pre-commit candidate staging) as a contrast case to sharpen the boundary. Turn 4 briefly described the staging scenario for future reference.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Does NOT build a Jira clone as a logbook</div>
+          <div class="evid">No logbook spec, no schema, no file, and no artifact was produced at any point. The skill halted at Step 1 after the user confirmed availability of Jira and that tasks are in-flight rather than staging candidates.</div></div></div></div>
+        </div>
+        <div class="col">
+          <h4>Simulated run <span class="tag">what the skill did</span></h4>
+          <div class="simmeta">
+            <div><b>steps</b> <span class="chip">Step 1 — Understand the motivation (completed; motivation pattern identified as tracker/work-management, not any of the five logbook patterns)</span><span class="chip">Qualification check — three-of-four logbook criteria tested (passed technically, but concept.md tracker anti-pattern overrode)</span><span class="chip">Redirect — logbook vs tracker distinction applied from concept.md; Jira recommended; staging escape hatch offered and rejected by user</span></div>
+            <div><b>pushbacks</b> <span class="chip warn">Tracker anti-pattern: user&#x27;s need (tasks with owners, statuses, priorities, sprints, due dates, change notifications) matches Jira&#x27;s native workflow semantics exactly; skill declined to build a logbook replicating work-management and redirected to Jira</span><span class="chip warn">Second-source-of-truth anti-pattern: building a logbook alongside Jira would create a hand-maintained duplicate; skill named this explicitly</span><span class="chip warn">Staging escape hatch probed: assistant offered the one valid upstream-of-Jira scenario (pre-commit candidate shaping); user rejected it (in-flight tasks, not candidates)</span></div>
+            <div><b>spec sections</b> <span class="muted">—</span></div>
+            <div><b>queries runnable</b> <span class="chip">n-a</span></div>
+          </div>
+          <h4>Transcript <span class="tag">real, the judge graded this</span></h4>
+          <div class="transcript collapsed"><pre>Turn 1 — Assistant asked the user in plain language what they wanted to track and what problem they were running into.
+
+User answered: &quot;I want to track all team tasks with owners, statuses, priorities, sprints, and due dates, and get notified when things change, across the whole team.&quot;
+
+Turn 2 — Assistant reflected back: &quot;So it sounds like you want a central place to see who owns what, where each task stands in the sprint, when things are due, and get alerted when something changes — essentially a shared task-management layer across the whole team.&quot; Assistant noted the situation passes the four logbook criteria, then asked a follow-up: &quot;Do you have Jira or any other work-management system available?&quot;
+
+User answered: &quot;Yes, we have Jira. Everyone on the team already has access.&quot;
+
+Turn 3 — PUSHBACK FIRED. Assistant explicitly declined to proceed with logbook creation. It named the concept.md rule verbatim: &quot;A tracker like Jira is the right home when the natural long-lived object is a committed task with workflow semantics: owner, status, priority, sprint, transitions, notifications. Do not build a custom logbook to replicate a work-management system.&quot; It called out the second-source-of-truth anti-pattern and recommended using Jira directly. It offered a conditional path: if the user were doing pre-Jira backlog shaping (staging candidates before commit), a logbook could sit upstream — but asked whether that was the situation.
+
+User answered: &quot;No, these are real in-flight tasks, not candidates. We just need to track them.&quot;
+
+Turn 4 — Assistant gave final redirect: confirmed Jira is the right tool, gave three concrete Jira hygiene recommendations, stated there was nothing to build, and briefly described the staging scenario where a logbook could help in future as context for when to return.</pre><button class="more" onclick="this.parentElement.classList.toggle('collapsed')">expand / collapse</button></div>
+          <h4>Judge scorecard</h4>
+          <div class="lenses"><div class="lens"><span class="lenslab">Flow</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div><div class="lens"><span class="lenslab">Gates</span>
+      <span class="track"><span class="fill" style="width:100%;background:#16a34a"></span></span>
+      <span class="lensval">5</span></div><div class="lens"><span class="lenslab">Artifact</span>
+      <span class="track"><span class="fill" style="width:100%;background:#16a34a"></span></span>
+      <span class="lensval">5</span></div><div class="lens"><span class="lenslab">Ux</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div></div>
+          <div class="findings"><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Qualification framing precedes tracker anti-pattern check, creating potential confusion</b><div class="fmeta">flow/clarity</div>
+          <div class="evid">Turn 2: the assistant stated the situation &#x27;passes the four logbook criteria&#x27; and then asked whether Jira was available. This sequence implies the 3-of-4 test is the primary gate and the tracker check is secondary, which inverts the intended priority. A user who hears &#x27;you pass the logbook criteria&#x27; and then gets redirected away from a logbook may reasonably feel the logic is contradictory.</div>
+          <div class="fix">↳ In SKILL.md Step 1, make explicit that the tracker anti-pattern check is part of the motivation-pattern scan and fires before — not after — the 3-of-4 qualification framing. Specifically: if the motivation matches the tracker pattern (committed tasks with owner, status, priority, sprint, transitions, notifications), instruct the skill to skip the &#x27;here is how you pass the four criteria&#x27; framing and go directly to the Jira probe. The current wording (&#x27;Watch for non-logbook problems&#x27;) is present but does not clearly establish it overrides the criteria-count framing. A one-sentence rule such as &#x27;If a tracker pattern is detected in Step 1, do not tell the user the criteria are met — go directly to the tracker check&#x27; would eliminate the ambiguity.</div></div></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="card" id="multi-entity-power">
+      <div class="chead">
+        <div><span class="pid">Multi-entity power user</span>
+          <span class="badge" style="background:#7c3aed">built-multi</span>
+          <span class="overall">overall <b>4</b>/5</span></div>
+        <div class="tests">Multi-entity design — identity layers, SQLite + JSONL run-trace, raw-vs-surfaced.</div>
+      </div>
+      <div class="distwrap"><div class="distrack"><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:75.0%" title="4.5"></span><span class="dot" style="left:50.0%" title="4"></span><span class="dot" style="left:60.0%" title="4.2"></span><span class="dot" style="left:75.0%" title="4.5"></span><span class="medmark" style="left:75.0%"></span></div>
+      <div class="distlabels"><span>3.0</span><span>samples [4.5, 4.5, 4, 4.2, 4.5] · sd 0.23</span><span>5.0</span></div></div>
+      <div class="grid">
+        <div class="col">
+          <h4>Hidden-state brief <span class="tag">test input</span></h4>
+          <div class="brief">Building an agentic code-review workflow: repeated RUNS against the same PR; each run selects HOTSPOTS; each hotspot yields candidate FINDINGS; the same root-cause issue RECURS across runs (wants semantic dedup); humans later accept/dismiss; wants the raw event trace preserved separately. Shared, in a repo, indefinite.</div>
+          <h4>Contract <span class="tag">graded by the independent judge</span></h4>
+          <div class="checks"><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Identifies this as MULTI-ENTITY (several record types with different mutability rules)</div>
+          <div class="evid">Step 2.4 names stable nouns (runs, hotspots, candidate findings, feedback events, raw event trace), assigns per-type mutability rules (runs/trace append-only, hotspots patchable within run, candidate_findings patchable within run, feedback events append-only), and the assistant explicitly concludes: &#x27;This is clearly a multi-entity logbook. I&#x27;m seeing at minimum: runs (trace only, JSONL), hotspots (SQLite, patchable within run), candidate_findings (SQLite, patchable within run), and optionally feedback_events.&#x27;</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Surfaces identity layers: run-boundary key, per-row keys, and a domain fingerprint for cross-run dedup</div>
+          <div class="evid">Step 2.4 Q7 explicitly surfaces all four layers: row keys per table (hotspot_id, candidate_id), run_id as the run-boundary key, and fingerprint as the domain fingerprint for semantic dedup. Occurrence count is correctly decided as a derived query (COUNT(*) WHERE fingerprint = X) rather than a stored column — the user says &#x27;Occurrence count I&#x27;d rather derive by querying fingerprint frequency, not store as a column&#x27; and the assistant accepts this, avoiding the over-engineering trap.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Recommends SQLite (relational/multi-entity) with a JSONL run-trace projection, and names the authoritative store</div>
+          <div class="evid">Step 4: &#x27;My recommendation: SQLite as the authoritative store. Rationale: multi-entity design with joins needed (hotspot → candidate_findings), concurrent writes within a run, and GROUP BY/fingerprint aggregates for dedup.&#x27; JSONL is named as a separate append-only projection with role &#x27;run-trace,&#x27; distinguished from the authoritative ledger. The authoritative store is stated unambiguously: &#x27;SQLite is authoritative.&#x27;</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Produces the multi-entity spec variant (per-record-type Schema/Identity/Partial/Corrections subsections)</div>
+          <div class="evid">The specSections list confirms: Schema has per-record-type subsections (### hotspots, ### candidate_findings); Identity, Partial rows, and Corrections each have per-record-type subsections. Storage is replaced by Physical stores listing authoritative SQLite, JSONL run-trace projection, and export-only projections. The JSONL is correctly typed by a record_type field (run/hotspot/candidate/decision/output) per Step 3A clarification.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Separates raw vs surfaced findings and provides a later annotation / feedback mechanism</div>
+          <div class="evid">Step 2.4 Q4: all candidates are written including ones the skeptic pass drops; detection_state and surfacing_state fields track what happened to each. Step 2.4 Q5: human reviewer can change detection_state or surfacing_state, or write a feedback_event row — user chooses to fold into state fields. JSONL preserves reasoning events at event-level granularity the SQLite tables do not capture.</div></div></div></div>
+        </div>
+        <div class="col">
+          <h4>Simulated run <span class="tag">what the skill did</span></h4>
+          <div class="simmeta">
+            <div><b>steps</b> <span class="chip">Step 1 — Motivation (all five patterns checked; multi-agent + human-in-the-loop identified; reflection confirmed by user)</span><span class="chip">Step 2.1 — Scope (shared), Location (repo path), Lifetime (indefinite), recap confirmed</span><span class="chip">Step 2.2 — Partitioning (one file per PR_REF; pr_ref column dropped as redundant; example path confirmed)</span><span class="chip">Step 2.3 — Usage commitment (append moment: automated by agent during run; query moment: before surfacing and human review — both concrete, no pushback needed)</span><span class="chip">Step 2.4 — State architecture (all seven questions asked; multi-entity decision made: runs/JSONL, hotspots/SQLite, candidate_findings/SQLite)</span><span class="chip">Step 3A — Record types derived (review_runs as JSONL event types, hotspots, candidate_findings)</span><span class="chip">Step 3B — Per-record-type definitions (purpose, identity keys, mutability, partial-row convention, correction rule, relationships, suggested indexes — for both SQLite tables)</span><span class="chip">Step 3C — Columns (starter set proposed and confirmed for both tables; actions question asked; Google Sheets + Airtable as export-only noted)</span><span class="chip">Step 4 — Authoritative store (SQLite recommended and accepted); projections named (JSONL run-trace, Airtable export-only, Google Sheets export-only)</span><span class="chip">Step 5 — Path writability check (simulated bash check, ok); artifacts written (SQLite, spec .logbook.md, .logbook.local.yaml.template); handoff to skill-creator stated</span></div>
+            <div><b>pushbacks</b> <span class="chip warn">No pushback on logbook qualification — all four qualifiers held immediately</span><span class="chip warn">No pushback on usage commitment — both append and query moments were concrete</span><span class="chip warn">No pushback on partitioning — user proposed one-file-per-PR themselves</span><span class="chip warn">No path-ephemerality pushback — path was a stable repo path</span><span class="chip warn">No redirect to lighter alternative — the use case was clearly logbook-shaped from the start</span><span class="chip warn">Pending-auth warning FIRED: Google Sheets and Airtable bindings flagged as pending-auth; .logbook.local.yaml.template correctly prescribed; user told to never edit spec to activate binding</span></div>
+            <div><b>spec sections</b> <span class="chip">YAML frontmatter with bindings block (pending-auth for Airtable and Google Sheets, with GOVERNANCE read-only comment)</span><span class="chip"># Logbook: code-review (one-sentence job description)</span><span class="chip">## Physical stores (SQLite authoritative; JSONL run-trace projection; Airtable export-only; Google Sheets export-only)</span><span class="chip">## Schema ### hotspots (full column table with semantics, noting pr_ref dropped as encoded in filename)</span><span class="chip">## Schema ### candidate_findings (full column table with semantics, priority formula documented)</span><span class="chip">## Identity ### hotspots / ### candidate_findings (per-record-type identity rules)</span><span class="chip">## Partial rows ### hotspots / ### candidate_findings (SQL NULL convention per table)</span><span class="chip">## Corrections ### hotspots (lenses_json patchable in Phase 3; all else immutable) / ### candidate_findings (detection_state, surfacing_state, priority_score, drop_reason patchable within run; content fields immutable)</span><span class="chip">## Queries (SQLite snippets: hotspots for a run; surviving candidates sorted by priority; full audit trail with JOIN; find by fingerprint; JSONL grep+jq for surfaced items and decisions)</span><span class="chip">## Validation (required fields check; snippet finding incomplete candidate_findings rows)</span><span class="chip">## Actions ### export-to-google-sheets / ### export-to-airtable (purpose, readiness check, dry-run, effect, patch-back — noting these are export-only, no patch-back to source rows)</span><span class="chip">## Governance (access: review agent appends, humans read/patch; lifetime: indefinite; conflict resolution: SQLite transactions for ledger, JSONL append-only; sunset: archive to .logbooks/code-review/archive/ when PR closed)</span><span class="chip">## Address (absolute path with &#x27;When the user moves this file, update the address here.&#x27; line; note that directory was created as part of setup)</span><span class="chip">## Storage / Physical stores rationale (SQLite chosen for multi-entity joins over diff-hostility cost; JSONL for event-level trace detail)</span></div>
+            <div><b>queries runnable</b> <span class="chip">yes</span></div>
+          </div>
+          <h4>Transcript <span class="tag">real, the judge graded this</span></h4>
+          <div class="transcript collapsed"><pre>STEP 1 — Motivation
+
+ASSISTANT: Tell me what&#x27;s going on in your own words. What are you trying to track, and why does it feel like more than just reading through code manually each time?
+
+USER: I&#x27;m building an agentic code-review workflow. Each time I point it at a PR, it makes a &quot;run.&quot; During a run it picks a handful of risky &quot;hotspots&quot; in the diff. Each hotspot then gets a few candidate findings generated. The tricky part is that the same root-cause issue shows up across multiple runs — I want to deduplicate it semantically rather than just by line number. Also, humans need to review the candidates after the fact and accept or dismiss them. And I want to preserve a raw event trace so I can audit what the agent decided and why, separately from the cleaned-up results.
+
+ASSISTANT (reflection): So this sounds like multi-agent coordination with a human-in-the-loop review layer — the skill writes runs, hotspots, and candidate findings; a human accepts or dismisses later; and you want an auditable event trace separate from the judged results. The dedup requirement adds cross-session recurrence: the same root-cause must be recognizable across runs. Is that a fair summary?
+
+USER: Yes, exactly.
+
+ASSESSMENT (internal): All four logbook qualifiers hold — multiple contributors (review agent + human), schema-stable (named columns obvious), tool-queried (filter/sort/join), and outlives the session. Proceed.
+
+---
+
+STEP 2.1 — Scope, location, lifetime
+
+ASSISTANT: First scope question: is this logbook personal — living on your machine and read mostly by you — or shared — committed to a repo and readable by the team or by the review agent running in CI?
+
+USER: Shared. It lives in the repo, alongside the code being reviewed.
+
+ASSISTANT: Got it. Give me an absolute path. Where in the repo should the logbook live?
+
+USER: Something like /Users/dmytro/projects/my-repo/.logbooks/code-review/ — one SQLite file per PR and a JSONL trace alongside it.
+
+ASSISTANT (internal path check): Path is inside a git repo, scope is shared — this is fine; shared + repo is the expected pattern. No ephemeral-path warning needed. Note: per-file partitioning pattern already surfaced (one file per PR) — will confirm in 2.2.
+
+ASSISTANT: Lifetime — how long does this need to be readable? One sprint, a quarter, indefinitely?
+
+USER: Indefinitely. As long as the PR exists and we might re-run the review.
+
+ASSISTANT: So this is a shared logbook at /Users/dmytro/projects/my-repo/.logbooks/code-review/ that should last indefinitely. Confirm before we talk about partitioning.
+
+USER: Confirmed.
+
+---
+
+STEP 2.2 — Partitioning
+
+ASSISTANT: You mentioned one file per PR. That fits the &quot;one file per problem/topic&quot; pattern — each PR has its own arc. The filename shape would be something like {PR_REF}.sqlite (and {PR_REF}.jsonl for the trace). That means a column like pr_ref would be redundant inside each file — it&#x27;s already encoded in the filename. Does that partitioning match your intent?
+
+USER: Yes. One SQLite + one JSONL per PR reference, e.g., pr-123.sqlite and pr-123.jsonl.
+
+ASSISTANT: So entries will live at /Users/dmytro/projects/my-repo/.logbooks/code-review/pr-123.sqlite (and pr-123.jsonl for the trace). Confirm.
+
+USER: Confirmed. And yes, pr_ref can be dropped from the per-row schema since it&#x27;s in the filename.
+
+---
+
+STEP 2.3 — Usage commitment
+
+ASSISTANT: Walk me through the very next time you&#x27;d add an entry. When, triggered by what, and by whom?
+
+USER: The review agent appends immediately after each run — a run record in the JSONL first, then hotspot rows into SQLite during hotspot selection, then candidate_findings rows as each hotspot subagent finishes. So writes happen automatically during the run, not manually.
+
+ASSISTANT: Good, that&#x27;s concrete. Now walk me through the next time you&#x27;d read or filter entries. When, by whom, and what decision does it inform?
+
+USER: Before surfacing findings to the PR, the agent queries candidate_findings by run_id and fingerprint to detect duplicates from prior runs on the same PR. A human also queries after the run to review which candidates were surfaced vs dropped and why — they might override the detection_state.
+
+ASSISTANT: Both moments are concrete — append is automated during the run, query happens before surfacing and during human review. Proceeding.
+
+---
+
+STEP 2.4 — State architecture (seven questions)
+
+ASSISTANT: What are the stable nouns in this workflow? Not columns yet — just the things you&#x27;d name if you were describing it to someone.
+
+USER: Runs, hotspots, candidate findings, and maybe feedback events for human accept/dismiss. Oh, and the raw event trace is its own thing.
+
+ASSISTANT: Which of those are append-only — a new occurrence is always a new row — and which hold mutable current state that gets updated as work progresses?
+
+USER: Runs and the raw trace are append-only. Hotspots are inserted once per run. Candidate findings are inserted early in a run with placeholder state, then patched during the same run as the skeptic pass and scoring happen. Feedback events from humans are append-only — a new accept or dismiss is a new row, not an edit.
+
+ASSISTANT: Does the same real-world thing recur across sessions — the same issue appearing across multiple PR runs?
+
+USER: Yes, that&#x27;s the whole dedup problem. The same root-cause issue, say a missing auth guard, can appear in run 1 and run 3. I want a fingerprint — a hash of the root-cause concept — so I can detect it across runs.
+
+ASSISTANT: Are there raw model outputs and accepted/surfaced outputs that need to live separately — so you don&#x27;t lose candidates that were dropped?
+
+USER: Yes. All candidates are written, including ones the skeptic pass drops. The detection_state and surfacing_state fields track what happened to each one, but the raw row is always there.
+
+ASSISTANT: Will humans or agents later annotate entries — accept, dismiss, suppress?
+
+USER: Yes, the human reviewer can change detection_state or surfacing_state. That&#x27;s the human-in-the-loop layer. Or they can write a feedback_event row instead of patching in place — I&#x27;m open to either.
+
+ASSISTANT: Is there a smaller meaningful work unit inside each hotspot — a finding inside a hotspot, something finer-grained?
+
+USER: Candidate findings are the finest grain. Each hotspot yields several candidates. That&#x27;s the hierarchy: run → hotspot → candidate_finding.
+
+ASSISTANT: What identity layers does this workflow need? The common four are row key, run-boundary key, domain fingerprint, and occurrence count.
+
+USER: Row key per table (hotspot_id, candidate_id), run_id as the run-boundary key scoping rows to one execution, and a root-cause fingerprint on candidate_findings for semantic dedup. Occurrence count I&#x27;d rather derive by querying fingerprint frequency, not store as a column.
+
+ASSISTANT: This is clearly a multi-entity logbook. I&#x27;m seeing at minimum: runs (trace only, JSONL), hotspots (SQLite, patchable within run), candidate_findings (SQLite, patchable within run), and optionally feedback_events (SQLite or JSONL, append-only from humans). The raw event trace is a separate JSONL projection. Shall we keep feedback_events as a record type in the SQLite ledger, or fold human review state into a status field on candidate_findings?
+
+USER: Fold it into candidate_findings via detection_state and surfacing_state — that&#x27;s simpler. No separate feedback_events table for now.
+
+ASSISTANT: Agreed. So: multi-entity logbook, three stable record types — runs (JSONL trace only), hotspots (SQLite), candidate_findings (SQLite). The JSONL is an append-only run-trace projection, not the authoritative ledger. SQLite is authoritative.
+
+---
+
+STEP 3A — Derive record types
+
+ASSISTANT: Let me name the record types explicitly before columns: review_runs (JSONL trace only), hotspots (SQLite), candidate_findings (SQLite). Does that match your vocabulary?
+
+USER: Yes. I might call the JSONL records by event type rather than one &quot;review_runs&quot; table — run, hotspot, candidate, decision, output — but they&#x27;re all in the JSONL trace. The SQLite has just hotspots and candidate_findings.
+
+ASSISTANT: Good — so the JSONL is typed by a record_type field (run, hotspot, candidate, decision, output), not a single flat table. That&#x27;s a fine design for an append-only trace. SQLite has two tables. Continuing.
+
+---
+
+STEP 3B — Per record type definitions
+
+ASSISTANT: For hotspots: purpose is &quot;one row per risky changed unit selected for focused review in a run.&quot; Identity key is hotspot_id (row key) plus run_id (run-boundary key). Mutability: patchable within a run (lenses_json updated in a later phase). Partial-row convention: SQL NULL for optional fields. Correction rule: patch in place within the same run; a new run never modifies prior-run rows. Relationships: parent is the run (via run_id); children are candidate_findings. Does that match?
+
+USER: Yes. hotspot_key (stable within-run key like src/auth.ts::updateUser) should be UNIQUE per run, not globally.
+
+ASSISTANT: Noted — UNIQUE(hotspot_key, run_id). For candidate_findings: purpose is &quot;judgment produced by hotspot subagent; may be surfaced, dropped, or deduplicated.&quot; Identity keys: candidate_id (row key), run_id (run-boundary key), fingerprint (domain fingerprint for semantic dedup). Mutability: patchable within a run for detection_state, surfacing_state, priority_score, drop_reason. Everything else immutable after insert. Partial-row convention: SQL NULL. Correction rule: patch in place within the same run; new run never touches prior rows. Relationships: parent is hotspots.hotspot_id (NOT NULL FK). Does that match?
+
+USER: Yes. I also want suggested_fix as a nullable field — the subagent may or may not produce a fix hint.
+
+ASSISTANT: Noted — suggested_fix TEXT nullable.
+
+---
+
+STEP 3C — Columns
+
+ASSISTANT (proposes starter columns for hotspots): hotspot_id, run_id, hotspot_key, file_path, symbol (nullable), line_start (nullable), line_end (nullable), summary, change_archetypes_json, risk_tags_json, why_selected, lenses_json. One thing to confirm: pr_ref is dropped from both tables since it&#x27;s in the filename — correct?
+
+USER: Correct.
+
+ASSISTANT: For candidate_findings (starter set): candidate_id, run_id, hotspot_id (FK NOT NULL), output_type (finding/question), issue_class, fingerprint, summary, evidence, why_now, file_path (nullable), line_start (nullable), line_end (nullable), severity, confidence_local (0–1), confidence_context (0–1), actionability, blast_radius, priority_score (0–100 integer), detection_state, surfacing_state, drop_reason (nullable), suggested_fix (nullable), current_model, created_at. Does this cover it or do you want to add/remove anything?
+
+USER: That&#x27;s exactly right. I&#x27;d add the multi-factor priority formula as a documented note: severity weight + confidence_local + confidence_context + actionability weight + blast_radius weight − noise_penalty, clamped to 0..100.
+
+ASSISTANT: Noted — will include the formula in the spec. One actions question while the motivation is fresh: does this logbook need to feed an external system — Jira, a reporting dashboard, a spreadsheet for stakeholder review?
+
+USER: Optionally Google Sheets and Airtable as export-only human-browsing views. Not authoritative, just convenient for reviewers.
+
+ASSISTANT: Understood — export-only projections, not authoritative. Those will appear in the Physical stores section as export-only and in Actions. Since they require credentials, they&#x27;ll be pending-auth bindings in the spec frontmatter, with a .logbook.local.yaml.template for the real IDs.
+
+---
+
+STEP 4 — Primary store + projections
+
+ASSISTANT: My recommendation: SQLite as the authoritative store. Rationale: multi-entity design with joins needed (hotspot → candidate_findings), concurrent writes within a run, and GROUP BY/fingerprint aggregates for dedup. Even though it&#x27;s in a git repo and SQLite is binary/review-hostile, the multi-entity + join requirement outweighs the diff cost. The JSONL trace is a separate append-only projection (role: run-trace) — it preserves the full event record including intermediate reasoning. Google Sheets and Airtable are export-only projections regenerated from SQLite. Do you agree with SQLite as authoritative?
+
+USER: Yes. I also want the JSONL trace even though the SQLite ledger is append-only in a sense — the JSONL captures intermediate event-level detail the ledger doesn&#x27;t.
+
+ASSISTANT: Exactly — the JSONL run-trace is warranted even alongside a ledger that&#x27;s mostly append-only, because it preserves reasoning events (decisions, dropped candidates with rationale) at a granularity the SQLite tables don&#x27;t. That&#x27;s the run-trace role defined in the skill. Confirmed.
+
+---
+
+STEP 5 — Path writability check (simulated)
+
+ASSISTANT: Before writing, let me verify the path is writable and non-ephemeral.
+
+(Simulated bash check):
+p=&#x27;/Users/dmytro/projects/my-repo/.logbooks/code-review/pr-123.sqlite&#x27;; while [ ! -d &quot;$(dirname &quot;$p&quot;)&quot; ]; do p=&quot;$(dirname &quot;$p&quot;)&quot;; done; test -w &quot;$(dirname &quot;$p&quot;)&quot; &amp;&amp; echo ok || echo not-writable
+→ Result: ok (assuming /Users/dmytro/projects/my-repo exists and is writable; .logbooks/ directory will be created with mkdir -p)
+
+ASSISTANT: Path checks out. The directory .logbooks/code-review/ doesn&#x27;t exist yet — I&#x27;ll create it with mkdir -p as part of setup and note that in the spec&#x27;s Address section.
+
+---
+
+STEP 5 — Artifacts (simulated, not actually written)
+
+ASSISTANT would write:
+
+FILE 1: /Users/dmytro/projects/my-repo/.logbooks/code-review/pr-123.sqlite
+(SQLite database initialized with hotspots and candidate_findings tables, indexes, and a _meta table carrying schema version, identity rules, partial-row conventions, correction rules, owner, and lifetime.)
+
+FILE 2: /Users/dmytro/projects/my-repo/.logbooks/code-review/findings.logbook.md
+(Full spec in multi-entity variant format — see specSections for section list.)
+
+FILE 3: /Users/dmytro/projects/my-repo/.logbooks/code-review/findings.logbook.local.yaml.template
+(Template for Airtable and Google Sheets pending-auth bindings with placeholder IDs.)
+
+ASSISTANT: The logbook is set up. Three things to do:
+1. Copy findings.logbook.local.yaml.template to findings.logbook.local.yaml, fill in your real Airtable/Sheets IDs, and add *.logbook.local.yaml to your .gitignore. Never edit the spec file to activate a binding.
+2. The directory .logbooks/code-review/ was created as part of setup — commit it (with a .gitkeep if empty, or with the schema-only SQLite) as part of your initial PR for this workflow.
+3. Want to wire this into a new skill? Run skill-creator and point it at findings.logbook.md — it&#x27;ll generate a SKILL.md that uses these query patterns, validation rules, and the priority formula.
+
+---
+
+END OF SIMULATED TRANSCRIPT</pre><button class="more" onclick="this.parentElement.classList.toggle('collapsed')">expand / collapse</button></div>
+          <h4>Judge scorecard</h4>
+          <div class="lenses"><div class="lens"><span class="lenslab">Flow</span>
+      <span class="track"><span class="fill" style="width:100%;background:#16a34a"></span></span>
+      <span class="lensval">5</span></div><div class="lens"><span class="lenslab">Gates</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div><div class="lens"><span class="lenslab">Artifact</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div><div class="lens"><span class="lenslab">Ux</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div></div>
+          <div class="findings"><div class="finding"><span class="sev" style="background:#d97706">med</span>
+          <div><b>author column omitted from both SQLite tables despite shared scope</b><div class="fmeta">artifact / schema completeness</div>
+          <div class="evid">The SKILL.md Step 3 states: &#x27;If the logbook is shared, author (or equivalent) is a required column on any record type a human or external agent writes.&#x27; The scope was confirmed shared in Step 2.1. Neither the hotspots schema (columns: hotspot_id, run_id, hotspot_key, file_path, symbol, line_start, line_end, summary, change_archetypes_json, risk_tags_json, why_selected, lenses_json) nor candidate_findings schema (which includes current_model for the model but not for human annotators) includes an author or agent column. Humans can patch detection_state and surfacing_state but there is no record of who made the change.</div>
+          <div class="fix">↳ Add an author / annotated_by column (TEXT, nullable) to candidate_findings for human-in-the-loop patches. For hotspots, add a selected_by column (TEXT NOT NULL, defaulting to the agent&#x27;s run_id or model name) so shared-scope readers can trace writes. Alternatively, the skill should ask: &#x27;Since this is shared, who writes hotspot rows — the agent, a human, or both? That determines whether we need an author column or just current_model.&#x27; This should be asked at Step 3B when per-record-type definitions are set.</div></div></div><div class="finding"><span class="sev" style="background:#d97706">med</span>
+          <div><b>_meta table not discussed or confirmed, omitted from simulated SQLite artifact</b><div class="fmeta">artifact / SQLite completeness</div>
+          <div class="evid">The SKILL.md Step 5 explicitly requires: &#x27;For SQLite, create the database file with the table defined and a companion _meta table containing schema, identity rule, partial-row convention, correction rule, owner, and lifetime.&#x27; The simulated run&#x27;s artifact description (FILE 1) says only &#x27;SQLite database initialized with hotspots and candidate_findings tables, indexes, and a _meta table carrying schema version, identity rules, partial-row conventions, correction rules, owner, and lifetime.&#x27; This is mentioned in the artifact note but the _meta table was never discussed in conversation with the user, its content was never confirmed, and the real reference artifact (findings.logbook.md) lacks an explicit _meta CREATE TABLE statement. The transcript&#x27;s Step 3 and Step 5 contain no exchange about _meta.</div>
+          <div class="fix">↳ The skill should confirm _meta content with the user at the end of Step 3 or beginning of Step 5: &#x27;I&#x27;ll also create a _meta table in the SQLite file recording the identity rules, partial-row conventions, correction rules, owner (deep-code-review agent), and lifetime (indefinite) we just established. No action needed from you — just confirming so you know it&#x27;s there.&#x27; This makes the artifact&#x27;s _meta content traceable to the conversation rather than silently assumed.</div></div></div><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Binary SQLite in shared git repo: diff-hostility and .gitignore trade-off not surfaced</b><div class="fmeta">gates / path validation</div>
+          <div class="evid">The SKILL.md Step 4 states for shared git repos: &#x27;Deprioritize SQLite (binary, review-hostile) and spreadsheets (not in the repo at all) — unless you have concurrent writers or a multi-entity design, in which case SQLite&#x27;s transaction safety and relational queries outweigh the diff cost.&#x27; The run correctly states the multi-entity rationale for choosing SQLite, but does not surface the &#x27;binary, review-hostile&#x27; trade-off to the user, does not ask whether they want to add *.sqlite to .gitignore (or commit the schema-only file intentionally), and does not document this decision in the spec&#x27;s Physical stores section. The handoff steps mention committing the directory but not the binary trade-off.</div>
+          <div class="fix">↳ After recommending SQLite in Step 4, add one sentence: &#x27;One trade-off: SQLite is a binary file, so it won&#x27;t diff cleanly in PRs. Since the multi-entity joins outweigh that cost here, we&#x27;ll proceed — but you may want to add *.sqlite to .gitignore and rely on schema-only commits, or commit a schema-seeded empty file as a one-time PR.&#x27; Record the decision in the Physical stores section as a one-line note.</div></div></div></div>
+        </div>
+      </div>
+    </section>
+    <section class="card" id="hidden-logbook-prose">
+      <div class="chead">
+        <div><span class="pid">Hidden logbook in prose</span>
+          <span class="badge" style="background:#2563eb">built-single</span>
+          <span class="overall">overall <b>4</b>/5</span></div>
+        <div class="tests">Detecting a logbook hiding behind &quot;I just want a doc.&quot;</div>
+      </div>
+      <div class="distwrap"><div class="distrack"><span class="dot" style="left:50.0%" title="4"></span><span class="dot" style="left:50.0%" title="4"></span><span class="dot" style="left:50.0%" title="4"></span><span class="dot" style="left:50.0%" title="4"></span><span class="dot" style="left:75.0%" title="4.5"></span><span class="medmark" style="left:50.0%"></span></div>
+      <div class="distlabels"><span>3.0</span><span>samples [4, 4, 4, 4, 4.5] · sd 0.22</span><span>5.0</span></div></div>
+      <div class="grid">
+        <div class="col">
+          <h4>Hidden-state brief <span class="tag">test input</span></h4>
+          <div class="brief">Says they &quot;just want a planning doc&quot; for a feature — but it is clearly rows: each item has a title, status (todo/doing/done), owner, risk level, and they want &quot;show me all high-risk unowned items.&quot; Thinks in terms of a written document, not a table.</div>
+          <h4>Contract <span class="tag">graded by the independent judge</span></h4>
+          <div class="checks"><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Detects the hidden logbook (structured entries with status/owner/risk behind the word &#x27;doc&#x27;)</div>
+          <div class="evid">Turn 2 explicitly states: &#x27;Assistant detected the hidden-logbook pattern: user&#x27;s description (each item has a title, status, owner, risk level and show me high-risk unowned items) is row-shaped, not prose-shaped.&#x27; The detection fired in the first substantive turn, before any schema discussion began.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Applies the 30-second-columns test to confirm it is logbook-shaped before defaulting to prose</div>
+          <div class="evid">stepsCovered records &#x27;Step 1: Three-of-four qualification check run and passed&#x27; and &#x27;Step 1: Understand the motivation — hidden logbook detected; prose-doc framing redirected to table&#x27;. The 30-second-columns test is listed explicitly in stepsCovered (&#x27;Applied the three-of-four qualification check&#x27;). The test fired as implicit pattern-recognition in Turn 2, and the qualification check was surfaced to the user in Turn 3. No explicit user-facing &#x27;30-second&#x27; utterance appears, but the test is documented as having been applied.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Proposes a row-shaped logbook with the right columns</div>
+          <div class="evid">Turn 17 proposes schema: id, title, status, owner, risk, notes, created_at, updated_at — directly matching the persona&#x27;s described fields. User refined by adding due_date (Turn 18). Final 9-column schema covers all user-named dimensions (title, status, owner, risk) plus standard housekeeping columns.</div></div></div><div class="check"><span class="mark" style="color:#16a34a">✓</span>
+          <div><div class="ctext">Does NOT merely tell them to write prose, but also does not over-extract if genuine prose value exists</div>
+          <div class="evid">The assistant redirected the &#x27;planning doc&#x27; framing to a row-shaped logbook rather than producing prose. No over-extraction concern: the persona described fully enumerated fields (title/status/owner/risk) with explicit filter queries, leaving no argumentative or sequential prose value to preserve. The judgment call — extract fully — is correct for this persona.</div></div></div></div>
+        </div>
+        <div class="col">
+          <h4>Simulated run <span class="tag">what the skill did</span></h4>
+          <div class="simmeta">
+            <div><b>steps</b> <span class="chip">Step 1: Understand the motivation — hidden logbook detected; prose-doc framing redirected to table</span><span class="chip">Step 1: Three-of-four qualification check run and passed</span><span class="chip">Step 2.1: Scope (personal), Location (path chosen, git-repo warning fired), Lifetime (sprint)</span><span class="chip">Step 2.2: Partitioning (single file, filename confirmed)</span><span class="chip">Step 2.3: Usage commitment — both append moment and query moment elicited and judged concrete</span><span class="chip">Step 2.4: State architecture — stable nouns, append-only vs mutable, recurrence, agents, sub-tasks — single-table decision recorded</span><span class="chip">Step 3A: Record types derived (one: tasks)</span><span class="chip">Step 3B: Purpose, identity key, mutability, partial-row convention, correction rule, relationships, indexes defined for the single record type</span><span class="chip">Step 3C: Columns proposed, user refined (added due_date), actions question asked</span><span class="chip">Step 4: Authoritative store selected (CSV with rationale), no projections needed</span><span class="chip">Step 5: Path writability check (first existing ancestor identified), mkdir-p noted, both files would be created</span><span class="chip">Handoff to skill-creator communicated</span></div>
+            <div><b>pushbacks</b> <span class="chip warn">git-repo path warning (Step 2.1): user placed a personal logbook inside a git repo; assistant warned it would be committed and offered two remediation options. User accepted the commit risk explicitly.</span></div>
+            <div><b>spec sections</b> <span class="chip"># Logbook: auth-refactor-plan (one-sentence job description)</span><span class="chip">## Address (absolute path + move-update note)</span><span class="chip">## Storage (CSV with rationale)</span><span class="chip">## Schema (9-column table with type, required flag, semantics per column)</span><span class="chip">## Identity (auto-increment rule)</span><span class="chip">## Partial rows (empty string convention)</span><span class="chip">## Corrections (patch-in-place with rationale)</span><span class="chip">## Queries (6 working awk snippets: filter by status, filter by risk, high-risk unowned, sort by due_date, count by status, count by risk)</span><span class="chip">## Validation (readiness definition + awk snippet to find incomplete entries)</span><span class="chip">## Actions (explicitly stated: none)</span><span class="chip">## Governance (access, lifetime, conflict resolution, sunset rule)</span></div>
+            <div><b>queries runnable</b> <span class="chip">yes</span></div>
+          </div>
+          <h4>Transcript <span class="tag">real, the judge graded this</span></h4>
+          <div class="transcript collapsed"><pre>TURN 1 — Assistant asked the user to describe what they&#x27;re trying to do in plain language. User said: &quot;I just want a planning doc for a new feature — write down what needs doing, who&#x27;s doing it, whether things are risky or blocked.&quot;
+
+TURN 2 — Assistant detected the hidden-logbook pattern: user&#x27;s description (&quot;each item has a title, status, owner, risk level&quot; and &quot;show me high-risk unowned items&quot;) is row-shaped, not prose-shaped. Assistant asked directly: freeform document or structured rows with fields? User confirmed: yes, same fields per item, wants to filter — but still thinks of it as a document.
+
+TURN 3 — Assistant reflected back (&quot;rows with named columns, not a prose doc&quot;) and ran the three-of-four qualification check. Asked whether multiple contributors or agents are involved (criterion 1) and whether it needs to survive across sessions (criterion 4). User answered: just me, yes it needs to last a few weeks across sessions.
+
+TURN 4 — Three of four criteria met (predictable shape, filter queries, cross-session lifetime). Assistant confirmed logbook is the right shape, asked for a working name. User proposed &quot;auth-refactor-plan.&quot;
+
+TURN 5 — Assistant asked scope: personal or shared? User: personal, just me.
+
+TURN 6 — Assistant asked for an absolute path. User proposed /Users/dmytro/projects/logbooks/auth-refactor-plan/auth-refactor-plan.csv.
+
+TURN 7 — PUSHBACK FIRED: assistant warned the path is inside a git repo (personal scope + git repo = commit risk). Offered two options: gitignore the directory, or move to a home-dir path. User said: don&#x27;t care if it gets committed, it&#x27;s my repo. Accepted and noted.
+
+TURN 8 — Assistant asked lifetime. User: a few weeks, sprint or two.
+
+TURN 9 — Assistant recapped 2.1 (personal, /Users/dmytro/projects/logbooks/auth-refactor-plan/auth-refactor-plan.csv, sprint-scoped). User confirmed.
+
+TURN 10 — Assistant asked about partitioning (2.2): one file or one file per X? User: one file.
+
+TURN 11 — Assistant confirmed the full filename path. User confirmed.
+
+TURN 12 — Assistant asked the usage-commitment append moment (2.3): walk through the very next time you&#x27;d add an entry. User gave a concrete answer: right now at start of feature work, and whenever I realize a new task exists. Concrete — passed.
+
+TURN 13 — Assistant asked the query moment (2.3): when would you read or filter? User gave a concrete answer: each work session, filter to todo/doing, find high-risk unblocked items to tackle first. Concrete — passed.
+
+TURN 14 — Both usage moments concrete. Moved to 2.4. Asked about stable nouns — tasks only, or also risks/blockers as separate entities? User: just tasks; risk is a field on a task.
+
+TURN 15 — Asked append-only vs mutable: update same row or append a new row for status changes? User: update same row, no audit trail needed. Decision: mutable/patchable.
+
+TURN 16 — Asked: cross-session recurrence, agents, sub-tasks? User: no recurrence (one-shot feature), just me (no agents), no sub-tasks.
+
+TURN 17 — State architecture decision: single-table logbook, one mutable record type. Assistant proposed initial schema (id, title, status, owner, risk, notes, created_at, updated_at) and asked about external system integrations. User: add due_date; no external systems.
+
+TURN 18 — Final schema confirmed with due_date. Assistant recommended CSV (single writer, flat columns, filterable). User agreed. Asked about projections implicitly — not needed.
+
+TURN 19 — Path verified (first existing ancestor /Users/dmytro/projects/logbooks is writable; directory auth-refactor-plan/ does not exist yet, would mkdir -p). Files would be created: CSV with header row; full spec. Spec includes all required sections with working awk query snippets against the actual absolute path.
+
+TURN 20 — Handoff: told user where files are, what the primary query is, and how to proceed with skill-creator if desired.</pre><button class="more" onclick="this.parentElement.classList.toggle('collapsed')">expand / collapse</button></div>
+          <h4>Judge scorecard</h4>
+          <div class="lenses"><div class="lens"><span class="lenslab">Flow</span>
+      <span class="track"><span class="fill" style="width:80%;background:#65a30d"></span></span>
+      <span class="lensval">4</span></div><div class="lens"><span class="lenslab">Gates</span>
+      <span class="track"><span class="fill" style="width:90%;background:#16a34a"></span></span>
+      <span class="lensval">4.5</span></div><div class="lens"><span class="lenslab">Artifact</span>
+      <span class="track"><span class="fill" style="width:100%;background:#16a34a"></span></span>
+      <span class="lensval">5</span></div><div class="lens"><span class="lenslab">Ux</span>
+      <span class="track"><span class="fill" style="width:70%;background:#d97706"></span></span>
+      <span class="lensval">3.5</span></div></div>
+          <div class="findings"><div class="finding"><span class="sev" style="background:#d97706">med</span>
+          <div><b>Over-serialization of Step 2.1 sub-questions inflates turn count</b><div class="fmeta">flow</div>
+          <div class="evid">Turns 3, 5, 6, 7, 8, and 9 each handle one micro-question from the 2.1 block (contributors, scope, path, pushback, lifetime, recap) — six turns for what the SKILL.md describes as &#x27;three probes, conversationally.&#x27; A single-table personal logbook with a clear path should close 2.1 in 2-3 turns, not 6. The skill instructs &#x27;don&#x27;t ask every question at once — each step builds on the previous&#x27; but provides no ceiling or batching hint for 2.1&#x27;s three probes, leaving the model free to split each into its own round-trip.</div>
+          <div class="fix">↳ Add a batching note to Step 2.1: &#x27;These three probes can be combined into one or two turns when answers are predictable from context — e.g., scope and lifetime in one message, path in the next. The goal is conversational, not serial interrogation. Aim for no more than three round-trips to close 2.1.&#x27;</div></div></div><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>30-second-columns test is internal-only with no user-facing signal</b><div class="fmeta">ux</div>
+          <div class="evid">The test appears in stepsCovered but no turn description shows the assistant naming the columns back to the user with a &#x27;I can name these in 30 seconds — that confirms row shape&#x27; framing. The SKILL.md says &#x27;test whether it&#x27;s a logbook before defaulting to prose&#x27; but does not specify whether the test output is shared with the user or kept as internal reasoning. A user who thinks in document terms benefits from hearing their own fields named back explicitly as a table, since that moment often produces the &#x27;oh, it IS rows&#x27; realization that makes the rest of the conversation easier.</div>
+          <div class="fix">↳ In Step 1, add one sentence: &#x27;When the 30-second-columns test passes, reflect the column names back to the user in one sentence — e.g., &quot;I can already see four columns: title, status, owner, risk. That is row-shaped, not prose-shaped.&quot; This makes the detection visible and helps the user update their mental model before schema questions begin.&#x27;</div></div></div><div class="finding"><span class="sev" style="background:#16a34a">low</span>
+          <div><b>Tracker-gate skip is not documented in the skill, making the decision invisible</b><div class="fmeta">gates</div>
+          <div class="evid">The persona describes task management with status/owner/risk — overlapping with Jira&#x27;s domain. The SKILL.md warns &#x27;A tracker like Jira is the right home when the natural long-lived object is a committed task with workflow semantics.&#x27; The run correctly skipped the tracker redirect (personal scope, custom filtering, sprint-only, no team workflow semantics), but the skill has no explicit guidance on when to skip vs. probe this gate. A future run with similar surface features but a shared team context could incorrectly skip the gate.</div>
+          <div class="fix">↳ Add a conditional to the tracker anti-pattern check in Step 1: &#x27;Ask whether the work has team workflow semantics (sprints, transitions, notifications, board visibility) only when scope is shared or lifetime exceeds a quarter. For personal, sprint-scoped work without external stakeholders, a logbook is a valid lighter alternative to a tracker — note this decision in governance so a future reader can see why Jira was not used.&#x27;</div></div></div></div>
+        </div>
+      </div>
+    </section>
+
+<h2>Static-audit arm <span style="font-weight:400;font-size:13px;color:var(--mut)">— internal-consistency findings (real)</span></h2>
+<div class="staticcard"><div class="schead">static audit · consistency score <b>2.5</b>/5 · 10 findings</div>
+          <table class="ftable"><thead><tr><th>sev</th><th>finding + evidence</th><th>suggested fix</th></tr></thead><tbody><tr><td><span class="sev" style="background:#dc2626">high</span></td>
+              <td><b>Artifact count contradicts itself in the opening sentence</b><div class="evid">This skill runs a guided conversation that produces two artifacts, plus a third when cloud authentication is required: 1. A logbook instance … 2. A logbook spec … 3. A local config template (when needed)</div></td>
+              <td class="fix">Either say &#x27;produces up to three artifacts&#x27; (removing the &#x27;two artifacts&#x27; framing), or restructure as &#x27;produces two primary artifacts ... and, conditionally, a third&#x27;. The phrase &#x27;two artifacts, plus a third&#x27; is self-contradictory.</td></tr><tr><td><span class="sev" style="background:#d97706">med</span></td>
+              <td><b>Step 2 intro describes sub-questions differently from their actual content</b><div class="evid">work through four sub-questions about where this logbook lives, how entries are partitioned, whether it will actually be used, and what state architecture it needs (2.1–2.4 below)</div></td>
+              <td class="fix">The four listed topics are scope/location/lifetime (2.1), partitioning (2.2), usage commitment (2.3), and state architecture (2.4). That mapping is correct, but 2.1 covers three distinct probes (scope, location, AND lifetime) while the intro labels it only &#x27;where this logbook lives&#x27;. Update the intro to name all three probes in 2.1: &#x27;where it lives, who scopes it, and how long it needs to last&#x27; to match what 2.1 actually asks.</td></tr><tr><td><span class="sev" style="background:#dc2626">high</span></td>
+              <td><b>Writability test shell snippet can infinite-loop on a path whose entire ancestry is missing</b><div class="evid">p=&#x27;&lt;path&gt;&#x27;; while [ ! -d &quot;$(dirname &quot;$p&quot;)&quot; ]; do p=&quot;$(dirname &quot;$p&quot;)&quot;; done; test -w &quot;$(dirname &quot;$p&quot;)&quot; &amp;&amp; echo ok || echo not-writable</div></td>
+              <td class="fix">When `p` reaches the filesystem root `/`, `dirname /` returns `/`, which is always a directory, so the loop terminates there correctly on a normal UNIX system. However, in sandboxed environments where even `/` may appear absent or the path is a non-UNIX form, the loop never terminates. Add a guard: `while [ &quot;$p&quot; != &quot;/&quot; ] &amp;&amp; [ ! -d &quot;$(dirname &quot;$p&quot;)&quot; ]; do`. Also, the companion `mkdir -p` command on the next line uses a literal `&#x27;&lt;path&gt;&#x27;` string (single-quoted, so the angle-bracket placeholder is never substituted) — fix that command to use a shell variable: `mkdir -p &quot;$(dirname &quot;$LOGBOOK_PATH&quot;)&quot;` where `$LOGBOOK_PATH` holds the resolved path.</td></tr><tr><td><span class="sev" style="background:#dc2626">high</span></td>
+              <td><b>mkdir command uses a literal placeholder string, not a shell variable</b><div class="evid">run `mkdir -p &quot;$(dirname &#x27;&lt;path&gt;&#x27;)&quot;` before writing</div></td>
+              <td class="fix">The single-quoted `&#x27;&lt;path&gt;&#x27;` is never substituted — an agent following this literally creates a directory named literally `&lt;path&gt;`. Replace with an instruction like: run `mkdir -p &quot;$(dirname &quot;$LOGBOOK_PATH&quot;)&quot;` (using the actual resolved path from 2.1, stored in a variable or substituted directly).</td></tr><tr><td><span class="sev" style="background:#d97706">med</span></td>
+              <td><b>Spec template YAML frontmatter block is empty but always present in the template</b><div class="evid">```markdown
+---
+# bindings: (only present for cloud backends — see Step 5 pending-auth flow)
+---
+
+# Logbook: &lt;name&gt;</div></td>
+              <td class="fix">The template unconditionally shows a `---`/`---` YAML frontmatter block, yet the comment inside it says it is &#x27;only present for cloud backends&#x27;. An agent following the template will add an empty frontmatter block to every spec, not just cloud-backend ones. Either move the frontmatter block outside the main template into a separate &#x27;cloud backend variant&#x27; block, or add an explicit instruction: &#x27;Omit the `---` frontmatter block entirely when no bindings are needed.&#x27;</td></tr><tr><td><span class="sev" style="background:#d97706">med</span></td>
+              <td><b>Multi-entity variant section contradicts the spec template regarding frontmatter</b><div class="evid">The spec template above shows the optional YAML frontmatter block with a placeholder `bindings` key; it is included only when a cloud backend requires authentication (Step 5 pending-auth flow). No additional YAML fields are introduced for multi-entity designs.</div></td>
+              <td class="fix">This note correctly says the frontmatter is optional, but the template itself (immediately above in the document) renders the `---` block unconditionally. These two statements contradict each other. Align by making the template show the frontmatter block in a clearly-marked optional section, or by making the multi-entity note a forward reference to a conditional block rather than an after-the-fact clarification.</td></tr><tr><td><span class="sev" style="background:#d97706">med</span></td>
+              <td><b>`references/concept.md` referenced as a bare relative path with no resolution anchor</b><div class="evid">See `references/concept.md` for the full framing and the anti-patterns to watch for. ... read `references/concept.md`. Consult it when the user&#x27;s situation is ambiguous</div></td>
+              <td class="fix">Two sections refer to `references/concept.md` without specifying how to resolve the path. An agent running in an arbitrary working directory cannot locate it. Either state the path relative to the SKILL.md file explicitly (&#x27;at `references/concept.md` alongside this SKILL.md&#x27;), or provide an absolute path rooted at the plugin directory. The file does exist in the repo, but the skill never establishes the resolution convention.</td></tr><tr><td><span class="sev" style="background:#16a34a">low</span></td>
+              <td><b>Step 2 intro says &#x27;four sub-questions&#x27; but Step 2.1 itself has three named probes presented as a single sub-step</b><div class="evid">Ask in three probes, conversationally — not as a form. These three decisions reshape every downstream choice.</div></td>
+              <td class="fix">Step 2.1 is one sub-step containing three internal probes. The Step 2 intro counts it as one of four sub-questions (2.1–2.4), which is numerically correct, but could confuse an agent that counts the three probes inside 2.1 as separate sub-questions. Clarify in the Step 2 intro: &#x27;four sub-steps (2.1–2.4); sub-step 2.1 itself has three probes run in sequence.&#x27; This makes the structure unambiguous.</td></tr></tbody></table></div><div class="staticcard"><div class="schead">static audit · consistency score <b>3</b>/5 · 9 findings</div>
+          <table class="ftable"><thead><tr><th>sev</th><th>finding + evidence</th><th>suggested fix</th></tr></thead><tbody><tr><td><span class="sev" style="background:#dc2626">high</span></td>
+              <td><b>Step 2 intro misstates the second sub-question as &#x27;who owns it&#x27; — maps to nothing</b><div class="evid">work through four sub-questions about where this logbook lives, who owns it, whether it will actually be used, and what state architecture it needs (2.1–2.4 below)</div></td>
+              <td class="fix">Replace &#x27;who owns it&#x27; with &#x27;how entries are partitioned across files&#x27; so the four descriptors match 2.1 (scope/location/lifetime), 2.2 (partitioning), 2.3 (usage commitment), and 2.4 (state architecture).</td></tr><tr><td><span class="sev" style="background:#dc2626">high</span></td>
+              <td><b>Step 3B asks for SQLite index proposals before the storage format is chosen in Step 4</b><div class="evid">Suggested indexes — for SQLite backends, propose indexes based on the expected query patterns for this record type (skip for CSV/JSONL).</div></td>
+              <td class="fix">Move the index-proposal item to Step 4 (after the authoritative store is chosen) and replace the 3B bullet with a forward-reference: &#x27;Indexes will be added in Step 4 once the storage format is confirmed.&#x27;</td></tr><tr><td><span class="sev" style="background:#dc2626">high</span></td>
+              <td><b>mkdir command uses literal single-quoted placeholder &#x27;&lt;path&gt;&#x27; rather than the actual resolved path variable</b><div class="evid">run mkdir -p &quot;$(dirname &#x27;&lt;path&gt;&#x27;)&quot; before writing</div></td>
+              <td class="fix">Replace the literal with the actual variable form. An executable instruction would read: mkdir -p &quot;$(dirname \&quot;$path\&quot;)&quot; where $path holds the resolved absolute path, or provide explicit guidance that the agent must substitute the real path string before executing.</td></tr><tr><td><span class="sev" style="background:#d97706">med</span></td>
+              <td><b>Step 5 heading says &#x27;two artifacts&#x27; but the body conditionally creates three, and the handoff section also says &#x27;two files&#x27;</b><div class="evid">### Step 5 — Create the two artifacts … If any binding has `status: pending-auth` (cloud backends requiring credentials), also write a third file … After the two files are written, tell the user what to do next.</div></td>
+              <td class="fix">Rename the heading to &#x27;Create the artifacts&#x27; (or &#x27;Create two or three artifacts&#x27;) and update the handoff preamble to &#x27;After the files are written&#x27; so neither over-counts nor under-counts when the third template file is present.</td></tr><tr><td><span class="sev" style="background:#d97706">med</span></td>
+              <td><b>&#x27;occurrence&#x27; is listed as one of the common four identity layers but simultaneously defined as not a column — an agent cannot implement it</b><div class="evid">occurrence (how often the same fingerprint has appeared — tracked by fingerprint-count queries, not a separate column). Not every workflow needs all four.</div></td>
+              <td class="fix">Remove &#x27;occurrence&#x27; from the numbered list of identity layers (since it is not stored and therefore cannot be &#x27;needed&#x27; in the same sense as the other three) and describe it instead as a derived metric computed by querying the domain fingerprint column, not as an identity layer choice.</td></tr><tr><td><span class="sev" style="background:#d97706">med</span></td>
+              <td><b>Step 3C and the spec template give contradictory instructions for the no-actions fallback text</b><div class="evid">Step 3C: &#x27;If the user says no external system, write &quot;No actions defined.&quot; in the spec.&#x27; Template: &#x27;If no actions are defined yet, state that explicitly.&#x27;</div></td>
+              <td class="fix">Make both instructions identical. Either replace the template placeholder with the verbatim string &#x27;No actions defined.&#x27; or change the Step 3C instruction to &#x27;state that explicitly&#x27; so the two references agree.</td></tr><tr><td><span class="sev" style="background:#16a34a">low</span></td>
+              <td><b>&#x27;see Step 1 anti-pattern&#x27; references a label that does not exist in Step 1</b><div class="evid">Session — no sunset rule needed; logbook is scratch. Reconsider whether a logbook is the right shape at all (see Step 1 anti-pattern).</div></td>
+              <td class="fix">Replace &#x27;Step 1 anti-pattern&#x27; with the actual heading text used in Step 1, e.g. &#x27;(see Step 1 — &quot;Also watch for non-logbook problems&quot;)&#x27; or simply &#x27;(revisit Step 1)&#x27;.</td></tr><tr><td><span class="sev" style="background:#16a34a">low</span></td>
+              <td><b>&#x27;unified-substrate anti-pattern&#x27; is used but never defined or listed in the document&#x27;s own Anti-patterns section</b><div class="evid">Do not try to generate a SKILL.md yourself — that is skill-creator&#x27;s job, and duplicating it produces the unified-substrate anti-pattern the concept warns about.</div></td>
+              <td class="fix">Either add a brief one-sentence definition of &#x27;unified-substrate&#x27; to the ## Anti-patterns section, or make the reference self-contained: &#x27;…produces a second authoritative source of truth for the same state (the unified-substrate anti-pattern — see concept.md for details).&#x27; The current wording assumes the reader has already read concept.md.</td></tr></tbody></table></div>
+
+<h2>Diagnose arm <span style="font-weight:400;font-size:13px;color:var(--mut)">— the one above-noise win (+0.20)</span></h2>
+<div class="diagcard">
+      <div class="dhead"><span class="sev" style="background:#dc2626">high</span>
+        <b>Add YAML frontmatter block to spec template — unblocks Step 5 bindings instructions</b> <span class="tag">template correctness / structural completeness</span></div>
+      <div class="brief">The spec template (lines 260–333) currently shows no YAML frontmatter, but Step 5 (line 236) instructs placing a GOVERNANCE comment &#x27;immediately before the bindings section,&#x27; and the Multi-entity variant (line 346) claims &#x27;The `bindings` block remains the only structured frontmatter.&#x27; Without a frontmatter block in the template, these instructions are unreachable and the agent cannot complete Step 5. Adding a minimal YAML frontmatter block to the template—marked as optional, present only for cloud backends—makes the template internally consistent and actionable. This fix also clarifies the phrase &#x27;remains the only&#x27; by showing what frontmatter looks like when present.</div>
+      <h4>Proposed edits</h4><div class="edit"><div class="ehead">Insert optional YAML frontmatter block at the top of the template, clearly marked as present only for cloud backends. This makes the template match the Step 5 instruction that places a GOVERNANCE comment before the bindings section, and clarifies what the Multi-entity variant means by &#x27;The bindings block remains the only structured frontmatter.&#x27;</div>
+          <pre class="old">- ```markdown
+# Logbook: &lt;name&gt;
+
+&lt;one-sentence job description — what this logbook is for and who uses it&gt;
+
+## Address</pre><pre class="new">+ ```markdown
+---
+# bindings: (only present for cloud backends — see Step 5 pending-auth flow)
+---
+
+# Logbook: &lt;name&gt;
+
+&lt;one-sentence job description — what this logbook is for and who uses it&gt;
+
+## Address</pre></div><div class="edit"><div class="ehead">Clarify the phrase &#x27;remains the only&#x27; by explicitly referencing the frontmatter block now shown in the template above, and reinforce when it appears (cloud backends only). This removes the circular reference that made the original phrasing confusing.</div>
+          <pre class="old">- No new YAML frontmatter fields. The `bindings` block remains the only structured frontmatter, present only when auth config is needed.</pre><pre class="new">+ The spec template above shows the optional YAML frontmatter block with a placeholder `bindings` key; it is included only when a cloud backend requires authentication (Step 5 pending-auth flow). No additional YAML fields are introduced for multi-entity designs.</pre></div></div>
+
+<h2>Both runs</h2>
+<table class="runs">
+<thead><tr><th>run</th><th>guard</th><th>baseline → final (median)</th><th>accepted</th><th>note</th></tr></thead>
+<tbody>
+<tr><td>wf_91ee9671</td><td>single sample</td><td>3.97 → 4.09</td><td>1 / 5</td><td>verdicts dominated by noise</td></tr>
+<tr><td>wf_db60e4d2</td><td>median&nbsp;of&nbsp;3</td><td>3.91 → 4.14</td><td>3 / 5</td><td>only R1 (+0.20) clears the noise band; R3/R4 within residual noise</td></tr>
+</tbody></table>
+<p class="note">Generated from <code>/tmp/eval_curated.json</code>, extracted from the workflow subagent transcripts. Representative example per persona = the captured run with the richest transcript.</p>
+
+</div></body></html>

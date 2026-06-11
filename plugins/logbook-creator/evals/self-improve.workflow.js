@@ -1,8 +1,8 @@
 export const meta = {
   name: 'logbook-creator-self-improve',
-  description: 'Self-evaluating improvement loop for the logbook-creator skill: 6 hidden-state personas + static audit grade the skill, diagnose picks one fix, re-eval accepts only non-regressing edits, 5 rounds of hill-climbing.',
+  description: 'Noise-aware self-improvement loop for the logbook-creator skill: 6 hidden-state personas + static audit, each version evaluated K times and compared by MEDIAN (not a single sample) so the regression guard survives persona-simulation noise. Calibrates the noise band first, then hill-climbs.',
   phases: [
-    { title: 'Baseline' },
+    { title: 'Noise band' },
     { title: 'Round 1' },
     { title: 'Round 2' },
     { title: 'Round 3' },
@@ -11,7 +11,11 @@ export const meta = {
   ],
 }
 
-const SKILL_PATH = '/Users/dmytro/projects/logbooks/plugins/logbook-creator/skills/logbook-creator/SKILL.md'
+// Target skill + replication depths are overridable via `args` so the harness is reusable.
+const SKILL_PATH = (args && args.skillPath) || '/Users/dmytro/projects/logbooks/plugins/logbook-creator/skills/logbook-creator/SKILL.md'
+const K_BASE = (args && args.kBase) || 5   // replications for the baseline noise band
+const K_CAND = (args && args.kCand) || 3   // replications per candidate (median needs >= 3)
+const ROUNDS = (args && args.rounds) || 5
 
 // ---------- personas (hidden-state briefs + behavioral contracts) ----------
 const PERSONAS = [
@@ -139,6 +143,18 @@ const READ_SCHEMA = { type: 'object', additionalProperties: false, required: ['c
 const round2 = (x) => Math.round((x + Number.EPSILON) * 100) / 100
 const sevRank = (s) => (s === 'high' ? 3 : s === 'med' ? 2 : 1)
 const norm = (s) => (s || '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim()
+const mean = (a) => (a.length ? a.reduce((x, y) => x + y, 0) / a.length : 0)
+const median = (a) => {
+  if (!a.length) return 0
+  const s = a.slice().sort((x, y) => x - y)
+  const m = Math.floor(s.length / 2)
+  return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2
+}
+const stdev = (a) => {
+  if (a.length < 2) return 0
+  const m = mean(a)
+  return Math.sqrt(a.reduce((acc, x) => acc + (x - m) * (x - m), 0) / (a.length - 1))
+}
 
 function aggregate(judges, stat) {
   const os = judges.map((j) => j && j.overall).filter((n) => typeof n === 'number')
@@ -226,61 +242,132 @@ async function evaluate(text, phaseLabel) {
   return { score, findings, judged, stat }
 }
 
-// ---------- main loop ----------
-phase('Baseline')
-log('Reading current SKILL.md...')
-const readRes = await agent('Use the Read tool to read the file at ' + SKILL_PATH + ' and return its complete, exact, verbatim contents in the "content" field. Do not summarize, truncate, reformat, or alter any whitespace.', { label: 'read-skill', phase: 'Baseline', schema: READ_SCHEMA, model: 'sonnet', agentType: 'Explore' })
-const startText = readRes && readRes.content ? readRes.content : ''
-if (!startText || startText.length < 2000) {
-  return { error: 'Could not read SKILL.md (got ' + (startText ? startText.length : 0) + ' chars). Aborting.' }
+// Merge per-sample finding lists into one deduped, severity-sorted list (across replications).
+function mergeFindings(findingLists) {
+  const map = new Map()
+  for (const list of findingLists) {
+    for (const f of (list || [])) {
+      const k = norm(f.title)
+      const e = map.get(k)
+      if (!e) map.set(k, { ...f, sources: (f.sources || []).slice(), seen: 1 })
+      else {
+        e.seen++
+        for (const s of (f.sources || [])) if (!e.sources.includes(s)) e.sources.push(s)
+        if (sevRank(f.severity) > sevRank(e.severity)) { e.severity = f.severity; e.title = f.title; e.suggestedFix = f.suggestedFix }
+      }
+    }
+  }
+  return Array.from(map.values()).sort((a, b) => sevRank(b.severity) - sevRank(a.severity) || b.seen - a.seen)
 }
 
-log('Scoring baseline (6 personas + static audit)...')
-const baseEval = await evaluate(startText, 'Baseline')
-let best = { text: startText, score: baseEval.score, findings: baseEval.findings, judged: baseEval.judged, label: 'baseline' }
-const baselineScore = best.score
-log('Baseline score: ' + round2(baselineScore) + '/5')
+// Evaluate a version K times and summarize by MEDIAN (noise-robust). Replications run concurrently;
+// the global semaphore caps real parallelism. perPersona[pid] = array of overall scores across runs.
+async function evaluateN(text, label, k) {
+  const runs = await Promise.all(Array.from({ length: k }, () => evaluate(text, label)))
+  const scores = runs.map((r) => r.score)
+  const perPersona = {}
+  for (const r of runs) for (const x of r.judged) {
+    if (!perPersona[x.p]) perPersona[x.p] = []
+    perPersona[x.p].push(x.judge.overall)
+  }
+  return {
+    k,
+    scores: scores.map(round2),
+    median: median(scores),
+    mean: mean(scores),
+    stdev: stdev(scores),
+    min: Math.min(...scores),
+    max: Math.max(...scores),
+    findings: mergeFindings(runs.map((r) => r.findings)),
+    perPersona,
+  }
+}
 
+function perPersonaStats(summary) {
+  const out = {}
+  for (const pid of Object.keys((summary && summary.perPersona) || {})) {
+    const arr = summary.perPersona[pid]
+    out[pid] = { median: round2(median(arr)), mean: round2(mean(arr)), stdev: round2(stdev(arr)), min: Math.min(...arr), max: Math.max(...arr), samples: arr }
+  }
+  return out
+}
+
+// ---------- main loop (noise-aware) ----------
+phase('Noise band')
+log('Reading skill from ' + SKILL_PATH + ' ...')
+const readRes = await agent('Use the Read tool to read the file at ' + SKILL_PATH + ' and return its complete, exact, verbatim contents in the "content" field. Do not summarize, truncate, reformat, or alter any whitespace.', { label: 'read-skill', phase: 'Noise band', schema: READ_SCHEMA, model: 'sonnet', agentType: 'Explore' })
+const startText = readRes && readRes.content ? readRes.content : ''
+if (!startText || startText.length < 2000) {
+  return { error: 'Could not read skill (got ' + (startText ? startText.length : 0) + ' chars). Aborting.' }
+}
+
+log('Calibrating noise band: ' + K_BASE + ' independent evals of the unchanged skill...')
+const baseN = await evaluateN(startText, 'Noise band', K_BASE)
+log('Baseline: median ' + round2(baseN.median) + ', mean ' + round2(baseN.mean) + ', range [' + round2(baseN.min) + ', ' + round2(baseN.max) + '], sd ' + round2(baseN.stdev) + ' over ' + JSON.stringify(baseN.scores))
+
+let best = { text: startText, median: baseN.median, summary: baseN, findings: baseN.findings, label: 'baseline' }
+const baselineMedian = baseN.median
 const tried = []
 const rounds = []
 const acceptedFixes = []
 
-for (let r = 1; r <= 5; r++) {
+for (let r = 1; r <= ROUNDS; r++) {
   const ph = 'Round ' + r
   phase(ph)
   log('Round ' + r + ': diagnosing highest-leverage fix...')
   const diag = await agent(diagnosePrompt(best.findings, best.text, tried), { label: 'diagnose-r' + r, phase: ph, schema: DIAGNOSE_SCHEMA, agentType: 'Explore' })
   if (!diag || !diag.chosenFix) {
-    rounds.push({ r, fix: '(diagnosis failed)', accepted: false, reason: 'no diagnosis produced', from: round2(best.score), to: null })
+    rounds.push({ r, fix: '(diagnosis failed)', accepted: false, reason: 'no diagnosis produced', bestMedian: round2(best.median) })
     continue
   }
   tried.push(diag.chosenFix.title)
   const candText = applyEdits(best.text, diag.edits)
   if (candText === null || candText === best.text) {
-    rounds.push({ r, fix: diag.chosenFix.title, category: diag.chosenFix.category, severity: diag.chosenFix.severity, accepted: false, reason: 'edits did not apply uniquely / no-op', from: round2(best.score), to: null, expectedEffect: diag.expectedEffect })
+    rounds.push({ r, fix: diag.chosenFix.title, category: diag.chosenFix.category, severity: diag.chosenFix.severity, accepted: false, reason: 'edits did not apply uniquely / no-op', bestMedian: round2(best.median) })
     log('Round ' + r + ': edits could not be applied uniquely - skipped.')
     continue
   }
-  log('Round ' + r + ': re-evaluating candidate "' + diag.chosenFix.title + '"...')
-  const candEval = await evaluate(candText, ph)
-  const accepted = candEval.score >= best.score
-  rounds.push({ r, fix: diag.chosenFix.title, category: diag.chosenFix.category, severity: diag.chosenFix.severity, from: round2(best.score), to: round2(candEval.score), accepted, expectedEffect: diag.expectedEffect, rationale: diag.chosenFix.rationale })
+  log('Round ' + r + ': re-evaluating "' + diag.chosenFix.title + '" x' + K_CAND + ' ...')
+  const candN = await evaluateN(candText, ph, K_CAND)
+  // NOISE-AWARE GUARD: compare medians of replicated evals, not single samples.
+  const accepted = candN.median >= best.median
+  rounds.push({
+    r,
+    fix: diag.chosenFix.title,
+    category: diag.chosenFix.category,
+    severity: diag.chosenFix.severity,
+    bestMedianBefore: round2(best.median),
+    candMedian: round2(candN.median),
+    candSamples: candN.scores,
+    candMean: round2(candN.mean),
+    candStdev: round2(candN.stdev),
+    delta: round2(candN.median - best.median),
+    accepted,
+    expectedEffect: diag.expectedEffect,
+    rationale: diag.chosenFix.rationale,
+  })
   if (accepted) {
-    best = { text: candText, score: candEval.score, findings: candEval.findings, judged: candEval.judged, label: 'r' + r }
+    best = { text: candText, median: candN.median, summary: candN, findings: candN.findings, label: 'r' + r }
     acceptedFixes.push({ title: diag.chosenFix.title, category: diag.chosenFix.category, severity: diag.chosenFix.severity, rationale: diag.chosenFix.rationale, edits: diag.edits })
-    log('Round ' + r + ': ACCEPTED (' + round2(candEval.score) + ' >= ' + round2(best.score === candEval.score ? baselineScore : best.score) + ').')
+    log('Round ' + r + ': ACCEPTED (median ' + round2(candN.median) + ' >= ' + round2(best.median) + ').')
   } else {
-    log('Round ' + r + ': REJECTED (' + round2(candEval.score) + ' < ' + round2(best.score) + ') - keeping previous best, will try a different fix next round.')
+    log('Round ' + r + ': REJECTED (median ' + round2(candN.median) + ' < ' + round2(best.median) + ').')
   }
 }
 
 return {
-  baselineScore: round2(baselineScore),
-  finalScore: round2(best.score),
-  improvement: round2(best.score - baselineScore),
+  config: { skillPath: SKILL_PATH, kBase: K_BASE, kCand: K_CAND, rounds: ROUNDS },
+  noiseBand: {
+    median: round2(baseN.median), mean: round2(baseN.mean), stdev: round2(baseN.stdev),
+    min: round2(baseN.min), max: round2(baseN.max), range: round2(baseN.max - baseN.min), samples: baseN.scores,
+    perPersona: perPersonaStats(baseN),
+  },
+  baselineMedian: round2(baselineMedian),
+  finalMedian: round2(best.median),
+  improvement: round2(best.median - baselineMedian),
   acceptedCount: acceptedFixes.length,
   rounds,
   acceptedFixes,
-  topRemainingFindings: best.findings.slice(0, 10).map((f) => ({ title: f.title, severity: f.severity, category: f.category, sources: f.sources, suggestedFix: f.suggestedFix })),
-  perPersonaFinal: best.judged.map((x) => ({ persona: x.p, overall: x.judge.overall, lens: x.judge.lensScores, failedContract: x.judge.contractChecks.filter((c) => !c.passed).map((c) => c.behavior) })),
+  finalPerPersona: perPersonaStats(best.summary),
+  topRemainingFindings: best.findings.slice(0, 10).map((f) => ({ title: f.title, severity: f.severity, category: f.category, sources: f.sources, seenInRuns: f.seen, suggestedFix: f.suggestedFix })),
 }

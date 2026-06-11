@@ -69,10 +69,33 @@ The default workflow subagent has `Edit`/`Write`, so diagnose agents wrote three
 - **Version mismatch (cross-file, out of loop scope)** — `plugin.json` = 2.0.0 vs `marketplace.json` = 1.1.0 (and ideation 2.2.0 vs 2.3.0). Pick the canonical version and sync.
 - **Step 2.4 short-circuit** — add an explicit "confirm answers already given in Step 1 rather than re-asking" clause to cut question fatigue for the crisp-expert case.
 
+## Run 2 — noise-aware median guard (`wf_db60e4d2`, 266 agents, 8.3M tok, ~84 min)
+
+The fix to the methodology: evaluate every version **K times** and compare **medians**, after first calibrating the noise band. (Caveat: `args` was passed as a JSON string, so `skillPath` fell back to the default — run 2 evaluated the **already-fixed** skill, not the original. The K-values matched the defaults, so they were unaffected.)
+
+**Noise band — the headline.** Five identical evals of the unchanged skill scored `[4.01, 3.91, 3.87, 3.87, 4.15]` → **median 3.91, sd 0.12, range 0.28**. This is hard confirmation that run 1's single-sample verdicts (a +0.13 "win" and 0.11–0.34 "regressions") were **noise** — the noise floor alone is 0.28. Per-persona, the noise is concentrated: **crisp-expert-single** swings `[4, 3, 3, 3.5, 3]` (sd 0.45, range 1.0); the other five are tight (sd 0.13–0.29).
+
+**Guard result: 3 accepted vs 1.** median 3.91 → 4.14.
+
+| R | Fix | Δ median | Samples | Verdict |
+|---|---|---|---|---|
+| 1 | Add YAML frontmatter block to spec template (wires in `bindings`) | **+0.20** | [4.11, 4.17, 3.87] | accept — **above noise** |
+| 2 | Step 2 intro topics (v1) | −0.21 | [3.89, 3.83, 4.07] | reject |
+| 3 | "who owns it" → "how entries are partitioned" | +0.01 | [4.11, 3.95, 4.12] | accept — within noise |
+| 4 | Intro: conditional third artifact | +0.03 | [4.09, 4.24, 4.14] | accept — within noise |
+| 5 | Step 5 heading artifact count | −0.24 | [3.9, 4.13, 3.83] | reject |
+
+**Honest caveat:** only **R1 (+0.20)** is unambiguously above the noise band. R3 and R4 cleared only via the `>=` tie and median-of-3's residual noise (~0.1) — they should be judged on merits, not score. So median-of-3 *materially* improves the guard (kills the gross false-rejections) but does **not** make sub-0.1 deltas trustworthy. To accept fine-grained fixes you need higher K, or — better — fix the noise at its source: tighten the **crisp-expert** persona's judging (it alone contributes most of the variance).
+
+**Applied from run 2:** R3 only — it corrects an inaccuracy *my own* run-1 fix introduced ("who owns it" is not a sub-step; 2.2 is partitioning). The loop caught my mistake.
+
+**Evidence for the deferred decision:** R1 wiring in `bindings` scored a clear **+0.20**, so the data favors *wiring in* over removing. Not auto-applied because (a) it's the design call left to the owner and (b) the static audit in the same run flagged the loop's specific implementation (an always-present frontmatter fence) as a *new* contradiction — the clean form is a conditional "if cloud backend, prepend this frontmatter" note plus a coherent artifact-count update across the intro and the Step 5 heading.
+
 ## Re-running
 
 ```
-Workflow({ scriptPath: "plugins/logbook-creator/evals/self-improve.workflow.js" })
+Workflow({ scriptPath: "plugins/logbook-creator/evals/self-improve.workflow.js",
+           args: { skillPath: "/abs/path/SKILL.md", kBase: 5, kCand: 3, rounds: 5 } })
 ```
 
-Edit `PERSONAS` to change the scenario matrix; edit `SKILL_PATH` to target a different skill.
+Pass `args` as a real object (not a JSON string). Edit `PERSONAS` to change the scenario matrix.

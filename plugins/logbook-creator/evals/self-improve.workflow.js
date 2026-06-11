@@ -12,10 +12,12 @@ export const meta = {
 }
 
 // Target skill + replication depths are overridable via `args` so the harness is reusable.
-const SKILL_PATH = (args && args.skillPath) || '/Users/dmytro/projects/logbooks/plugins/logbook-creator/skills/logbook-creator/SKILL.md'
-const K_BASE = (args && args.kBase) || 5   // replications for the baseline noise band
-const K_CAND = (args && args.kCand) || 3   // replications per candidate (median needs >= 3)
-const ROUNDS = (args && args.rounds) || 5
+// Be robust if args arrives as a JSON STRING (a common caller mistake) instead of an object.
+const ARGS = (typeof args === 'string' && args.trim().startsWith('{')) ? JSON.parse(args) : (args || {})
+const SKILL_PATH = ARGS.skillPath || '/Users/dmytro/projects/logbooks/plugins/logbook-creator/skills/logbook-creator/SKILL.md'
+const K_BASE = ARGS.kBase || 5   // replications for the baseline noise band
+const K_CAND = ARGS.kCand || 3   // replications per candidate (median needs >= 3)
+const ROUNDS = ARGS.rounds || 5
 
 // ---------- personas (hidden-state briefs + behavioral contracts) ----------
 const PERSONAS = [

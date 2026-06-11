@@ -47,7 +47,7 @@ Reflect back what you heard in one sentence: *"So this sounds like a staging sur
 
 ### Step 2 — Scope & lifecycle
 
-Before picking columns or a storage format, work through four sub-questions about where this logbook lives, who owns it, whether it will actually be used, and what state architecture it needs (2.1–2.4 below). Each sub-question feeds into the next and into downstream steps. Don't collapse these into one prompt — they build on each other, and users often revise their earlier answer once a later one forces the issue. Let them go back.
+Before picking columns or a storage format, work through four sub-questions about where this logbook lives, how entries are partitioned, whether it will actually be used, and what state architecture it needs (2.1–2.4 below). Each sub-question feeds into the next and into downstream steps. Don't collapse these into one prompt — they build on each other, and users often revise their earlier answer once a later one forces the issue. Let them go back.
 
 #### 2.1 Scope, location, lifetime
 

@@ -1,7 +1,13 @@
-run_id,round,fix_title,category,severity,from_score,to_score,accepted,applied_to_skill,note
-wf_91ee9671,0,baseline measurement,n/a,n/a,,3.97,n/a,n/a,6 personas + static audit; aggregate = 0.8*mean(persona overall) + 0.2*static consistency
-wf_91ee9671,1,Fix Step 2 intro count: three sub-questions -> four,structural-contradiction,high,3.97,3.86,false,true,"Rejected by noisy re-eval (3.86<3.97); corroborated by manual analysis + static audit, applied deliberately as count+flow fix"
-wf_91ee9671,2,Query quality checklist (ban positional awk / naive enum sorts),artifact,high,3.97,3.63,false,false,"Rejected (3.63<3.97); real issue but fix needs new template subsections — left for user as a documented finding"
-wf_91ee9671,3,Step 5 writability check fails when parent dir missing,instruction-fails-in-env,high,3.97,3.79,false,true,"Rejected by noisy re-eval (3.79<3.97); corroborated correctness bug, applied deliberately (ancestor-walk + mkdir -p)"
-wf_91ee9671,4,Introduce pending-auth binding concept in Step 4,dangling-instruction,high,3.97,3.77,false,deferred,"Rejected (3.77<3.97); wire-in-vs-remove is a feature-direction decision left to the human owner; wiring also incomplete (spec template still lacks a bindings section)"
-wf_91ee9671,5,Standardize local-override filename (Step 5 vs Anti-patterns),internal-consistency,med,3.97,4.09,true,true,"Accepted by loop (4.09>=3.97); the one fix the regression guard let through"
+run_id,guard,round,fix_title,category,severity,from,to,samples,accepted,applied_to_skill,note
+wf_91ee9671,single-sample,0,baseline measurement,n/a,n/a,,3.97,3.97,n/a,n/a,"6 personas + static audit; aggregate = 0.8*mean(persona overall) + 0.2*static consistency; ONE sample"
+wf_91ee9671,single-sample,1,Step 2 intro count three->four,structural-contradiction,high,3.97,3.86,3.86,false,true,"Rejected by noisy single sample; corroborated, applied deliberately"
+wf_91ee9671,single-sample,2,Query quality checklist (awk/enum),artifact,high,3.97,3.63,3.63,false,false,"Rejected; deferred (needs new template subsection)"
+wf_91ee9671,single-sample,3,Step 5 writability parent-dir fix,instruction-fails-in-env,high,3.97,3.79,3.79,false,true,"Rejected by noise; corroborated, applied deliberately"
+wf_91ee9671,single-sample,4,Introduce pending-auth binding in Step 4,dangling-instruction,high,3.97,3.77,3.77,false,deferred,"Rejected; feature-direction decision for human"
+wf_91ee9671,single-sample,5,Standardize local-override filename,internal-consistency,med,3.97,4.09,4.09,true,true,"Accepted; the one fix the single-sample guard let through"
+wf_db60e4d2,median-of-3,0,noise band (5x unchanged skill),n/a,n/a,,3.91,"[4.01,3.91,3.87,3.87,4.15]",n/a,n/a,"NOISE BAND: median 3.91, sd 0.12, range 0.28. Ran on the CURRENT (already-fixed) skill, not the original (args passed as string -> skillPath fell back to default). crisp-expert persona is the noise source (sd 0.45, range 1.0)"
+wf_db60e4d2,median-of-3,1,Add YAML frontmatter block to spec template,template-correctness,high,3.91,4.11,"[4.11,4.17,3.87]",true,recommended,"ACCEPTED, delta +0.20 — ABOVE noise. Wires in the bindings feature (the deferred decision). Not auto-applied: implementation contested by static audit; it's the design call for the human"
+wf_db60e4d2,median-of-3,2,Step 2 intro matches sub-step topics (v1),structural-consistency,high,4.11,3.89,"[3.89,3.83,4.07]",false,n/a,"Rejected, delta -0.21"
+wf_db60e4d2,median-of-3,3,Replace 'who owns it' with partitioning in Step 2 intro,internal-contradiction,high,4.11,4.11,"[4.11,3.95,4.12]",true,true,"ACCEPTED, delta +0.01 (within residual noise) but correct on merits — fixes an inaccuracy my own manual fix introduced; applied"
+wf_db60e4d2,median-of-3,4,Intro: account for conditional third artifact,artifact-completeness,high,4.11,4.14,"[4.09,4.24,4.14]",true,deferred,"ACCEPTED, delta +0.03 (within residual noise); created a 'two plus a third' self-contradiction flagged in same run — fold into the bindings decision instead"
+wf_db60e4d2,median-of-3,5,Resolve artifact count in Step 5 heading,internal-consistency,high,4.14,3.9,"[3.9,4.13,3.83]",false,n/a,"Rejected, delta -0.24"

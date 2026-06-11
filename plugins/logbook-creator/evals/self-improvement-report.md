@@ -99,3 +99,103 @@ Workflow({ scriptPath: "plugins/logbook-creator/evals/self-improve.workflow.js",
 ```
 
 Pass `args` as a real object (not a JSON string). Edit `PERSONAS` to change the scenario matrix.
+
+## Driver-pattern extension — RED baseline (`wf_aeea6414-240`, 51 agents, 1.57M tok, ~47 min)
+
+A new capability under evaluation: **driver (work-queue) logbooks** — the schema is a state machine and an
+empty stage cell is the trigger for an agent to do that stage (`WHERE reviewed IS NULL` = the work queue).
+Five new hidden-state personas (`evals/driver-pattern/driver-personas.js`), one per footgun, graded with an
+added `DRIVER_GROUND_TRUTH` block. Worked example + design fixtures in `evals/driver-pattern/`. This is the
+**before** snapshot, run against the unchanged skill (which has no driver branch).
+
+**Headline: mean overall 2.5/5 · contract items 58/105 (55%).**
+
+| Persona (footgun) | Contract | Overall median | Read |
+|---|---|---|---|
+| driver-poison-row | **0/20** | 1.0 (lows 0.5) | total miss — no attempts/parked concept |
+| driver-stage-dag | **0/20** | 1.0 | total miss — no DAG/prerequisite concept |
+| driver-sentinel-trap | 24/25 | 3.0 (artifact lens 2) | **emergent pass, not skill coverage** (see below) |
+| driver-concurrent-claim | 16/20 | 3.5 | sees the race 5/5, emits the lease only 3/5 |
+| driver-vs-tracker | 18/20 | 4.0 | existing tracker guard holds (1 run fooled by veneer) |
+
+**Key finding — the two numbers disagree, and that is the signal.** 55% contract-pass *overstates* coverage.
+`driver-sentinel-trap` passed 24/25 yet every judge's gap list says *"SKILL.md has no mechanism to elicit the
+sentinel trap"* and one finding is titled *"correct behavior was emergent, not instructed."* A capable Sonnet
+probed and built a status sentinel from its own competence — **sim-rescue**, not skill coverage (corroborated
+by artifact lens stuck at 2, and `concurrent-claim` recognizing the race 5/5 but emitting the mechanism only
+3/5). The trustworthy signal is the floor, not the average: **DAG and poison are a hard 0/20** (instructed-
+absence the model can't rescue); sentinel/claim are fragile-emergent; only the tracker guard is genuinely
+covered. This mirrors the run-1/run-2 lesson from the other direction: behavioral sims are *optimistic* about
+capabilities the skill doesn't contain — trust the gap/static signal over the behavioral average.
+
+**Fix (all 12 high-severity gaps converged on it): a named driver branch.** Priority by leverage:
+poison-row (0/20) → stage-DAG (0/20) → claim/lease mechanism (3/5) → make the sentinel gate forced not
+emergent → preserve the tracker guard. Implemented next as generic rules with an anti-rationalization table
+to force the flow; re-run will measure the green delta vs. this baseline.
+
+## Driver-pattern extension — GREEN re-eval (`wf_ba42f8c1-391`, 51 agents, 1.71M tok, ~18 min)
+
+Same rig (same 5 personas × K=5, identical prompts), against the patched skill — apples-to-apples. The
+branch: a 6th motivation in Step 1, **Step 2.5** (gate + anti-rationalization table + five required
+decisions), a sentinel carve-out in 3B, stage-column kit in 3C, storage override in Step 4, a Driver-
+variant spec section, four anti-patterns, and `references/work-queue.md`.
+
+**Headline: mean overall 2.5 → 4.36 (+1.86) · contract 55% → 94% (58→99/105) · fully-failed 2 → 0.**
+
+| Persona | RED contract | GREEN contract | RED overall | GREEN overall |
+|---|---|---|---|---|
+| poison-row | 0/20 | **20/20** | 1.0 | 4.5 |
+| stage-dag | 0/20 | **19/20** | 1.0 | 4.0 |
+| concurrent-claim | 16/20 | 20/20 | 3.5 | 4.5 |
+| sentinel-trap | 24/25 (emergent) | 20/25 (instructed) | 3.0 | 4.8 |
+| vs-tracker | 18/20 | 20/20 | 4.0 | 4.0 |
+
+The two hard 0/20 capability holes (poison, DAG) closed. The tracker guard *strengthened* (redirect 4/5
+→ 5/5, no veneer fooling). concurrent-claim lease mechanism 3/5 → 5/5. Sentinel is now instructed not
+sim-rescued (artifact lens 2 → 5). The anti-rationalization table converted fragile emergent behavior
+into forced behavior — that is why the floor rose.
+
+**Remaining (now refinements, not holes).** Judges flagged: (1) Decision 1's sentinel reads as
+*conditional* on the user's "no" — one rep accepted "no" without an adversarial probe (the lone overall-2
+outlier; sentinel contract 20/25). Make the sentinel **structural/unconditional**. (2) A numbering
+collision I introduced — the anti-rationalization table labelled the tracker row "(Decision 5)" while the
+numbered Decision 5 is *terminal outcomes*. (3) No explicit stop-redirect when the tracker gate fires
+mid-2.5. Plus artifact nits: emit one atomic-claim per stage; `CREATE INDEX` in the driver template;
+probe for an implicit DAG even when one stage is visible; the SQLite `NULL != value` caveat. Applied in a
+tightening pass; a confirmation re-run measures it.
+
+## Driver-pattern extension — CONFIRM re-eval + convergence (`wf_85d63f30-0ab`, 51 agents, 1.70M tok, ~17 min)
+
+Same rig a third time, against the tightened skill (unconditional sentinel; numbering-collision fix;
+pre-check stop-redirect; implicit-DAG probe; per-stage atomic claim + `CREATE INDEX`; SQLite `NULL`
+caveat in `work-queue.md`).
+
+**Headline: mean overall 4.36 → 4.46 · contract 94% → 89% (99→93/105) · fully-failed still 0.**
+
+| Persona | GREEN | CONFIRM | note |
+|---|---|---|---|
+| sentinel | 4.8 / 20/25 | 4.8 / **25/25** | unconditional-sentinel fix landed — perfect, no outlier |
+| vs-tracker | 4.0 / 20 | 4.5 / 20 | guard solid, slightly up |
+| concurrent | 4.5 / 20 | 4.5 / 16 | one outlier rep (built-single) |
+| dag | 4.0 / 19 | 4.5 / 16 | one outlier rep; **median up** |
+| poison | 4.5 / 20 | 4.0 / 16 | one outlier rep |
+
+**The contract dip is rep-noise, and the median metric proves it.** Targeted fix worked (sentinel
+20/25 → 25/25). Mean overall *rose*; per-persona medians flat-or-up (dag 4.0 → 4.5). The 94→89 drop is
+three single-rep outliers where the sim didn't engage the driver gate in 1 of 5 reps (one returned
+`built-single`) — whole-rep stochastic misses, **not** the "accepted a dismissive answer" mode (per-item
+passes were a uniform 4/5). Aggregate delta +0.10 is inside the established ±0.28 band.
+
+**Convergence — loop stopped.** Three rounds: **2.5 → 4.36 → 4.46.** Both 0/20 capability holes closed,
+sentinel perfected, tracker guard solid + strengthened (redirect 4/5 → 5/5 over the runs), zero
+fully-failed personas. Green→confirm deltas are within noise; a 4th round would surface a different random
+outlier set. ~5.0M tokens across the 3 rounds (153 sim+judge agents).
+
+**Recommended (optional) next refinements — proven pattern, apply-and-measure.** The judges converged on
+extending the Decision-1 counter-probe device (which demonstrably took sentinel to 25/25) to Decisions 2–4:
+challenge a dismissive "they're independent" / "every item completes" once with a concrete counter-example
+before accepting. Also: make `<stage>_attempts` + a `failed` status **unconditional** schema defaults (the
+failure question sets `N`, not whether to include them); and add a Step 5 check that every status literal
+used in a query appears in the Stages table + CHECK constraint. These harden against an *actively
+dismissive* user (not the noise above), so they should be applied **and re-measured** in a future round
+rather than shipped unmeasured — consistent with the loop discipline.

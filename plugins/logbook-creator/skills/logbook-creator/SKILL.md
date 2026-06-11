@@ -38,6 +38,7 @@ Ask the user what's going on in plain language, not "what columns do you want." 
 - **Human-in-the-loop review** — agents produce structured results and a human reviews, annotates, approves, or rejects before anything is applied downstream.
 - **Multi-agent coordination** — several agents read and write the same structured state; the logbook is the shared contract between them (explorer writes findings, critic scores, estimator adds numbers).
 - **Collection for later analysis** — gather structured data during work sessions now so that filtering, aggregation, or visualization is cheap later.
+- **Driver / work-queue** — the schema *is* the todo list: an empty stage cell is the trigger for an agent to do that stage, and `WHERE <stage> IS NULL` is the work queue. No external orchestration list. This pattern has its own required gating — see Step 2.5.
 
 Reflect back what you heard in one sentence: *"So this sounds like a staging surface — you want agents to shape candidates, and you review and push approved ones to X. Is that right?"* The motivation shapes everything downstream, especially which validation rules, actions, and governance defaults matter.
 
@@ -47,7 +48,7 @@ Reflect back what you heard in one sentence: *"So this sounds like a staging sur
 
 ### Step 2 — Scope & lifecycle
 
-Before picking columns or a storage format, work through four sub-questions about where this logbook lives, how entries are partitioned, whether it will actually be used, and what state architecture it needs (2.1–2.4 below). Each sub-question feeds into the next and into downstream steps. Don't collapse these into one prompt — they build on each other, and users often revise their earlier answer once a later one forces the issue. Let them go back.
+Before picking columns or a storage format, work through four sub-questions about where this logbook lives, how entries are partitioned, whether it will actually be used, and what state architecture it needs (2.1–2.4 below), plus a conditional fifth check (2.5) that fires when the logbook is a work-queue that drives agent work. Each sub-question feeds into the next and into downstream steps. Don't collapse these into one prompt — they build on each other, and users often revise their earlier answer once a later one forces the issue. Let them go back.
 
 #### 2.1 Scope, location, lifetime
 
@@ -142,6 +143,34 @@ Ask these seven questions in conversation (not as a form):
 
 Whether a multi-entity logbook also needs an append-only JSONL run-trace alongside its SQLite ledger is a Step 4 question (projections), not a separate branch here.
 
+#### 2.5 Work-queue (driver) check
+
+Run this gate for **every** logbook. Ask one question:
+
+> *"Is an empty (NULL) cell in some column the signal for an agent to do work on that row?"*
+
+If **no**, skip to Step 3. If **yes**, this is a **driver** (work-queue) logbook: the schema is a state machine and emptiness is a transition trigger. The five decisions below are **required gates, not optional probes** — skipping any one ships a queue that silently double-works, runs stages out of order, stalls, or loops forever. The dimension is orthogonal to single-table vs. multi-entity (2.4): a driver can be either.
+
+First, a **pre-check (tracker gate):** a driver framing does **not** exempt the Step 1 "three of four" test. If per-person assignment, due dates, notifications, or staleness SLAs are present, this is work-management — **stop, redirect to Jira/Linear, and do not proceed to the five decisions.** The driver framing does not change that outcome. Otherwise, work the five decisions below. **Before working them, check yourself against the shortcuts in this table** — each feels reasonable in the moment and is wrong:
+
+| If you catch yourself thinking… | Stop — the rule is |
+|---|---|
+| "The user said 'empty = todo', so I'll trigger on the empty content cell (`comment`, `summary`, `result`)." | A stage can finish successfully and still leave that cell empty. Trigger on a dedicated `<stage>_status` sentinel where **NULL means pending only** — never on a content column. *(Decision 1)* |
+| "There's only one worker, so I don't need claiming." | Ask whether two workers could *ever* run at once. If yes or unknown, add the lease now — retrofitting concurrency onto a live queue is a mid-flight schema migration. *(Decision 2)* |
+| "They're just columns to fill in; the order will sort itself out." | Elicit the stage dependencies and bake each prerequisite into that stage's ready-query. A bare `WHERE <stage> IS NULL` runs stages out of order. *(Decision 3)* |
+| "Every row will complete eventually." | Some inputs never succeed (dead link, corrupt file, un-doable item). Design an attempts counter + a terminal *parked* state before first run, or one poison row starves the queue. *(Decision 4)* |
+| "It's a driver logbook, so the tracker test doesn't apply." | The driver framing exempts nothing. Per-person assignment, due dates, notifications, and staleness SLAs are work-management → redirect to Jira/Linear. *(Pre-check — see above)* |
+
+The five decisions, each a required question:
+
+1. **Sentinel — what does empty mean?** **Propose a `<stage>_status` column for every triggering stage by default** (`NULL` = pending; explicit `done`; plus any terminal values) — the trigger and every ready-query key off it, never the content column. The question *"Can this stage finish successfully and still leave its content cell empty?"* is **diagnostic, not a yes/no toggle for whether to add the sentinel.** Even if the user says a completed stage always writes content, keep the sentinel: empty-string and `NULL` are indistinguishable in a content column, and the sentinel costs nothing. Only omit it if the user gives a concrete reason the stage *literally cannot* produce a successful empty result — and when in doubt, keep it. If the user first answers "no, the content is always filled," challenge once with a counter-example (*"and if the agent looks and finds nothing worth recording?"*) before accepting. Carries into Step 3B as a partial-row carve-out.
+2. **Concurrency — who claims a row?** Ask: *"Will more than one worker process rows at the same time?"* If yes/unknown: add `claimed_by`, `claimed_at`, `lease_until`; claim atomically; and every ready-query excludes leased rows (`lease_until IS NULL OR lease_until < :now`) so a crashed worker's row becomes reclaimable. Carries into Step 4 (atomic claim ⇒ SQLite, not CSV).
+3. **Dependencies — what must be true before a stage runs?** Ask: *"Can these stages happen in any order, or must one precede another?"* Each stage's ready-query then includes its prerequisite (`<this>_status IS NULL AND <prior>_status = 'done'`), not a bare null-check. Even if only one stage is visible, ask whether any step must precede it or consume its output — implicit stages surface here, before the schema is fixed.
+4. **Failure — what happens when a row can't be done?** Ask: *"If a worker errors on a row, does it retry, and how many times before giving up?"* Add `<stage>_attempts` (default 0), a terminal `failed`/`parked` status, a ready-query predicate `<stage>_attempts < N`, and a parked-rows query that surfaces dead-letter rows for a human. Distinguish transient (release lease, retry) from terminal (park).
+5. **Terminal outcomes — what stops a row advancing?** Some results are done-but-dead (`rejected`, `excluded`, `duplicate`). Name which status values advance a row and which absorb it, so the next stage's ready-query (decision 3) admits only genuinely-advancing rows.
+
+Record the answers; they drive the schema (Step 3), storage (Step 4), and the driver spec sections (Step 5). For generic column/query templates and a full worked example, read `references/work-queue.md`. Then proceed to Step 3.
+
 ### Step 3 — Entity-first schema design
 
 By this point Step 2.4 has decided whether this is a single-table or a multi-entity logbook. Both paths run through the same three sub-steps — single-table collapses them trivially (one record type) while multi-entity fans them out per record type.
@@ -162,7 +191,7 @@ Answer each of these once per record type, grounded in the user's scenario rathe
 - **Purpose** — one sentence: what this record type is for.
 - **Identity key(s)** — the row key. If Step 2.4 surfaced cross-session recurrence, add a domain fingerprint. If the record type is run-scoped, add a run-boundary key as well.
 - **Mutability** — append-only or patchable current state. This usually falls out of the motivation: audit-sensitive record types append; refinement-heavy ones patch.
-- **Partial-row convention** — empty string, explicit null, or "unknown". One convention per record type. Mixed conventions corrupt filters.
+- **Partial-row convention** — empty string, explicit null, or "unknown". One convention per record type. Mixed conventions corrupt filters. **Driver carve-out (Step 2.5):** in a driver logbook, every `<stage>_status` column reserves `NULL` for *pending* exclusively and never accepts empty-string — a worker writing `""` to a status column is indistinguishable from pending and gets re-claimed forever. Content columns still follow the one-convention rule.
 - **Correction rule** — append-only (new row supersedes) or patch-in-place. Must be consistent with mutability: append-only types correct by appending; patchable types correct by patching.
 - **Relationships** — foreign keys into other record types, parent/child hierarchies, any cross-table link.
 - **Suggested indexes** — for SQLite backends, propose indexes based on the expected query patterns for this record type (skip for CSV/JSONL).
@@ -171,7 +200,7 @@ If two contributors might mean different things by the same column name (`priori
 
 #### 3C — Columns
 
-Only after 3B is settled. Propose a starter set per record type; let the user refine. Include one sentence of field semantics per column. If the schema for any record type can't be described in under 30 seconds, trim or reshape before proceeding.
+Only after 3B is settled. Propose a starter set per record type; let the user refine. Include one sentence of field semantics per column. If the schema for any record type can't be described in under 30 seconds, trim or reshape before proceeding. For a driver logbook (Step 2.5), each stage contributes a `<stage>_status` sentinel column (plus `<stage>_attempts` where failure handling was decided, and the shared `claimed_by`/`claimed_at`/`lease_until` lease columns when concurrent) — these are part of the starter set, not afterthoughts.
 
 Also ask one actions question here while the motivation is fresh: *"Does this logbook need to feed an external system — Jira, Miro, a report, another agent? If so, name it."* Record the answer. This populates the `## Actions` section in Step 5 with real content instead of a placeholder. If the user says no external system, write "No actions defined." in the spec.
 
@@ -199,6 +228,8 @@ Narrow the table by the location picked in 2.1:
 The motivation biases the choice: staging and collection lean toward CSV or SQLite (diffable, chartable); human-review leans toward spreadsheet; multi-agent concurrent writers and anything multi-entity lean toward SQLite.
 
 Migration is always available — start simple, upgrade when the pain signals (nested fields → JSONL; need joins → SQLite; need human UI → spreadsheet). Tell the user this so they don't over-engineer up front.
+
+**Driver logbooks (Step 2.5) with concurrent workers** need atomic row claiming — one `UPDATE … RETURNING` that hands a row to exactly one worker. Plain CSV cannot claim atomically (two workers read the same empty row and both act on it), so a concurrently-claimed driver requires **SQLite** or an enforced single writer. This overrides the "deprioritize SQLite in a repo" guidance above: keep the live SQLite queue at a stable state-path and, if repo visibility matters, commit only an exported snapshot projection.
 
 #### Projections (optional)
 
@@ -392,6 +423,26 @@ Example skeleton for the expanded sections (record type names are illustrative �
 <rule>
 ````
 
+### Driver variant
+
+When Step 2.5 identified this as a driver (work-queue) logbook, extend the template with the sections below. Keep them generic to the stages the user actually named — do not invent stages.
+
+- **Schema** — each stage adds a `<stage>_status` sentinel column (and `<stage>_attempts` where failure handling was decided); the lease columns `claimed_by`/`claimed_at`/`lease_until` are shared across stages when concurrent. In Step 5, alongside `CREATE TABLE`, emit one `CREATE INDEX` per `<stage>_status` + `lease_until` pair — that is the ready-query hot path.
+- Add a **`## Stages`** section — one row per stage, naming its trigger, action, and outcome values:
+
+```markdown
+## Stages
+| Stage | Ready when (predicate) | Action | Done | Terminal-skip | Parked |
+|---|---|---|---|---|---|
+| <stage> | `<stage>_status IS NULL AND <prior>_status='done' AND <stage>_attempts < N AND (lease free)` | <what the agent does> | `'done'` | `'<skip>'` | `'failed'` |
+```
+
+- **Queries** must include, against the real address: each stage's **ready-query**; one **atomic claim** per stage (every stage in the Stages table, not just the first) (`UPDATE … WHERE id=(SELECT … LIMIT 1) RETURNING …`); a **funnel** (`GROUP BY` stage = live burndown); and a **parked-rows** query surfacing dead-letter rows for a human.
+- **Actions** become **internal stage-actions** (they advance rows inside the logbook) rather than external pushes: each stage's readiness check = its ready-query predicate; effect = sets the stage status + releases the lease; patch-back = n/a. An external push, if any, stays a normal Action with its own patch-back column.
+- **Governance** records the lease duration and that the authoritative store is safe for claiming (SQLite transaction = safe; CSV under concurrent workers = unsafe).
+
+The poller that turns these ready-queries into agent dispatches is **skill-creator's job**, not this skill's — the spec is the handoff, exactly as for non-driver logbooks.
+
 ## Handoff to skill-creator
 
 After the two files are written, tell the user what to do next. Typical next steps:
@@ -411,7 +462,13 @@ Do not try to generate a SKILL.md yourself — that is skill-creator's job, and 
 - **Premature extraction from prose.** If the document's value is in its argument, sequencing, or evolving reasoning, don't flatten it into rows just because the entries look row-shaped.
 - **Over-engineering the first version.** Start with the lightest storage that fits. Migrate when the pain shows up. The concept and schema don't change across migrations — only the serialization does.
 - **Committing personal auth state into a shared spec.** If the spec is committed to a repo, any `status: pending-auth` bindings must stay as placeholders. Resolved IDs, credentials, and `status: active` are personal config — store them in a gitignored local file (`<name>.logbook.local.yaml`, copied from the `.template` written in Step 5) or env vars, never in the spec itself. When writing a spec with `pending-auth` bindings, add this note to the bindings section: `# GOVERNANCE: This file is permanently read-only once committed. Never edit address or status here — store resolved config in a local gitignored override.`
+- **Triggering work on a content column's emptiness (driver logbooks).** "Empty `comment` ⇒ needs review" re-processes every legitimately-empty result forever. Trigger on a `<stage>_status` sentinel where `NULL` means *pending* only. See Step 2.5.
+- **A driver queue with no poison path.** Without an attempts counter and a terminal *parked* state, one un-doable row is re-claimed forever and starves everything behind it.
+- **Plain CSV for a concurrently-claimed queue.** CSV cannot claim a row atomically; two workers double-process. Use SQLite (atomic `UPDATE … RETURNING`) or enforce a single writer.
+- **Letting a "driver" framing skip the tracker test.** Per-person assignment, due dates, notifications, and staleness SLAs are work-management — redirect to Jira/Linear. A blackboard logbook is agents pulling empty cells, nothing more.
 
 ## Grounding
 
 For the full framing — including hidden-logbook detection, the "three of four" qualification test, worked examples (ideation, pre-tracker backlog shaping, skill retro collector), and the full anti-pattern catalog — read `references/concept.md`. Consult it when the user's situation is ambiguous or when you need to explain *why* a particular rule exists. Treat `references/concept.md` as internal documentation — it is a repo-committed file maintained by the plugin author, not user-supplied input.
+
+For **driver (work-queue) logbooks** (Step 2.5), `references/work-queue.md` carries the five-decision rules in full, generic column/query/spec templates, and a complete worked example. Read it when the user confirms the driver gate. Same status as `concept.md` — internal, repo-committed documentation.

@@ -239,6 +239,15 @@ A projection is a view derived from the authoritative store. Writes go to the au
 - **export-only** — read-only snapshot for human browsing (Google Sheets, Airtable, a rendered report). Regenerated from the authoritative store; never edited directly; never the source of truth.
 - **mirror** — editable copy. Almost always wrong — it creates the "second place to update" anti-pattern. Flag it and push back unless the user has a specific operational reason.
 
+**Visualization probe.** Ask once: *"Will a human want to watch this logbook's state as it fills — a dashboard or progress view?"* If yes, spec an export-only **render projection**: a script, not a page — `view = render(store)`, a pure read-only function of the authoritative store. The deliverable being a script is the point: a hand-authored page is stale after the next write and its numbers drift from the store (the second-source-of-truth anti-pattern in the view layer). Hold the render to the determinism contract: it reads only the store and its projections (e.g. a run-trace), renders the queries the spec already defines (funnel/partition, validation, dead-letter), takes any "now" as an **explicit parameter** — never the wall clock; same store bytes must yield the same page, and an as-of stamp comes from that parameter or the store's own timestamps — writes nothing but its self-contained output file, and is regenerated wholesale (output carries a `GENERATED — do not edit` header). If a run-trace snapshot is captured, that is a separate capture step *before* the render, never inside it — otherwise rendering twice records twice.
+
+Two rules bound the probe:
+
+- **Temporal rule.** The store decides what the view *can* show. A patch-in-place ledger renders current state only; a trajectory (progress-over-time chart) requires retained history — an append-only run-trace or transition timestamps, which is a store decision (2.4 / this step), not a renderer feature. Never chart a trend from a single snapshot.
+- **Scope rule.** One logbook, one render script bound to that logbook's spec. *"Make it configurable for my other logbooks too"* is the universal-platform trap in the view layer — and a shared generator driven by a config registry is that trap in softened form, even though it feels like "reusable infrastructure." Reuse happens by copying the convention into the next logbook's own script and spec.
+
+For the full contract, anti-rationalization table, script template, and a worked example, read `references/visualization.md`.
+
 If it is unclear which store is authoritative, the design is not finished. Ask again before moving on.
 
 ### Step 5 — Create the two artifacts
@@ -301,7 +310,7 @@ When the user moves this file, update the address here.
 
 ## Storage
 
-<format + one-sentence rationale for why this format fits the job>
+<format + one-sentence rationale for why this format fits the job. If any projections were specced (Step 4), list each: role (`run-trace` | `export-only` | `mirror`) and address — and for a render projection, the render script path, what it renders, and its temporal capability (current-state only, or trajectory via which retained history).>
 
 ## Schema
 
@@ -369,7 +378,7 @@ The query snippets must be the **actual commands** that work against the logbook
 
 When Step 2.4 decided this is a multi-entity logbook, extend the template above as follows. Sections not listed here stay identical to the single-table template.
 
-- **Storage** becomes **Physical stores** — lists the authoritative store first, then each projection with its role (`run-trace`, `export-only`, `mirror`) and address.
+- **Storage** becomes **Physical stores** — lists the authoritative store first, then each projection with its role (`run-trace`, `export-only`, `mirror`) and address — and for a render projection, also the script path, what it renders, and its temporal capability, exactly as in the single-table `## Storage` clause.
 - **Schema** becomes one `### <RecordType>` subsection per table, each with its own schema table.
 - **Identity**, **Partial rows**, **Corrections** each become per-record-type subsections, one block per record type — so a reader can see the full contract for one table without scanning the whole spec.
 - **Queries** remains flat but includes cross-table JOIN examples where relevant.
@@ -438,6 +447,7 @@ When Step 2.5 identified this as a driver (work-queue) logbook, extend the templ
 ```
 
 - **Queries** must include, against the real address: each stage's **ready-query**; one **atomic claim** per stage (every stage in the Stages table, not just the first) (`UPDATE … WHERE id=(SELECT … LIMIT 1) RETURNING …`); a **funnel** (`GROUP BY` stage = live burndown); and a **parked-rows** query surfacing dead-letter rows for a human.
+- If the **visualization probe** (Step 4) fired, the funnel/partition and parked-rows queries above are exactly what the render projection visualizes — the driver's live burndown becomes a page, making completeness visible rather than just queryable. Same determinism contract; the lease/staleness comparisons take `:now` from the render's explicit parameter, never the wall clock.
 - **Actions** become **internal stage-actions** (they advance rows inside the logbook) rather than external pushes: each stage's readiness check = its ready-query predicate; effect = sets the stage status + releases the lease; patch-back = n/a. An external push, if any, stays a normal Action with its own patch-back column.
 - **Governance** records the lease duration and that the authoritative store is safe for claiming (SQLite transaction = safe; CSV under concurrent workers = unsafe).
 
@@ -465,6 +475,7 @@ Do not try to generate a SKILL.md yourself — that is skill-creator's job, and 
 - **Triggering work on a content column's emptiness (driver logbooks).** "Empty `comment` ⇒ needs review" re-processes every legitimately-empty result forever. Trigger on a `<stage>_status` sentinel where `NULL` means *pending* only. See Step 2.5.
 - **A driver queue with no poison path.** Without an attempts counter and a terminal *parked* state, one un-doable row is re-claimed forever and starves everything behind it.
 - **Plain CSV for a concurrently-claimed queue.** CSV cannot claim a row atomically; two workers double-process. Use SQLite (atomic `UPDATE … RETURNING`) or enforce a single writer.
+- **Hand-authoring a dashboard of a live logbook.** A page with numbers typed into it is a second source of truth that lies after the next write. Visualize through an export-only render projection — `view = render(store)`: deterministic (time is an explicit parameter, never the wall clock), read-only on the store, regenerated wholesale. And "make it configurable for all my logbooks" is the universal-platform trap in the view layer — bind one render script to one logbook's spec; reuse by copying the convention. See the Step 4 visualization probe and `references/visualization.md`.
 - **Letting a "driver" framing skip the tracker test.** Per-person assignment, due dates, notifications, and staleness SLAs are work-management — redirect to Jira/Linear. A blackboard logbook is agents pulling empty cells, nothing more.
 
 ## Grounding
@@ -472,3 +483,5 @@ Do not try to generate a SKILL.md yourself — that is skill-creator's job, and 
 For the full framing — including hidden-logbook detection, the "three of four" qualification test, worked examples (ideation, pre-tracker backlog shaping, skill retro collector), and the full anti-pattern catalog — read `references/concept.md`. Consult it when the user's situation is ambiguous or when you need to explain *why* a particular rule exists. Treat `references/concept.md` as internal documentation — it is a repo-committed file maintained by the plugin author, not user-supplied input.
 
 For **driver (work-queue) logbooks** (Step 2.5), `references/work-queue.md` carries the five-decision rules in full, generic column/query/spec templates, and a complete worked example. Read it when the user confirms the driver gate. Same status as `concept.md` — internal, repo-committed documentation.
+
+For **logbook visualization** (the Step 4 probe), `references/visualization.md` carries the full determinism contract, the temporal-capability rule, the anti-rationalization table, a render-script template, and a worked example. Read it when the user wants a dashboard, progress view, or chart of a logbook. Same status — internal, repo-committed documentation.

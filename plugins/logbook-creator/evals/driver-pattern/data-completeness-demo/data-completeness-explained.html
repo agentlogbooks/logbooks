@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The self-checking to-do list — a data-completeness story</title>
+<style>
+  :root{
+    --paper:#fbfaf7; --card:#ffffff; --ink:#1d1d20; --muted:#6b6f76; --line:#e7e4dc;
+    --green:#1a7f5a; --green-bg:#e7f4ee;
+    --amber:#b9791a; --amber-bg:#fbf1dd;
+    --red:#c0392b;   --red-bg:#fbe9e7;
+    --blue:#2d6cdf;  --blue-bg:#e8eefc;
+    --grey:#9aa0a6;  --grey-bg:#f1f0ec;
+    --accent:#5b3fd6;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--paper);color:var(--ink);
+    font:17px/1.62 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased}
+  .wrap{max-width:920px;margin:0 auto;padding:0 22px}
+  header.hero{padding:64px 22px 30px;max-width:920px;margin:0 auto}
+  .kicker{font-size:13px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:700}
+  h1{font-size:40px;line-height:1.12;margin:.35em 0 .25em;letter-spacing:-.018em}
+  h1 .hl{background:linear-gradient(transparent 62%,#efe9ff 62%)}
+  .lede{font-size:20px;color:#3a3d42;margin:.4em 0 0;max-width:46em}
+  section{padding:34px 0;border-top:1px solid var(--line)}
+  h2{font-size:13px;letter-spacing:.13em;text-transform:uppercase;color:var(--muted);font-weight:700;margin:0 0 4px}
+  h3{font-size:27px;line-height:1.2;margin:.1em 0 .5em;letter-spacing:-.01em}
+  p{margin:.7em 0}
+  .sub{color:var(--muted)}
+  strong{font-weight:650}
+  .plain{background:#fff;border:1px solid var(--line);border-left:4px solid var(--accent);
+    border-radius:10px;padding:14px 18px;margin:18px 0;box-shadow:0 1px 0 rgba(0,0,0,.02)}
+  .plain .tag{font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--accent)}
+  .plain p{margin:.35em 0 0}
+  .grid{display:grid;gap:14px}
+  .cols-2{grid-template-columns:1fr 1fr}
+  .cols-3{grid-template-columns:repeat(3,1fr)}
+  @media(max-width:760px){.cols-2,.cols-3{grid-template-columns:1fr}}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:13px;padding:18px}
+  .pill{display:inline-block;font-size:12px;font-weight:700;border-radius:999px;padding:3px 10px;letter-spacing:.02em}
+  .p-green{background:var(--green-bg);color:var(--green)}
+  .p-amber{background:var(--amber-bg);color:var(--amber)}
+  .p-red{background:var(--red-bg);color:var(--red)}
+  .p-blue{background:var(--blue-bg);color:var(--blue)}
+  .p-grey{background:var(--grey-bg);color:#5f6368}
+  /* pipeline */
+  .pipe{display:flex;gap:0;align-items:stretch;flex-wrap:wrap;margin:6px 0 2px}
+  .stage{flex:1;min-width:150px;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 14px 12px;position:relative}
+  .stage + .stage{margin-left:26px}
+  .stage + .stage::before{content:"→";position:absolute;left:-21px;top:50%;transform:translateY(-50%);color:var(--accent);font-size:20px;font-weight:700}
+  .stage .n{font-size:12px;color:var(--accent);font-weight:700}
+  .stage .t{font-weight:650;margin:2px 0 4px}
+  .stage .adds{font-size:13px;color:var(--muted)}
+  .stage .pl{font-size:13.5px;margin-top:8px;color:#3c3f44}
+  @media(max-width:760px){.stage+.stage{margin-left:0;margin-top:26px}.stage+.stage::before{left:50%;top:-21px;transform:translateX(-50%) rotate(90deg)}}
+  /* company strip */
+  .co{display:flex;align-items:center;gap:12px;padding:11px 14px;border:1px solid var(--line);border-radius:11px;background:#fff;margin:9px 0}
+  .co .dom{font-weight:650;min-width:128px;font-variant-numeric:tabular-nums}
+  .ph{display:flex;gap:5px}
+  .cell{width:30px;height:30px;border-radius:7px;display:flex;align-items:center;justify-content:center;
+    font-size:12px;font-weight:700;border:1px solid transparent}
+  .c-done{background:var(--green-bg);color:var(--green)}
+  .c-skip{background:var(--blue-bg);color:var(--blue)}
+  .c-fail{background:var(--red-bg);color:var(--red)}
+  .c-work{background:var(--amber-bg);color:var(--amber);border-color:var(--amber)}
+  .c-pend{background:var(--grey-bg);color:#b6babf}
+  .co .note{font-size:13.5px;color:#3c3f44;flex:1;min-width:200px}
+  .co.interesting{border-color:#d9d2f5;box-shadow:0 0 0 3px #f0ecfd}
+  .legend{display:flex;flex-wrap:wrap;gap:14px;font-size:13px;color:var(--muted);margin:6px 0 16px}
+  .legend span{display:inline-flex;align-items:center;gap:6px}
+  .sw{width:15px;height:15px;border-radius:4px;display:inline-block}
+  /* vs */
+  .vs{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+  @media(max-width:760px){.vs{grid-template-columns:1fr}}
+  .vs .card h4{margin:0 0 2px;font-size:16px}
+  .big{font-size:38px;font-weight:750;letter-spacing:-.02em;line-height:1}
+  .scorebar{height:12px;border-radius:7px;background:var(--grey-bg);overflow:hidden;margin:10px 0 4px}
+  .scorebar > i{display:block;height:100%}
+  table.miss{width:100%;border-collapse:collapse;font-size:14.5px;margin-top:6px}
+  table.miss th,table.miss td{text-align:left;padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+  table.miss th{font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+  table.miss td.dom{font-weight:650;white-space:nowrap}
+  .arrow{color:var(--muted)}
+  .decision{display:flex;gap:14px;padding:15px 0;border-bottom:1px solid var(--line)}
+  .decision:last-child{border-bottom:0}
+  .decision .num{flex:none;width:34px;height:34px;border-radius:9px;background:#f3f0fd;color:var(--accent);
+    font-weight:750;display:flex;align-items:center;justify-content:center}
+  .decision .q{font-weight:650}
+  .decision .r{font-size:14.5px;color:#3c3f44;margin-top:2px}
+  .decision .r b{color:var(--ink)}
+  .checks{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin-top:8px}
+  @media(max-width:620px){.checks{grid-template-columns:1fr}}
+  .check{display:flex;gap:9px;align-items:flex-start;font-size:14px;background:#fff;border:1px solid var(--line);border-radius:9px;padding:9px 11px}
+  .check .ok{color:var(--green);font-weight:800}
+  .finding{background:var(--amber-bg);border:1px solid #ecd9ad;border-radius:13px;padding:18px 20px}
+  .finding h3{margin-top:0}
+  .fix{background:#fff;border:1px solid var(--line);border-radius:10px;padding:12px 16px;margin-top:12px}
+  .bottom{background:#1d1d20;color:#f4f3ef;border-radius:16px;padding:30px 28px;margin:8px 0 0}
+  .bottom h3{color:#fff;margin-top:0}
+  .bottom .big{color:#fff}
+  .bottom .hl{color:#c9bcff}
+  footer{padding:30px 22px 70px;color:var(--muted);font-size:13px;max-width:920px;margin:0 auto}
+  code{background:#f1f0ec;border-radius:5px;padding:1px 6px;font-size:.88em;font-family:ui-monospace,SFMono-Regular,Menlo,monospace}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="kicker">A worked example, explained from scratch</div>
+  <h1>How do you <span class="hl">prove</span> a pile of half-finished work is actually complete?</h1>
+  <p class="lede">We built a small multi-step workflow whose database <em>is</em> its to-do list, ran 12 records through four phases, and then asked one question: <strong>can you look at the database at any instant and say, for every record, exactly where it stands — with no guessing?</strong> This page explains the idea, the test, and the result, assuming you know nothing going in.</p>
+</header>
+
+<main>
+
+<section class="wrap">
+  <h2>The core idea</h2>
+  <h3>A to-do list made of empty boxes</h3>
+  <p>Imagine a spreadsheet where each row is a job and each column is a step. The rule is simple: <strong>an empty box is a signal that someone should go do that step.</strong> A worker scans for empty boxes, does the work, fills the box in, and moves on. The spreadsheet doesn't just <em>record</em> the work — it <em>drives</em> it. There's no separate task manager and nobody assigning jobs by hand.</p>
+  <div class="plain">
+    <span class="tag">Plain language</span>
+    <p>It's like the order rail in a kitchen. A ticket goes up; whoever's free grabs it; when it's done it comes down. Nobody emails the cooks. The board itself is the system. We'll call this kind of database a <strong>driver</strong> (because it drives the work). The opposite — a tool like a ticketing system where a person assigns each task, sets due dates, and gets reminders — is a <strong>tracker</strong>. This story is about a driver.</p>
+  </div>
+  <p>The catch: this only works if an empty box has <em>one</em> unambiguous meaning. Most of this page is about the surprisingly easy ways that breaks — and what it takes to make it trustworthy.</p>
+</section>
+
+<section class="wrap">
+  <h2>What we built</h2>
+  <h3>A four-phase pipeline that <em>accumulates</em> data</h3>
+  <p>Our example enriches a list of companies. Each record starts as just a web domain and gathers more information at every phase. By the end, a sparse row has become a full profile — that's the "data accumulation."</p>
+  <div class="pipe" id="pipe"></div>
+  <div class="plain">
+    <span class="tag">Why these phases matter</span>
+    <p>Two of them can <strong>succeed and still produce nothing</strong>: a company might run no detectable software ("none found"), or have no reachable contact ("no contact"). That's a real, finished answer — not a gap. Holding onto that distinction is the whole game, as you'll see.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>The 12 records, after running</h2>
+  <h3>Every row landed in one of three states</h3>
+  <div class="legend">
+    <span><i class="sw c-done"></i> done</span>
+    <span><i class="sw c-skip"></i> finished-but-empty (a real answer)</span>
+    <span><i class="sw c-fail"></i> gave up &amp; flagged a human</span>
+    <span><i class="sw c-work"></i> being worked right now</span>
+    <span><i class="sw c-pend"></i> waiting / blocked</span>
+  </div>
+  <div id="companies"></div>
+  <p class="sub">Highlighted rows are the tricky ones — the cases that quietly break a naive design. The next section is about exactly those.</p>
+</section>
+
+<section class="wrap">
+  <h2>What "data complete" really means</h2>
+  <h3>The empty-box trap</h3>
+  <p>Here's the problem in one picture. Two of our records look <em>byte-for-byte identical</em> in their data, yet they mean opposite things:</p>
+  <div class="vs">
+    <div class="card">
+      <h4>umbrella.com</h4>
+      <p class="sub" style="margin:.2em 0 .6em">tech-stack columns: <code>empty</code></p>
+      <span class="pill p-green">Truth: COMPLETE</span>
+      <p style="font-size:14.5px">We checked. This company runs no detectable software. Empty is the <strong>correct, final</strong> answer.</p>
+    </div>
+    <div class="card">
+      <h4>cyberdyne.com</h4>
+      <p class="sub" style="margin:.2em 0 .6em">tech-stack columns: <code>empty</code></p>
+      <span class="pill p-red">Truth: GAVE UP</span>
+      <p style="font-size:14.5px">Every lookup errored out. Empty means <strong>nobody ever finished</strong> this step. Opposite meaning, same bytes.</p>
+    </div>
+  </div>
+  <p>If your only signal is "is the content box empty?", these two are indistinguishable — and so is a third case: a record someone is <em>actively working on right now</em> looks finished the moment its last box is filled, even though it isn't released yet.</p>
+
+  <div class="vs" style="margin-top:18px">
+    <div class="card">
+      <h4 style="color:var(--green)">Our driver design</h4>
+      <div class="big" style="color:var(--green)">12 / 12</div>
+      <div class="scorebar"><i style="width:100%;background:var(--green)"></i></div>
+      <p style="font-size:14.5px;margin:.5em 0 0">Every record placed in exactly one state — <strong>9 complete · 1 in-flight · 2 flagged</strong>. Completeness is a <em>query that returns an exact answer</em>.</p>
+    </div>
+    <div class="card">
+      <h4 style="color:var(--red)">A naive design (content only)</h4>
+      <div class="big" style="color:var(--red)">7 / 12</div>
+      <div class="scorebar"><i style="width:58.3%;background:var(--red)"></i></div>
+      <p style="font-size:14.5px;margin:.5em 0 0">Best possible guess from the data alone. It can't even <em>express</em> "flagged" or "in-flight", and it confuses "finished-empty" with "not done". It gets <strong>5 records wrong</strong>:</p>
+    </div>
+  </div>
+
+  <table class="miss" id="miss"></table>
+  <div class="plain">
+    <span class="tag">The takeaway</span>
+    <p>The fix isn't a cleverer query — no query over the naive data can separate identical rows. The fix is <strong>storing a tiny status flag for each phase</strong> whose only job is to say <em>pending / done / finished-empty / gave-up</em>. That one column per phase is what turns "are we done?" from a guess into a fact.</p>
+  </div>
+</section>
+
+<section class="wrap">
+  <h2>The design rules</h2>
+  <h3>Five ways an empty-box to-do list breaks — and the rule for each</h3>
+  <div id="decisions"></div>
+</section>
+
+<section class="wrap">
+  <h2>How we checked it</h2>
+  <h3>We didn't just trust our own test</h3>
+  <p>We ran a 9-agent review. Six independent checkers each <strong>wrote their own database query from scratch</strong> to try to find a broken record. One adversary tried to find a hole the six would miss. One tried to reproduce our clean answer on the naive design. One wrote the verdict.</p>
+  <div class="checks" id="checks"></div>
+  <p style="margin-top:14px"><span class="pill p-green">All six checkers: zero broken records.</span> &nbsp; <span class="pill p-red">Naive design: failed (couldn't get past 7/12).</span></p>
+</section>
+
+<section class="wrap">
+  <h2>The one thing we found</h2>
+  <div class="finding">
+    <h3>A blind spot the snapshot can't see</h3>
+    <p>The adversary found a real gap — not in the data, but in the <em>design</em>. We only count a record's failed attempts when a worker <strong>reports an error</strong>. But a worker could grab a record, <strong>crash before doing anything</strong>, and silently let its claim expire. The record gets handed back out — with its attempt count untouched. That can repeat forever, and because no error is ever reported, the "give up after 3 tries" rule never fires. A photo of the database at any instant looks perfectly healthy.</p>
+    <div class="fix">
+      <strong>The fix (a general rule, noted for the skill):</strong> count an attempt the moment a worker <em>grabs</em> a record, not only when it reports an error — and let the hand-back step itself flag a record that's been grabbed too many times. Then a crash-loop trips the limit like any other failure.
+    </div>
+  </div>
+</section>
+
+<section class="wrap">
+  <div class="bottom">
+    <h2 style="color:#bdb4e8">Bottom line</h2>
+    <h3>"Is our data complete?" becomes a question with a <span class="hl">provable</span> answer</h3>
+    <p style="color:#d9d7d0;max-width:48em">With one small status flag per phase, every record is always accountable — done, finished-empty, flagged, in-flight, or waiting — and you can verify the whole pile with a single query that six independent reviewers couldn't break. Without those flags, the best you can do is guess, and the guess is wrong 5 times out of 12. That's the difference the pattern buys.</p>
+  </div>
+</section>
+
+</main>
+
+<footer class="wrap">
+  Worked example built with the <strong>logbook-creator</strong> skill (driver / work-queue branch). Reproduce: <code>python3 harness.py &amp;&amp; python3 audit.py</code>. Independent verification: 9-agent workflow, 6 SQL auditors + adversary + naive-contrast + synthesis, all confirming. Domains are fictional; data is synthetic and deterministic.
+</footer>
+
+<script>
+const PHASES = [
+  {n:"Phase 1", t:"Firmographics", adds:"industry · employees · HQ", pl:"Look the company up and fill in the basics."},
+  {n:"Phase 2", t:"Tech stack",    adds:"CMS · analytics · cloud",   pl:"Detect their software. Finding nothing is a valid answer."},
+  {n:"Phase 3", t:"Contacts",      adds:"primary email · name",      pl:"Find a person to reach. Having no contact is also valid."},
+  {n:"Phase 4", t:"Score",         adds:"fit score",                 pl:"Compute the final score. This is the finish line."},
+];
+
+// state: done | skip(finished-empty) | fail | work(in-flight) | pend(waiting/blocked)
+const COMPANIES = [
+  {dom:"acme.com",      cells:["done","done","done","done"], state:"complete", interesting:false, note:"Flowed straight through all four phases."},
+  {dom:"globex.com",    cells:["done","done","done","done"], state:"complete", interesting:false, note:"Straightforward."},
+  {dom:"initech.com",   cells:["done","done","done","done"], state:"complete", interesting:false, note:"Straightforward."},
+  {dom:"umbrella.com",  cells:["done","skip","done","done"], state:"complete", interesting:true,  note:"No detectable software. Tech-stack finished EMPTY — a real answer — then carried on and scored."},
+  {dom:"soylent.com",   cells:["done","done","skip","done"], state:"complete", interesting:true,  note:"No reachable contact. Contacts finished EMPTY, still scored."},
+  {dom:"stark.com",     cells:["done","done","done","done"], state:"complete", interesting:false, note:"Straightforward."},
+  {dom:"tyrell.com",    cells:["done","done","done","done"], state:"complete", interesting:false, note:"Straightforward."},
+  {dom:"oscorp.com",    cells:["done","done","done","done"], state:"complete", interesting:true,  note:"Its first lookup errored once, retried, then succeeded — a transient blip, not a failure."},
+  {dom:"dunder.com",    cells:["done","done","done","done"], state:"complete", interesting:true,  note:"A worker had grabbed it and crashed; its claim expired, another worker reclaimed it and finished."},
+  {dom:"wayne.com",     cells:["done","work","pend","pend"], state:"in-flight", interesting:true, note:"A worker is holding it right now (claim still valid). Correctly NOT counted as finished."},
+  {dom:"wonka.com",     cells:["fail","pend","pend","pend"], state:"flagged",  interesting:true,  note:"Its lookup errors every time. After 3 tries it was parked and flagged for a human — it stops clogging the line."},
+  {dom:"cyberdyne.com", cells:["done","fail","pend","pend"], state:"flagged",  interesting:true,  note:"Same story one phase later: tech-stack lookup never works, parked after 3 tries."},
+];
+
+const NAIVE_MISS = [
+  {dom:"umbrella.com",  naive:"“not done”",   nc:"p-grey", truth:"COMPLETE",  tc:"p-green", why:"Tech boxes are empty because we checked and found nothing. Naive can't tell that from “nobody checked yet”."},
+  {dom:"soylent.com",   naive:"“not done”",   nc:"p-grey", truth:"COMPLETE",  tc:"p-green", why:"No contact exists — a final answer. Empty looks identical to “still looking”."},
+  {dom:"wonka.com",     naive:"“not done”",   nc:"p-grey", truth:"FLAGGED",   tc:"p-red",   why:"Lookup always errors. Naive has no notion of “give up”, so it would retry forever."},
+  {dom:"cyberdyne.com", naive:"“not done”",   nc:"p-grey", truth:"FLAGGED",   tc:"p-red",   why:"Byte-for-byte identical to umbrella (a finished row). No query can separate them."},
+  {dom:"wayne.com",     naive:"“finished”",   nc:"p-grey", truth:"IN-FLIGHT", tc:"p-amber", why:"All boxes happen to be filled, so naive calls it done — but a worker is still holding it. “Being worked on” isn't stored anywhere."},
+];
+
+const DECISIONS = [
+  {q:"What does an empty box actually mean?", r:"Give every phase its own little <b>status flag</b> (pending / done / finished-empty / gave-up). Read the flag, never guess from whether the content is empty. This is the rule the whole page is about."},
+  {q:"What if two workers grab the same record?", r:"A worker <b>stamps the record</b> with its name and an expiry time before working. Others skip stamped records. If the worker dies, the stamp expires and the record frees itself up."},
+  {q:"What has to happen before what?", r:"A phase is only <b>ready</b> when the phase before it has finished. Phase 3 can't start until phase 2 is done-or-finished-empty. The order is enforced, not assumed."},
+  {q:"What about a record that can never succeed?", r:"<b>Count the attempts.</b> After a few failures, park it in a “gave-up” state and surface it to a human, so one broken record can't block everything behind it forever."},
+  {q:"Which answers count as finished?", r:"<b>Name them explicitly.</b> “done”, “none-found” and “no-contact” all move the record forward; “gave-up” stops it. Outcomes, not just true/false."},
+];
+
+const CHECKS = [
+  "Every record is in exactly one state — no record left unclassified, none double-counted.",
+  "No phase ran out of order — each one waited for the phase before it.",
+  "No status flag was left blank in a way that could be mistaken for “pending”.",
+  "Every “done” record actually has the data it should; every “finished-empty” one is correctly empty.",
+  "Every record that gave up was flagged for a human; none was silently dropped.",
+  "No record was left claimed by a worker whose stamp had already expired.",
+];
+
+function el(html){const d=document.createElement("div");d.innerHTML=html.trim();return d.firstChild;}
+
+// pipeline
+document.getElementById("pipe").innerHTML = PHASES.map(p=>
+  `<div class="stage"><div class="n">${p.n}</div><div class="t">${p.t}</div>
+   <div class="adds">adds: ${p.adds}</div><div class="pl">${p.pl}</div></div>`).join("");
+
+// companies
+const CELLMAP={done:["c-done","✓"],skip:["c-skip","∅"],fail:["c-fail","✗"],work:["c-work","●"],pend:["c-pend","·"]};
+const STATEPILL={complete:["p-green","complete"],"in-flight":["p-amber","in-flight"],flagged:["p-red","flagged"]};
+document.getElementById("companies").innerHTML = COMPANIES.map(c=>{
+  const cells=c.cells.map(s=>`<div class="cell ${CELLMAP[s][0]}">${CELLMAP[s][1]}</div>`).join("");
+  const sp=STATEPILL[c.state];
+  return `<div class="co${c.interesting?" interesting":""}">
+    <div class="dom">${c.dom}</div>
+    <div class="ph">${cells}</div>
+    <span class="pill ${sp[0]}">${sp[1]}</span>
+    <div class="note">${c.note}</div></div>`;
+}).join("");
+
+// naive miss table
+document.getElementById("miss").innerHTML =
+  `<tr><th>Record</th><th>Naive says</th><th></th><th>Reality</th><th>Why naive can't tell</th></tr>` +
+  NAIVE_MISS.map(m=>`<tr>
+    <td class="dom">${m.dom}</td>
+    <td><span class="pill ${m.nc}">${m.naive}</span></td>
+    <td class="arrow">&rarr;</td>
+    <td><span class="pill ${m.tc}">${m.truth}</span></td>
+    <td>${m.why}</td></tr>`).join("");
+
+// decisions
+document.getElementById("decisions").innerHTML = DECISIONS.map((d,i)=>
+  `<div class="decision"><div class="num">${i+1}</div>
+   <div><div class="q">${d.q}</div><div class="r">${d.r}</div></div></div>`).join("");
+
+// checks
+document.getElementById("checks").innerHTML = CHECKS.map(c=>
+  `<div class="check"><span class="ok">✓</span><span>${c}</span></div>`).join("");
+</script>
+</body>
+</html>

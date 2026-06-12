@@ -3,6 +3,9 @@
 --   firmographics -> techstack -> contacts -> score
 -- Drive rule: an empty <phase>_status cell is the trigger for a worker to do that phase.
 -- Every footgun (sentinel / concurrency / DAG / poison / terminal outcomes) is handled.
+-- <phase>_attempts counts CLAIMS, incremented inside the atomic claim itself (not in the worker's
+-- error branch): a worker that crashes without reporting still counts, and the reclaim path parks
+-- exhausted rows (reaper) -- closing the claim->crash->reclaim liveness hole. See liveness_demo.py.
 
 CREATE TABLE companies (
   id                     INTEGER PRIMARY KEY,

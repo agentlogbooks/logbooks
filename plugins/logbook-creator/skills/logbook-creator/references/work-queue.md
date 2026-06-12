@@ -51,7 +51,8 @@ Generic columns (row-level lease — sufficient when a row is worked at one stag
 ```sql
 -- atomic claim of the next ready row for <stage> (SQLite: one statement = one transaction)
 UPDATE <table>
-   SET claimed_by = :worker, claimed_at = :now, lease_until = :now_plus_lease
+   SET claimed_by = :worker, claimed_at = :now, lease_until = :now_plus_lease,
+       <stage>_attempts = <stage>_attempts + 1          -- count at CLAIM time: crashes count (decision 4)
  WHERE id = (
    SELECT id FROM <table>
     WHERE <stage>_status IS NULL
@@ -66,26 +67,59 @@ RETURNING id, <content cols>;                            -- empty result ⇒ not
 This is why **storage flips**: CSV cannot claim atomically, so a concurrently-claimed driver requires
 SQLite (or an enforced single writer). Overrides the "deprioritize SQLite in a repo" default.
 
+The lease makes a dead worker's row *reclaimable* — that is recovery, not accounting. Decision 4
+makes the reclaim *bounded*: the claim itself increments the attempts counter, because a worker that
+crashes never reports.
+
 ### 3. Dependencies — readiness includes the prerequisite
 
 Stages usually form a small DAG. "Ready for `<stage>`" is **not** `<stage>_status IS NULL` alone — it is
 `<stage>_status IS NULL AND <prior>_status = 'done'`. Elicit the ordering; emit one ready-query per
 stage carrying its prerequisite. (For a parallel fan-in, the predicate ANDs several prior stages.)
 
-### 4. Failure — attempts counter + dead-letter
+### 4. Failure — count at claim, park on reclaim (attempts + reaper + dead-letter)
 
-The failure: a row that can never complete (dead link, corrupt input) is re-claimed forever and starves
-everything behind it. **Rule:** count attempts; after `N`, move to a terminal **parked** state excluded
-from the ready-query *and* surfaced to a human.
+The obvious failure: a row that can never complete (dead link, corrupt input) is re-claimed forever
+and starves everything behind it. The subtle one: a row that *kills* its worker (crash, OOM-kill,
+spot preemption) never reaches the worker's error branch — an error-time counter (`on error:
+attempts += 1`) stays at 0 while the lease silently expires, and the row loops claim → crash →
+reclaim **forever**. No snapshot audit can see that loop: every point-in-time check looks healthy
+(row pending or validly leased, counter under cap); only retained history shows the row never
+finishes. It is a liveness hole, not a safety hole.
+
+**Rule:** count attempts at **claim** time — the atomic claim increments the counter (decision 2's
+template), so a vanished worker still counts — and the **reclaim path itself parks** exhausted rows
+(a reaper), so parking never depends on a worker surviving to report.
 
 ```
+on claim:     <stage>_attempts += 1   (inside the atomic claim UPDATE — counts claims, so crashes count)
 on success:   <stage>_status = 'done'; write content; release lease
-on error:     <stage>_attempts += 1; release lease
-              if <stage>_attempts >= N → <stage>_status = 'failed'   (parked, off the queue)
+on reported error:
+              terminal error (input can never succeed) → <stage>_status = 'failed'; release lease
+                                                          (park immediately — do not retry N times)
+              transient error → release lease (retry; the next claim re-increments)
+              if <stage>_attempts >= N → <stage>_status = 'failed'   (budget exhausted on the final try)
+reaper (on the reclaim path, or a sweep at the top of each poll pass):
+              UPDATE <table>
+                 SET <stage>_status='failed', claimed_by=NULL, claimed_at=NULL, lease_until=NULL
+               WHERE <stage>_status IS NULL AND <stage>_attempts >= N
+                 AND (lease_until IS NULL OR lease_until < :now)
 ```
 
-Distinguish transient failure (release lease, retry) from terminal failure (park). Every ready-query
-includes `<stage>_attempts < N`.
+Distinguish transient reported failure (release, retry) from terminal (park) — silent crashes are
+bounded by the same claim counter. Every ready-query includes `<stage>_attempts < N`. Three
+consequences to record:
+
+- **Size `N` with headroom** — claims are what is counted, so benign interruptions also consume
+  budget (genuine tries + expected crash burn), and give dead-letter triage a defined requeue
+  (reset `<stage>_attempts`, clear the lease).
+- **The exhaustion invariant is lease-aware** — attempts may legitimately equal `N` while the Nth
+  claim is still in flight. The violation, and the reaper's job, is an exhausted row *at rest*:
+  pending, past the cap, lease expired or absent.
+- **Liveness becomes checkable** — "every row eventually completes or parks" turns into the safety
+  invariant *no pending row sits at rest with `attempts >= N`*; the full claim-bound (`no (row,
+  stage) claimed more than N times`) is auditable only against retained history (a run-trace),
+  never against a single snapshot.
 
 ### 5. Terminal outcomes — name what does not advance
 
@@ -102,7 +136,7 @@ For each stage a driver logbook contributes:
 |---|---|
 | `<stage>_status` | `NULL`=pending trigger; `'done'`; terminal-skip value(s); `'failed'` |
 | `<stage>` content col(s) | what the stage produces (may be empty when done) |
-| `<stage>_attempts` | failure counter; ready-query keeps `< N` (decision 4) |
+| `<stage>_attempts` | claim counter — incremented inside the atomic claim, so crashes count (decision 4); ready-query keeps `< N` |
 | `claimed_by`, `claimed_at`, `lease_until` | shared row-level lease (decision 2; only if concurrent) |
 
 Plus the usual logbook columns (`id`, an `added_at`/order key, and `author` when scope is shared).
@@ -110,9 +144,10 @@ Plus the usual logbook columns (`id`, an `added_at`/order key, and `author` when
 ## Generic query kit (for the spec's `## Queries`)
 
 - **ready-query** (per stage): `… WHERE <stage>_status IS NULL AND <prior>_status='done' AND <stage>_attempts < N AND (lease_until IS NULL OR lease_until < :now)`
-- **atomic claim**: the `UPDATE … WHERE id=(SELECT … LIMIT 1) RETURNING …` above.
+- **atomic claim**: the `UPDATE … WHERE id=(SELECT … LIMIT 1) RETURNING …` above — including the `<stage>_attempts + 1` increment (decision 4).
+- **reaper** (decision 4 — run on the reclaim path or at the top of each poll pass): parks exhausted rows at rest: `UPDATE … SET <stage>_status='failed', claimed_by=NULL, claimed_at=NULL, lease_until=NULL WHERE <stage>_status IS NULL AND <stage>_attempts >= N AND (lease_until IS NULL OR lease_until < :now)`.
 - **funnel** (live burndown — the payoff): one `count(*)` per stage `UNION ALL`'d, plus `parked` and `done`.
-- **parked rows for a human**: `… WHERE <stage>_status='failed' OR <final>='needs-human'`.
+- **parked rows for a human**: `… WHERE <stage>_status='failed' OR <final>='<human-escape value>'`.
 
 **SQLite NULL caveat:** `NULL != value` evaluates to `NULL` (not true), so `WHERE <stage>_status != 'failed'` silently drops pending (`NULL`) rows — the opposite of what a "still-active" query wants. Write `WHERE <stage>_status IS NULL OR <stage>_status != 'failed'` (or `IS NOT 'failed'` on SQLite 3.x) whenever a status filter must keep the pending rows.
 
@@ -121,7 +156,7 @@ Plus the usual logbook columns (`id`, an `added_at`/order key, and `author` when
 Extend the standard spec template with:
 
 - **`## Stages`** — table: stage | ready-when predicate | action | done | terminal-skip | parked.
-- **`## Queries`** — the four query shapes above, against the real address.
+- **`## Queries`** — the five query shapes above (ready, claim, reaper, funnel, parked), against the real address.
 - **`## Actions`** — *internal stage-actions* (advance rows in-place): readiness = the ready predicate;
   effect = set status + release lease; patch-back = n/a. External pushes stay normal Actions.
 - **`## Governance`** — lease duration; the authoritative store is safe for claiming (SQLite txn safe;
@@ -185,8 +220,8 @@ Stages table for its spec:
 
 | Stage | Ready when | Action | Done | Terminal-skip | Parked |
 |---|---|---|---|---|---|
-| summarize | `summarize_status IS NULL` | read URL, write summary | `'done'` | `'irrelevant'` | `'failed'` (3 tries) |
-| assess | `assess_status IS NULL AND summarize_status='done'` | rate relevance+credibility | `'done'` | — | `'failed'` (3 tries) |
+| summarize | `summarize_status IS NULL AND summarize_attempts < 3 AND (lease free)` | read URL, write summary | `'done'` | `'irrelevant'` | `'failed'` (3 claims) |
+| assess | `assess_status IS NULL AND summarize_status='done' AND assess_attempts < 3 AND (lease free)` | rate relevance+credibility | `'done'` | — | `'failed'` (3 claims) |
 | verdict | `verdict IS NULL AND assess_status='done'` | include/exclude/needs-human | non-null | `'exclude'`, `'needs-human'` | — |
 
 Funnel:
@@ -195,16 +230,26 @@ Funnel:
 SELECT 'summarize' stage, count(*) n FROM sources WHERE summarize_status IS NULL
 UNION ALL SELECT 'assess',  count(*) FROM sources WHERE assess_status IS NULL AND summarize_status='done'
 UNION ALL SELECT 'verdict', count(*) FROM sources WHERE verdict IS NULL AND assess_status='done'
+UNION ALL SELECT 'skipped', count(*) FROM sources WHERE summarize_status='irrelevant'
 UNION ALL SELECT 'parked',  count(*) FROM sources WHERE summarize_status='failed' OR assess_status='failed'
 UNION ALL SELECT 'done',    count(*) FROM sources WHERE verdict IS NOT NULL;
 ```
 
+Every row lands in exactly one bucket (terminal-skips get their own — without the `skipped` line,
+`'irrelevant'` rows vanish from the funnel), so the buckets sum to `count(*)` and the funnel doubles
+as the completeness partition.
+
 Every footgun is handled: `summary` may be `''` when `summarize_status='done'` (sentinel); the lease +
 atomic claim let multiple summarizers run safely (concurrency); `assess` waits on `summarize_status='done'`
-(DAG); three failures park a dead URL as `'failed'`, off the queue and surfaced to a human (poison);
-`'irrelevant'`/`'exclude'` are done-but-do-not-advance (terminal outcomes).
+(DAG); three claims park a dead URL as `'failed'`, off the queue and surfaced to a human — counted
+at claim time, so a summarizer that crashes without ever reporting is bounded by the same counter
+and parked by the reaper (poison); `'irrelevant'`/`'exclude'` are done-but-do-not-advance
+(terminal outcomes).
 
 (`verdict` doubles as its own sentinel — legitimate here because a *terminal* stage producing a required
 enum can never finish *and* be empty. Decision 1's separate-status rule applies to stages whose content
 can validly be empty, like `summary`; a pure-enum terminal stage that is never legitimately empty is the
-one justified exception, and should be called out as such in the spec.)
+one justified exception, and should be called out as such in the spec. The verdict stage is also
+*human-performed* here, which is why it carries no lease, no attempts budget, and no atomic claim — the
+per-stage claim/attempts/reaper kit applies to *agent-performed* stages, where workers can race or vanish
+mid-claim; an agent-performed verdict would need all three. Call that scoping out in the spec too.)

@@ -87,8 +87,18 @@ def build_driver():
 
 def claim_next(con, st):
     att_clause = f" AND {st['att']} < {N_ATTEMPTS}" if st['att'] else ""
+    # Count at CLAIM time: the atomic claim itself increments attempts, so a worker that crashes
+    # without reporting still counts (Decision 2/4 — closes the claim->crash->reclaim liveness hole).
+    bump = f", {st['att']} = {st['att']} + 1" if st['att'] else ""
+    if st['att']:
+        # Reaper: the reclaim path parks exhausted rows at rest. Parking must not depend on a
+        # worker surviving to its error branch (a crashed worker never reaches it).
+        con.execute(f"""UPDATE companies SET {st['status']}='failed',
+                        claimed_by=NULL, claimed_at=NULL, lease_until=NULL
+                         WHERE {st['status']} IS NULL AND {st['att']} >= {N_ATTEMPTS}
+                           AND (lease_until IS NULL OR lease_until < ?)""", (NOW,))
     sql = f"""
-      UPDATE companies SET claimed_by='loop', claimed_at=?, lease_until=?
+      UPDATE companies SET claimed_by='loop', claimed_at=?, lease_until=?{bump}
        WHERE id = (SELECT id FROM companies
                     WHERE {st['ready']}{att_clause}
                       AND (lease_until IS NULL OR lease_until < ?)
@@ -112,12 +122,16 @@ def do_stage(con, st, row):
     out = WORLD[dom][KEY[name]]
     kind, fail_count = out[0], out[-1]
     prior = _attempts_so_far(dom, name)
-    if prior < fail_count:                       # this attempt errors
-        _bump(dom, name); new_att = prior + 1
-        if new_att >= N_ATTEMPTS:
-            release(f", {st['status']}='failed', {st['att']}=?", (new_att,))   # parked (poison)
+    if prior < fail_count:                       # this attempt errors (worker survives to report)
+        _bump(dom, name)
+        # attempts were already counted at claim time; a reported error just releases the lease.
+        # If this was the final allowed claim, park now (worker-reported terminal) — the reaper
+        # in claim_next is the backstop for crashes that never report.
+        cur = con.execute(f"SELECT {st['att']} FROM companies WHERE id=?", (rid,)).fetchone()[0]
+        if cur >= N_ATTEMPTS:
+            release(f", {st['status']}='failed'")                              # parked (poison)
         else:
-            release(f", {st['att']}=?", (new_att,))                            # transient -> retry
+            release()                                                          # transient -> retry
         return
     # success
     if name == "firmographics":

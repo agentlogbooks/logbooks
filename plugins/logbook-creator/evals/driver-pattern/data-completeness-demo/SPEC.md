@@ -21,9 +21,9 @@ This is the *logbook* artifact; the *poller/skill* that dispatches workers is sk
 | # | Decision | Resolution here |
 |---|----------|-----------------|
 | 1 | **Sentinel** | One `<phase>_status` column per phase. `NULL`=pending only. `techstack`/`contacts` can finish *successfully empty* (`none-detected`/`no-contact`) — exactly why a content column can't be the trigger. `fit_score` is the justified pure-enum terminal exception (a number that can never finish empty). |
-| 2 | **Concurrency** | Many enrichment workers run at once → `claimed_by`/`claimed_at`/`lease_until` lease; atomic `UPDATE … WHERE id=(SELECT … LIMIT 1) RETURNING`. Forces **SQLite** (CSV can't claim atomically — Step 4). |
+| 2 | **Concurrency** | Many enrichment workers run at once → `claimed_by`/`claimed_at`/`lease_until` lease; atomic `UPDATE … WHERE id=(SELECT … LIMIT 1) RETURNING`, which **also increments `<phase>_attempts`** (claims count whether or not the worker survives). Forces **SQLite** (CSV can't claim atomically — Step 4). |
 | 3 | **Stage DAG** | Linear: each phase's ready-query carries its prerequisite (`techstack` ready iff `firmographics_status='done'`; `contacts` iff `techstack_status IN ('done','none-detected')`; `score` iff `contacts_status IN ('done','no-contact')`). The advancing set is wider than `'done'`. |
-| 4 | **Poison rows** | `<phase>_attempts` counter; after `N=3` the phase status flips to `'failed'` (parked, off the ready-query) and is surfaced by the dead-letter query. |
+| 4 | **Poison rows** | `<phase>_attempts` counts **claims** (incremented inside the atomic claim — a crashed worker that never reports still counts). After `N=3`: a worker-reported error on the final claim parks immediately, and the **reclaim path itself parks** exhausted rows at rest (reaper) — parking never depends on a worker reaching its error branch. Parked = `'failed'`, off the ready-query, surfaced by the dead-letter query. Closes the claim→crash→reclaim liveness hole (`liveness_demo.py`). |
 | 5 | **Terminal outcomes** | `'done'` and the legit-empty skips (`none-detected`, `no-contact`) **advance**; `'failed'` **absorbs**; `fit_score` non-null is the terminal done. Named, not boolean. |
 
 ## Address
@@ -44,7 +44,8 @@ projection, not the live `.db` (Step 4).
 ## Queries (`completeness-audit.sql`)
 
 - **ready-query** (per stage): `… WHERE <ready> AND <stage>_attempts < 3 AND (lease_until IS NULL OR lease_until < :now)`
-- **atomic claim**: `UPDATE companies SET claimed_by=:w, lease_until=:now+lease WHERE id=(SELECT id … LIMIT 1) RETURNING …`
+- **atomic claim** (counts itself): `UPDATE companies SET claimed_by=:w, lease_until=:now+lease, <phase>_attempts=<phase>_attempts+1 WHERE id=(SELECT id … LIMIT 1) RETURNING …`
+- **reaper** (on the reclaim path): `UPDATE companies SET <phase>_status='failed', claimed_by=NULL, claimed_at=NULL, lease_until=NULL WHERE <phase>_status IS NULL AND <phase>_attempts >= 3 AND (lease_until IS NULL OR lease_until < :now)`
 - **funnel / partition** (the data-completeness burndown): one bucket per row → `complete | in_flight | parked | pending_<stage>`; must sum to total with zero `ORPHAN`.
 - **dead-letter** (parked, for a human): `WHERE <stage>_status='failed'`.
 
@@ -71,7 +72,12 @@ per stage: ready-query + action + sentinels.
 
 ## Data-completeness result
 
-`python3 audit.py` → all 9 invariants PASS; partition `9 complete + 1 in_flight + 2 parked = 12`.
+`python3 audit.py` → all 9 snapshot invariants PASS (C5 is lease-aware: "no exhausted row *at rest*" —
+the reaper guarantee), plus **L1 claim-bound**, the liveness check, auditable only against the
+run-trace (`driver.history.jsonl`): a claim→crash→reclaim loop is invisible to every snapshot and
+shows only in retained history. Partition `9 complete + 1 in_flight + 2 parked = 12`.
+`python3 liveness_demo.py` proves the hole (12 crash-claims, attempts frozen at 0, 12/12 snapshots
+pass) and the fix (parked at exactly N=3 claims).
 The naive contrast schema (`schema.naive.sql`, no sentinels/attempts) can only see `8 complete / 4
 pending`, misclassifying the two legit-empty rows as pending and the two poison rows as in-progress —
 completeness is **unprovable** without the driver pattern's status columns.

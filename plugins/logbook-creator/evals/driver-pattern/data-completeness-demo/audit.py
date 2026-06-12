@@ -37,11 +37,15 @@ INVARIANTS = {
    "SELECT count(*) FROM companies WHERE techstack_status='none-detected' AND (cms IS NOT NULL OR analytics IS NOT NULL OR cloud IS NOT NULL)",
  "C4d contacts done<=>email present":
    "SELECT count(*) FROM companies WHERE (contacts_status='done' AND primary_email IS NULL) OR (contacts_status='no-contact' AND primary_email IS NOT NULL)",
- "C5 no live row past attempt cap": f"""
+ # Lease-aware under claim-time counting: attempts may legitimately equal N while the Nth claim
+ # is still in flight (lease live). The violation is an exhausted row AT REST — pending, past the
+ # cap, lease expired/absent — exactly the state the reaper must have parked.
+ "C5 no exhausted row at rest (reaper guarantee)": f"""
    SELECT count(*) FROM companies
-    WHERE (firmographics_status IS NULL AND firmographics_attempts >= {N})
-       OR (techstack_status     IS NULL AND techstack_attempts     >= {N})
-       OR (contacts_status      IS NULL AND contacts_attempts      >= {N})""",
+    WHERE (lease_until IS NULL OR lease_until <= '{NOW}')
+      AND (   (firmographics_status IS NULL AND firmographics_attempts >= {N})
+           OR (techstack_status     IS NULL AND techstack_attempts     >= {N})
+           OR (contacts_status      IS NULL AND contacts_attempts      >= {N}))""",
  "C6 no claimed row with expired lease (no leaked claim)":
    f"SELECT count(*) FROM companies WHERE claimed_by IS NOT NULL AND lease_until <= '{NOW}'",
 }
@@ -67,6 +71,34 @@ def run_driver():
     con.close()
     return failures
 
+def run_trace_liveness():
+    """L1 — the liveness bound. Snapshot invariants (C1-C6) are SAFETY: checkable on the store as
+    it sits. The liveness bound — no (row, stage) is ever claimed more than N times — is only
+    checkable against RETAINED HISTORY (the run-trace), never against a single snapshot: a
+    claim->crash->reclaim loop looks healthy in every photo and only shows in the film. This is
+    the temporal rule from the render-projection work, applied to auditing."""
+    path = os.path.join(HERE, "driver.history.jsonl")
+    if not os.path.exists(path):
+        print("\n  [SKIP] L1 claim-bound (liveness): no run-trace (driver.history.jsonl) -- a"
+              "\n         snapshot cannot bound claims; run step_trace.py to retain history.")
+        return []
+    import json
+    from collections import Counter
+    claims = Counter()
+    with open(path) as f:
+        for line in f:
+            line = line.strip()
+            if not line: continue
+            label = json.loads(line).get("label", "")
+            if ":" in label:
+                claims[label.split(":", 1)[0] + ":" + label.split(":", 1)[1]] += 1
+    over = {k: v for k, v in claims.items() if v > N}
+    ok = not over
+    print(f"\n  [{'PASS' if ok else 'FAIL'}] L1 claim-bound (liveness, from run-trace): "
+          f"max claims per (stage,row) = {max(claims.values()) if claims else 0} <= {N}"
+          + ("" if ok else f"  VIOLATIONS: {over}"))
+    return [] if ok else ["L1 claim-bound (liveness)"]
+
 def run_naive():
     con = sqlite3.connect(os.path.join(HERE, "naive.db"))
     total = con.execute("SELECT count(*) FROM companies_naive").fetchone()[0]
@@ -85,6 +117,7 @@ def run_naive():
 if __name__ == "__main__":
     print("=== DATA-COMPLETENESS TEST ===")
     failures = run_driver()
+    failures += run_trace_liveness()
     run_naive()
     if failures:
         print(f"\nRESULT: FAIL -- {len(failures)} invariant(s) violated: {failures}")

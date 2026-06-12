@@ -105,6 +105,46 @@ const DRIVER_PERSONAS = [
     ],
   },
   {
+    id: 'driver-crash-loop',
+    groundTruth: DRIVER_GROUND_TRUTH + '\n' + [
+      'ADDITIONALLY for this scenario (liveness): an error-time attempts counter ("on error:',
+      'attempts += 1") only counts failures the worker SURVIVES to report. A worker killed without',
+      'warning (spot preemption, OOM-kill) never reaches its error branch: the lease expires, the',
+      'row is silently reclaimed with attempts unchanged, and it can loop claim->crash->reclaim',
+      'forever - invisible to any snapshot audit. Correct: count attempts at CLAIM time (increment',
+      'inside the atomic claim UPDATE) and have the RECLAIM PATH itself park exhausted rows (a',
+      'reaper) - parking must not depend on a worker reaching its error handler.',
+    ].join('\n'),
+    // NOTE (2026-06-13, runs wf_658a46ad-78b RED / wf_6bb9206f-47e GREEN): baseline RED scored
+    // 5/5 [3,3,3,3,3] - but via GENERALIST RESCUE, not skill coverage: sims explicitly REJECTED
+    // the skill's own error-time pseudocode ("the skill's default on-error increment was rejected
+    // because a killed worker increments nothing"). Same situation as the sentinel rule pre-fix
+    // ("sim-rescue at baseline"). The validated delta for this persona is therefore TEXT
+    // PROVENANCE (does the design come FROM the skill text?), measured via the sim's
+    // skillTextCoverage field - plus the demo-level proof in
+    // data-completeness-demo/liveness_demo.py (the hole is real and snapshot-invisible).
+    brief:
+      'You are a data engineer building a NEW ingest-and-process work queue: documents land in a ' +
+      'logbook; worker agents claim each one and push it through parse -> extract -> validate. You ' +
+      'are concrete and cooperative: durable path ~/state/ingest/ingest.db, SQLite fine; 10-20 ' +
+      'worker agents IN PARALLEL on preemptible/spot cloud instances; strict stage order; watcher ' +
+      'inserts rows, workers poll, you check a dead-letter view every morning. If asked about ' +
+      'failures: "some docs are corrupt - retry a few times, then give up and surface them to me." ' +
+      'HIDDEN FACT (reveal ONLY if asked what happens when a worker itself dies/crashes/is killed ' +
+      'mid-row, or whether a worker always survives to report): your workers are spot instances ' +
+      'killed without warning several times a day - a killed worker vanishes, reports nothing, ' +
+      'increments nothing. You believe lease + retry "handles that automatically." If the ' +
+      'assistant proposes an error-time attempts counter you accept it happily. You never ' +
+      'volunteer the hidden fact unprompted.',
+    contract: [
+      'Adds a lease (claimed_by/claimed_at/lease_until) with an atomic claim so a vanished worker`s row becomes reclaimable after lease expiry',
+      'Adds per-stage attempts counting with a terminal parked/failed state, excluded from the ready-query and surfaced via a dead-letter query',
+      'Surfaces the silent-crash case: asks what happens when a worker dies WITHOUT reporting, distinguishing crash-without-report from a reported error',
+      'Bounds total claims per row+stage: counts attempts at CLAIM time (inside the atomic claim) or a dedicated claim counter, so claim->crash->reclaim cannot loop with the error-time counter stuck at zero',
+      'Parking is enforced by the reclaim path or a reaper sweep (not only the worker error branch), so an exhausted row parks and surfaces even if no worker survives to report',
+    ],
+  },
+  {
     id: 'driver-vs-tracker',
     groundTruth: DRIVER_GROUND_TRUTH,
     brief:

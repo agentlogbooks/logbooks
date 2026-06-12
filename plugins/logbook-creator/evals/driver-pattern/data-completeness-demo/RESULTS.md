@@ -32,13 +32,27 @@ unbounded claim→crash→reclaim loop that the attempts cap never trips and tha
 detect. The current data is still provably complete (no crash is modeled), but the **schema cannot detect a
 hypothetical crash-loop**.
 
-### Generic refinement this implies (candidate for the skill — not yet validated by the eval loop)
+### Generic refinement this implies — IMPLEMENTED (2026-06-13)
 
-Driver Decision 2/4: **count attempts at *claim* time, or add a dedicated `claim_count`/`lease_epochs`
-column**, and have the **reclaim path itself park** a row whose claim-count ≥ N (a reaper), rather than
-relying on a worker reaching the error branch. Otherwise a crashed-mid-lease row is the one liveness hole a
-point-in-time completeness audit cannot see. Worth folding into `references/work-queue.md` and re-validating
-through the driver persona eval loop before shipping.
+Driver Decision 2/4: **count attempts at *claim* time** (the atomic claim increments the counter, so
+crashes count), and have the **reclaim path itself park** a row whose claim-count ≥ N (a reaper), rather
+than relying on a worker reaching the error branch.
+
+The demo now embodies the fix end-to-end:
+
+- **`liveness_demo.py`** — the isolated proof, deterministic logical clock. RED (error-time counting):
+  12 crash-claims, `attempts` frozen at 0, row pending forever — and the snapshot audit passes **12/12**
+  times (the starvation loop is structurally invisible to any point-in-time audit). GREEN (claim-time
+  counting + reaper): parked at exactly N=3 claims, surfaced in dead-letter, every audited step passes.
+- **`harness.py`** — the atomic claim increments `<phase>_attempts`; a reported error just releases
+  (parking immediately only on the final claim); the reaper inside the claim path parks exhausted rows
+  at rest. Behavior-preserving for the existing world: same partition (9/1/2), same claim sequence,
+  **byte-identical `driver.view.html`**.
+- **`audit.py`** — C5 became lease-aware ("no exhausted row *at rest*": attempts may legitimately equal
+  N while the Nth claim is in flight — the refinement the GREEN trace itself surfaced); plus **L1
+  claim-bound**, the liveness check, computed from the run-trace because **liveness is only auditable
+  against retained history** — snapshot invariants are safety; the run-trace is what makes the liveness
+  bound a checkable property (the temporal rule from the render-projection work, applied to auditing).
 
 ## Deterministic visualization (render projection)
 
@@ -73,7 +87,8 @@ snapshot a human opens; the `.db` and `.jsonl` are gitignored (rebuildable).
 ## Verdict
 
 The driver logbook is **provably data-complete at any snapshot** (every row accounted for; every `done` cell
-provably populated; legit-empty distinguished from pending; poison parked and surfaced). The one gap is
-*liveness over time* (crash-reclaim loop), addressable with claim-time counting + a reaper. The naive schema
-cannot prove completeness at all — establishing that the driver pattern's sentinels are what make
-data-completeness a query rather than a guess.
+provably populated; legit-empty distinguished from pending; poison parked and surfaced) **and now provably
+live** (claim-time counting + reaper bound every row's claims at N; `liveness_demo.py` proves the old
+design's crash-reclaim loop was snapshot-invisible, and L1 verifies the bound against the run-trace). The
+naive schema cannot prove completeness at all — establishing that the driver pattern's sentinels are what
+make data-completeness a query rather than a guess.

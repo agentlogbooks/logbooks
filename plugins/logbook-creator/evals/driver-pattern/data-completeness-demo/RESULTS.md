@@ -40,6 +40,36 @@ relying on a worker reaching the error branch. Otherwise a crashed-mid-lease row
 point-in-time completeness audit cannot see. Worth folding into `references/work-queue.md` and re-validating
 through the driver persona eval loop before shipping.
 
+## Deterministic visualization (render projection)
+
+`render.py` is an **export-only projection**: `view = render(driver.db)`, a pure read-only function of
+the store. `step_trace.py` writes an append-only **run-trace** (`driver.history.jsonl`) so the view can
+also show the burndown. Reproduce: `python3 harness.py && python3 step_trace.py && python3 render.py`.
+
+Proven (`render.py` over the live `driver.db`):
+
+- **Deterministic** — render twice, the full-file sha256 is identical (`c946ea369442bf02`). No clock, no
+  randomness, no network, no hand-typed numbers. `now` is a *query parameter* (default `2026-06-11T12:00:00Z`,
+  same as `audit.py`), not the wall clock — that is what keeps it reproducible.
+- **Faithful** — the view's partition (`9 complete / 1 in-flight / 2 parked = 12`) is the *same* partition
+  `audit.py` verifies. The picture cannot drift from the audit because it is the audit's data, rendered.
+- **Progressive at every fill level** — all 44 run-trace frames (empty → fixpoint) sum to 12; the burndown
+  shows pending 11→0, complete 0→9, parked 0→2, in-flight steady at 1. "Progressive" = correct at *every*
+  fill level, not just when full.
+- **Follows the store** — mutate the store (expire `wayne`'s lease: in-flight → pending) and re-render; the
+  view follows deterministically to `9 complete / 2 parked / 1 pending = 12`. Deterministic in state,
+  progressive in time.
+- **Read-only** — `driver.db`'s sha256 is unchanged after rendering. A render that wrote to the store would
+  be a *mirror*, not a projection.
+- **Temporal capability is upstream** — the burndown exists *only* because the append-only run-trace retained
+  history. A patch-in-place ledger could render the current snapshot only; a single snapshot has no
+  trajectory. (Decided back at state-architecture / projections, not in the renderer.)
+
+This is the RED→GREEN for visualization: the hand-authored `data-completeness-explained.html` (numbers typed
+by hand) is the RED — a second source of truth that drifts the instant `harness.py` changes a number;
+`render.py` is the GREEN — a projection that *cannot* drift. The committed `driver.view.html` is the exported
+snapshot a human opens; the `.db` and `.jsonl` are gitignored (rebuildable).
+
 ## Verdict
 
 The driver logbook is **provably data-complete at any snapshot** (every row accounted for; every `done` cell

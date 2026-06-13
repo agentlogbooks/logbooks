@@ -1,0 +1,41 @@
+{"ts": 0.0, "type": "session_started", "payload": {"topic": "cafe-afternoon-revenue", "phases": ["Frame", "Generate", "Transform", "Evaluate", "Decide"]}}
+{"ts": 22.0, "type": "plan_set", "payload": {"steps": [{"n": 1, "type": "op", "description": "Identify root causes and framing questions"}, {"n": 2, "type": "checkpoint", "description": "Confirm the framing"}, {"n": 3, "type": "parallel", "description": "Generate ~20 diverse ideas in parallel"}, {"n": 4, "type": "op", "description": "Present them side-by-side in a short report"}]}}
+{"ts": 22.3, "type": "phase_started", "payload": {"name": "Frame"}}
+{"ts": 22.3, "type": "op_started", "payload": {"op_run_id": 1, "operator": "frame.discover", "persona": "", "cohort_size": 0, "step_n": 1, "description": "Identify root causes and framing questions"}}
+{"ts": 70.3, "type": "op_finished", "payload": {"op_run_id": 1, "status": "succeeded", "ideas_count": 0}}
+{"ts": 70.3, "type": "checkpoint_reached", "payload": {"name": "framing", "step_n": 2}}
+{"ts": 101.3, "type": "checkpoint_resolved", "payload": {"name": "framing", "action": "proceed"}}
+{"ts": 101.6, "type": "phase_started", "payload": {"name": "Generate"}}
+{"ts": 101.6, "type": "op_started", "payload": {"op_run_id": 2, "operator": "generate.seed", "persona": "innovator", "cohort_size": 0, "step_n": 3, "description": "Practical ideas \u2014 10"}}
+{"ts": 101.6, "type": "op_started", "payload": {"op_run_id": 3, "operator": "generate.seed", "persona": "wild_card", "cohort_size": 0, "step_n": 3, "description": "Wild ideas \u2014 10"}}
+{"ts": 155.65, "type": "idea_generated", "payload": {"id": 1, "title": "Loyalty happy-hour after 2pm", "description": "Punch-card that only fills on weekday afternoons, so regulars learn the slow hours are the cheap hours and start drifting in then.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 155.7, "type": "idea_generated", "payload": {"id": 2, "title": "Laptop-corner day pass", "description": "Sell a $6 afternoon pass for a quiet corner with outlets and fast wifi; the coffee's extra, the seat is the product.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 155.75, "type": "idea_generated", "payload": {"id": 3, "title": "Pastry rescue box", "description": "Bag up the morning's unsold pastries at 3pm for half price; turns waste into a reason to walk in after lunch.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 155.8, "type": "idea_generated", "payload": {"id": 4, "title": "Second-cup half-price token", "description": "Anyone who bought a morning coffee gets a token for a half-price afternoon refill, redeemable same day only.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 155.85, "type": "idea_generated", "payload": {"id": 5, "title": "Neighborhood remote-work club", "description": "A monthly membership that reserves afternoon seating and a bottomless drip, aimed at the work-from-home crowd nearby.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 155.9, "type": "idea_generated", "payload": {"id": 6, "title": "Kids draw, parents stay", "description": "Free crayons and a wall to pin drawings on; parents on the school run linger and order a second drink.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 155.95, "type": "idea_generated", "payload": {"id": 7, "title": "Afternoon tasting flight", "description": "Three 4oz pours of single-origin for the price of a latte, framed as a slow-hour ritual, not a rush purchase.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 156.0, "type": "idea_generated", "payload": {"id": 8, "title": "Bring-a-friend 3-to-5", "description": "Between 3 and 5, two drinks ring up as one-and-a-half; the empty room fills because nobody comes alone.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 156.05, "type": "idea_generated", "payload": {"id": 9, "title": "Standing pre-order for offices", "description": "Nearby offices set a recurring 3pm tray order; you batch-make it, they expense it, the lull disappears.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 156.1, "type": "idea_generated", "payload": {"id": 10, "title": "Silent-hour study deal", "description": "Declare 2-4pm phone-free and discount drip 30%; the vibe itself becomes the draw for students.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 156.6, "type": "op_finished", "payload": {"op_run_id": 2, "status": "succeeded", "ideas_count": 10}}
+{"ts": 162.15, "type": "idea_generated", "payload": {"id": 11, "title": "Cold-brew growler refills", "description": "Sell branded growlers, refill cold brew cheap in the afternoon; regulars stock their fridge and your slow hours move volume.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 162.2, "type": "idea_generated", "payload": {"id": 12, "title": "Barista's-choice mystery cup", "description": "A $3 afternoon-only mystery drink the barista improvises; cheap experiment that turns dead time into a game.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 162.25, "type": "idea_generated", "payload": {"id": 13, "title": "Afterschool hot-chocolate route", "description": "Partner with the school two blocks over for a hot-chocolate punch card kids redeem walking home.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 162.3, "type": "idea_generated", "payload": {"id": 14, "title": "Co-working stamp partnership", "description": "Tie up with a co-working space: their members flash a badge for afternoon discounts, you get their overflow.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 162.35, "type": "idea_generated", "payload": {"id": 15, "title": "Slow-hour catering sampler", "description": "Use the lull to bake mini catering samplers and hand them to office managers who walk past at 3.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 162.4, "type": "idea_generated", "payload": {"id": 16, "title": "Pay-what-it-weighs cookies", "description": "Afternoon cookies priced by the gram on a little scale at the counter; novelty pulls the curious in.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 162.45, "type": "idea_generated", "payload": {"id": 17, "title": "Reverse rush-hour playlist", "description": "A posted live DJ-style afternoon playlist; people come for the set, the coffee is incidental.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 162.5, "type": "idea_generated", "payload": {"id": 18, "title": "Two-for-Tuesday iced drinks", "description": "Every Tuesday afternoon, iced drinks are buy-one-gift-one; the gifted one drags in a new face.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 162.55, "type": "idea_generated", "payload": {"id": 19, "title": "Window-seat reservation app", "description": "Let people reserve the good window seat for an afternoon hour for a small fee that's redeemable on food.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 162.6, "type": "idea_generated", "payload": {"id": 20, "title": "Local-maker pop-up shelf", "description": "Rent a shelf to a local maker who hosts an afternoon demo; their followers become your 3pm traffic.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 163.1, "type": "op_finished", "payload": {"op_run_id": 3, "status": "succeeded", "ideas_count": 10}}
+{"ts": 165.6, "type": "phase_started", "payload": {"name": "Decide"}}
+{"ts": 165.6, "type": "op_started", "payload": {"op_run_id": 4, "operator": "decide.compare", "persona": "", "cohort_size": 20, "step_n": 4, "description": "Side-by-side compare"}}
+{"ts": 199.7, "type": "idea_ranked", "payload": {"id": 8, "rank": 1}}
+{"ts": 199.8, "type": "idea_ranked", "payload": {"id": 3, "rank": 2}}
+{"ts": 199.9, "type": "idea_ranked", "payload": {"id": 11, "rank": 3}}
+{"ts": 200.0, "type": "idea_ranked", "payload": {"id": 1, "rank": 4}}
+{"ts": 200.1, "type": "idea_ranked", "payload": {"id": 17, "rank": 5}}
+{"ts": 200.6, "type": "op_finished", "payload": {"op_run_id": 4, "status": "succeeded", "ideas_count": 0}}
+{"ts": 202.6, "type": "session_complete", "payload": {}}

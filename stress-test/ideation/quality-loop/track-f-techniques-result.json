@@ -1,0 +1,1461 @@
+{
+  "summary": [
+    {
+      "frame": "cafe",
+      "technique": "reverse",
+      "tech_wins": 1,
+      "plain_wins": 1,
+      "ties": 0,
+      "tech_substance": 13.5,
+      "plain_substance": 13
+    },
+    {
+      "frame": "cafe",
+      "technique": "scamper",
+      "tech_wins": 2,
+      "plain_wins": 0,
+      "ties": 0,
+      "tech_substance": 12.5,
+      "plain_substance": 11.5
+    },
+    {
+      "frame": "cafe",
+      "technique": "sixhats",
+      "tech_wins": 1,
+      "plain_wins": 1,
+      "ties": 0,
+      "tech_substance": 12.5,
+      "plain_substance": 13
+    },
+    {
+      "frame": "b2b",
+      "technique": "reverse",
+      "tech_wins": 0,
+      "plain_wins": 2,
+      "ties": 0,
+      "tech_substance": 13.5,
+      "plain_substance": 14
+    },
+    {
+      "frame": "b2b",
+      "technique": "scamper",
+      "tech_wins": 0,
+      "plain_wins": 2,
+      "ties": 0,
+      "tech_substance": 11,
+      "plain_substance": 13
+    },
+    {
+      "frame": "b2b",
+      "technique": "sixhats",
+      "tech_wins": 1,
+      "plain_wins": 1,
+      "ties": 0,
+      "tech_substance": 12.5,
+      "plain_substance": 12.5
+    }
+  ],
+  "perFrame": [
+    {
+      "frame": "cafe",
+      "frameTitle": "Cafe \u2014 grow weekday-afternoon revenue",
+      "coll": {
+        "plain": [
+          {
+            "id": "1",
+            "title": "Afternoon work-and-stay seats",
+            "description": "Turn the empty 2-5pm room into a paid quiet-work spot where remote workers buy a $6 'desk pass' that includes bottomless drip coffee and a reserved seat with a power outlet. For example, a freelancer drops in at 2pm, taps to pay for a 3-hour pass, and the cafe earns from the seat plus refills it otherwise wouldn't sell.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "2",
+            "title": "Bake-ahead office snack boxes",
+            "description": "Use the idle ovens to bake an extra afternoon batch of pastries and sell them as standing 2pm snack-box deliveries to nearby offices on a weekly standing order. For example, a 12-person accounting firm gets a box of 15 cookies dropped off every Tuesday and Thursday at 2:30 on a recurring tab.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "3",
+            "title": "Morning receipt = afternoon coffee token",
+            "description": "Hand every morning customer a token on their receipt that's only redeemable for a discounted drink between 2 and 5pm that same day, giving regulars a concrete reason to come back. For example, a 8am latte buyer pockets a chip that gets them a $2 afternoon drip if they return after lunch.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "4",
+            "title": "Two-trip combo priced at the counter",
+            "description": "Sell a single 'morning + afternoon' combo at the register where paying $9 in the morning locks in both today's coffee and a discounted afternoon drink. For example, a regular pays once at 7am and the cashier marks their name on a list so the 3pm drink is already covered.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "5",
+            "title": "Host recurring afternoon groups for free space",
+            "description": "Offer the dead 2-5pm room free to recurring local groups like book clubs, knitting circles, or language meetups in exchange for a guaranteed minimum drink order per head. For example, a 10-person Spanish conversation group meets every Wednesday at 3pm and each member must buy at least one drink to attend.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "6",
+            "title": "3pm fresh-out-of-the-oven event",
+            "description": "Fire the idle ovens for a daily 3pm hot-bake drop where a small batch of fresh cookies or scones comes out warm and is announced as a standing daily moment. For example, a sign reads 'Warm cookies at 3, every day' so neighbors learn to time a walk past the door.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "7",
+            "title": "Piggyback on a neighbor's afternoon crowd",
+            "description": "Partner with a nearby business whose customers peak in the afternoon, like a gym or salon, to cross-sell the cafe with a shared coupon handed out at their counter. For example, the yoga studio next door gives every 4pm class a card for half-price tea redeemable within the hour.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "8",
+            "title": "Monthly pass that pays off on second visits",
+            "description": "Sell a flat monthly drink subscription priced so it only becomes a good deal for customers who come twice a day, economically nudging an extra afternoon trip. For example, a $45/month unlimited-drip pass means a regular who already comes mornings starts swinging back at 3pm to 'get their money's worth.'",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "9",
+            "title": "Rent the room as a bookable meeting venue",
+            "description": "List the empty afternoon space on a booking site as an hourly private meeting or tutoring venue that comes with a catering minimum from the cafe. For example, a tutor books the corner table 3-5pm on Mondays for $20/hour and orders drinks for their two students.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "10",
+            "title": "After-school treat counter for parents and kids",
+            "description": "Build a 3pm after-school offer aimed at parents picking up kids, pairing a kid's cookie-and-milk combo with a parent coffee at a family price. For example, a mom grabs her second-grader from the school two blocks over and stops in for a $5 cookie-milk-and-coffee set on the walk home.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "11",
+            "title": "Afternoon coffee cart to locked-in workers",
+            "description": "Send a staffer with a thermos cart on a fixed 3pm route to nearby workplaces where people can't leave their desks, taking pre-orders by a simple text the morning of. For example, a dental office texts in five afternoon drinks by 11am and they're wheeled over at 3.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "12",
+            "title": "A distinct afternoon menu that isn't coffee",
+            "description": "Launch a separate 2-5pm menu built around things people want in the afternoon but not the morning, like savory tartines, iced spritzes, and a glass of wine. For example, the chalkboard flips at 2pm to read 'Afternoon: tartines, spritzes, wine' so it reads as a different occasion, not a leftover morning.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "13",
+            "title": "Punch card that only counts afternoon visits",
+            "description": "Run a loyalty card where punches are only earned on 2-5pm purchases, so the reward path itself trains the afternoon habit. For example, a regular needs six afternoon visits for a free drink, and the card sits in their wallet as a standing reminder to come back later in the day.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "14",
+            "title": "Rent idle oven time to a small food maker",
+            "description": "Lease the unused ovens and counter from 2-5pm to a local baker or meal-prep maker who needs kitchen hours, turning idle equipment into rent plus a cut of their sales. For example, a home-based granola maker pays $15/hour to bake on-site and the cafe also sells their bags at the register.",
+            "tag": "WILD",
+            "lens": "plain"
+          },
+          {
+            "id": "15",
+            "title": "A standing afternoon social draw with a host",
+            "description": "Create a recurring named afternoon happening with a paid or volunteer host, like a 4pm trivia round or a live acoustic set, so people schedule their week around showing up. For example, 'Thursday 4pm Trivia' becomes the thing a friend group does together, each buying a drink to play.",
+            "tag": "WILD",
+            "lens": "plain"
+          },
+          {
+            "id": "16",
+            "title": "Timed sidewalk pull for passersby",
+            "description": "Put a sandwich-board and a scent fan at the door that only switch on at 2pm with a time-limited afternoon offer to intercept people who walk past without a reason to enter. For example, the board reads '2-5pm only: any iced drink $3' and a small fan pushes fresh-coffee smell toward the sidewalk.",
+            "tag": "WILD",
+            "lens": "plain"
+          }
+        ],
+        "reverse": [
+          {
+            "id": "1",
+            "title": "Morning receipt unlocks an afternoon return",
+            "description": "Print a same-day coupon on every 7-11am receipt that's only redeemable 2-5pm that same day, giving each morning regular a concrete reason to walk back in after lunch. For example, a 9am latte receipt says 'bring this back today 2-5pm for a $2 cookie + drip refill.'",
+            "tag": "SAFE",
+            "lens": "No same-day return reason"
+          },
+          {
+            "id": "2",
+            "title": "A 3pm fresh bake people can smell",
+            "description": "Fire the idle ovens for a single small batch that comes out hot at exactly 3pm daily, so the afternoon has a fresh-baked draw the morning doesn't. For example, warm cinnamon rolls or savory scones pulled at 3:00 and announced on the sidewalk board.",
+            "tag": "SAFE",
+            "lens": "Cold idle ovens"
+          },
+          {
+            "id": "3",
+            "title": "Afternoon-only price on slow items",
+            "description": "Set a discounted price that exists ONLY from 2-5pm on a few specific items, so coming off-peak is cheaper than coming at the rush. For example, '$3 any espresso drink, weekdays 2-5pm only' printed on its own card.",
+            "tag": "SAFE",
+            "lens": "Same price all day"
+          },
+          {
+            "id": "4",
+            "title": "Rent the empty room to remote workers",
+            "description": "Sell a low monthly 'afternoon desk' pass that buys a remote worker a guaranteed seat, fast wifi, and one drink credit every weekday 2-5pm, turning idle chairs into recurring revenue. For example, $39/month gets a regular spot at the back communal table every afternoon.",
+            "tag": "BOLD",
+            "lens": "Idle seats earn nothing"
+          },
+          {
+            "id": "5",
+            "title": "Outlets, wifi, and a long table for lingering",
+            "description": "Physically reconfigure the afternoon floor with a power-strip-lined communal table, posted wifi password, and comfortable seating so people choose to stay and work for hours. For example, swap two two-tops for one 8-seat table wired with outlets after the lunch clear.",
+            "tag": "SAFE",
+            "lens": "Space punishes lingering"
+          },
+          {
+            "id": "6",
+            "title": "A different reason every weekday afternoon",
+            "description": "Give each weekday a named recurring afternoon ritual so regulars learn 'Tuesday means X here,' building habit through repetition. For example, Monday board-game stacks out, Wednesday local-author table, Thursday $4 happy-hour cold brew.",
+            "tag": "BOLD",
+            "lens": "No recurring weekly hook"
+          },
+          {
+            "id": "7",
+            "title": "Cross-promote with the gym and salon next door",
+            "description": "Hand neighboring businesses with afternoon clients a stack of cards their customers redeem at your cafe 2-5pm, importing foot traffic you don't currently get. For example, the yoga studio's 1pm class leaves with a 'half-price tea after class' card good only that afternoon.",
+            "tag": "BOLD",
+            "lens": "No afternoon traffic partners"
+          },
+          {
+            "id": "8",
+            "title": "Shareable platters for two-plus",
+            "description": "Add a small afternoon-only sharing menu priced for groups so people have a reason to bring a friend rather than grab-and-go solo. For example, a $12 'afternoon board' of cheese, fruit, and a half-pastry meant for two people to split.",
+            "tag": "SAFE",
+            "lens": "Solo-only coffee offer"
+          },
+          {
+            "id": "9",
+            "title": "After-school landing spot for parents and kids",
+            "description": "Stock a kids' snack-and-juice combo, a low shelf of books or coloring, and welcome the 3pm school-pickup crowd as a target market instead of a nuisance. For example, a $4 'after-school' cookie-and-milk set with a kids' corner that opens at 2:45.",
+            "tag": "BOLD",
+            "lens": "Kids treated as nuisance"
+          },
+          {
+            "id": "10",
+            "title": "Yesterday-style fresh, today's afternoon snack flight",
+            "description": "Repurpose what would be wasted day-old morning pastry into a cheap warmed 'snack flight' sold only in the afternoon, turning waste into a low-cost draw. For example, three mini day-old pastries toasted and served warm for $5 from 2pm.",
+            "tag": "BOLD",
+            "lens": "Morning inventory wasted"
+          },
+          {
+            "id": "11",
+            "title": "Text club that pings at 1:45pm",
+            "description": "Collect phone numbers at the morning register and send one short afternoon-trigger text each weekday just before 2pm so people get a nudge while the choice is live. For example, a 1:45pm text: 'Scones out hot at 3 today, first 10 get a free refill.'",
+            "tag": "BOLD",
+            "lens": "No way to trigger return"
+          },
+          {
+            "id": "12",
+            "title": "Rebrand the sidewalk for the afternoon",
+            "description": "Flip the exterior sign, window, and chalkboard at 2pm to advertise a distinct afternoon identity so passersby stop reading the place as 'morning coffee only.' For example, a reversible A-frame that shows 'Morning Coffee' until 2pm and 'Afternoon Treats + Workspace' after.",
+            "tag": "SAFE",
+            "lens": "Known as morning-only"
+          },
+          {
+            "id": "13",
+            "title": "Standing reservation for a weekly group",
+            "description": "Recruit existing clubs and meetups to hold a fixed weekly 2-5pm slot with a reserved area and a per-head minimum, guaranteeing a base of bodies and spend. For example, the knitting circle books the corner every Wednesday 3-5pm, everyone buys at least one drink.",
+            "tag": "BOLD",
+            "lens": "No standing group anchor"
+          },
+          {
+            "id": "14",
+            "title": "Punch card that only fills in the afternoon",
+            "description": "Issue a loyalty card where punches are earned exclusively on 2-5pm visits, rewarding the behavior you actually want instead of all-day spend. For example, five afternoon visits earns a free drink, and only afternoon purchases get punched.",
+            "tag": "SAFE",
+            "lens": "Loyalty ignores time slot"
+          },
+          {
+            "id": "15",
+            "title": "Sell the seat-and-bottomless model",
+            "description": "Offer an afternoon flat fee that buys a seat plus bottomless drip/tea for the whole 2-5pm block, monetizing the idle space directly rather than per-cup. For example, $9 buys your chair and unlimited filter coffee from 2 to close.",
+            "tag": "WILD",
+            "lens": "Charging full price per cup"
+          },
+          {
+            "id": "16",
+            "title": "A no-jitters afternoon menu",
+            "description": "Build an explicit decaf, herbal, and food-forward afternoon menu so the 3pm crowd who refuses more caffeine has something to order. For example, a posted 'afternoon, no buzz' list of golden milk, herbal infusions, and a soup-and-bread plate.",
+            "tag": "WILD",
+            "lens": "Caffeine-only self-excludes"
+          }
+        ],
+        "scamper": [
+          {
+            "id": "1",
+            "title": "Afternoon Desk Pass",
+            "description": "Sell a flat-rate afternoon ticket that turns the empty 2-5pm room into a paid quiet workspace with a drink included, so idle tables earn money from remote workers instead of just coffee buyers. For example, $12 buys a guaranteed seat, fast Wi-Fi, an outlet, and one drip refill between 2 and 5pm.",
+            "tag": "SAFE",
+            "lens": "Substitute"
+          },
+          {
+            "id": "2",
+            "title": "Hot-From-The-Oven Savory Hour",
+            "description": "Fire the idle afternoon ovens for warm savory items the morning menu never carries, giving regulars a reason to come for food rather than a second coffee. For example, cheese-and-herb scones and personal flatbreads come out fresh at 2:30 and 3:30 daily.",
+            "tag": "BOLD",
+            "lens": "Substitute"
+          },
+          {
+            "id": "3",
+            "title": "Guest-Baker Residency",
+            "description": "Hand the afternoon counter to a rotating local baker or dessert maker who sells their own goods from the cafe and shares revenue, swapping the owner's product for a draw the cafe can't make alone. For example, a neighborhood pastry chef takes over Tuesday afternoons selling laminated croissants under their own name.",
+            "tag": "WILD",
+            "lens": "Substitute"
+          },
+          {
+            "id": "4",
+            "title": "Same-Day Return Stamp",
+            "description": "Print a tear-off on every morning receipt that unlocks a discounted afternoon treat redeemable only that same day after 2pm, so the morning crowd is handed a concrete trigger to come back. For example, the 8am receipt says 'half-price cookie + tea, valid today 2-5pm only.'",
+            "tag": "SAFE",
+            "lens": "Combine"
+          },
+          {
+            "id": "5",
+            "title": "Borrowed Afternoon Crowd",
+            "description": "Partner with a nearby afternoon-busy business such as a yoga studio, salon, or daycare so their clients get a cafe perk and the cafe gets steered foot traffic during the dead window. For example, the studio's 3pm class members show their app and get a discounted iced drink afterward.",
+            "tag": "BOLD",
+            "lens": "Combine"
+          },
+          {
+            "id": "6",
+            "title": "Two-To-Five Price Drop",
+            "description": "Run a fixed daily discount window where drinks and pastries are marked down only between 2 and 5pm, building a price-driven habit at the exact hours the room sits empty. For example, all lattes are $1 off and day-baked pastries are 30% off every weekday afternoon.",
+            "tag": "SAFE",
+            "lens": "Adapt"
+          },
+          {
+            "id": "7",
+            "title": "Coffee Flight Tasting",
+            "description": "Offer a small paid flight of three contrasting brews or single-origin pours served side by side, turning the afternoon into a slow tasting experience instead of a grab-and-go transaction. For example, $9 gets three 3oz pours with tasting cards, available only after lunch.",
+            "tag": "BOLD",
+            "lens": "Adapt"
+          },
+          {
+            "id": "8",
+            "title": "Standing Theme Afternoons",
+            "description": "Give each weekday afternoon a recurring named draw on a fixed calendar so people learn there's always a reason to show up later in the day. For example, every Wednesday 3-5pm is a quiet board-game afternoon and Thursday is a local-author reading corner.",
+            "tag": "BOLD",
+            "lens": "Modify/Magnify"
+          },
+          {
+            "id": "9",
+            "title": "End-Of-Day Bake Clearance",
+            "description": "Move all unsold morning pastries into a clearly marked discounted basket that opens at 4pm, converting soon-to-be-waste inventory into low-cost afternoon traffic and revenue. For example, a '4pm Last-Batch Bin' sells remaining muffins three-for-the-price-of-two.",
+            "tag": "SAFE",
+            "lens": "Modify/Magnify"
+          },
+          {
+            "id": "10",
+            "title": "Private Room Booking",
+            "description": "Let people reserve the whole quiet space or a section for paid afternoon use such as book clubs, small meetings, or kids' parties, monetizing the empty room as rentable real estate. For example, a $60 two-hour booking includes the back tables plus a drink tray for up to eight people.",
+            "tag": "SAFE",
+            "lens": "Put-to-other-use"
+          },
+          {
+            "id": "11",
+            "title": "Idle-Oven Wholesale Line",
+            "description": "Use the unused afternoon oven and staff time to bake goods for sale to other local outlets like offices, shops, or markets, earning revenue that doesn't depend on anyone walking in. For example, staff bake cookie trays each afternoon that a nearby gym and two corner stores buy on standing order.",
+            "tag": "BOLD",
+            "lens": "Put-to-other-use"
+          },
+          {
+            "id": "12",
+            "title": "Afternoon Baking Class",
+            "description": "Sell ticketed hands-on baking or latte-art sessions run by existing staff in the dead hours, charging admission and selling the kitchen's downtime as an experience. For example, a $35 sourdough basics class runs Mondays 2-4pm for six people.",
+            "tag": "BOLD",
+            "lens": "Put-to-other-use"
+          },
+          {
+            "id": "13",
+            "title": "The No-Line Pitch",
+            "description": "Market the afternoon explicitly as the calm, wait-free version of the cafe to people who avoid the chaotic morning rush, removing the crowding barrier as the selling point. For example, signage and posts read 'Same coffee, zero line \u2014 afternoons are the smart time to come.'",
+            "tag": "SAFE",
+            "lens": "Eliminate"
+          },
+          {
+            "id": "14",
+            "title": "Office Drop Runs",
+            "description": "Remove the trip itself by running scheduled afternoon delivery or curbside pickup of drinks and snacks to nearby offices that can't leave their desks. For example, offices pre-order by 1pm and a staffer drops a labeled tray at three buildings at 3pm.",
+            "tag": "BOLD",
+            "lens": "Eliminate"
+          },
+          {
+            "id": "15",
+            "title": "Afternoon-Only Signature",
+            "description": "Make one craveable item available exclusively after 2pm and never in the morning, flipping the daypart so the most-wanted thing forces an afternoon visit. For example, a warm skillet cookie with ice cream is sold only 2-5pm and sells out by closing.",
+            "tag": "WILD",
+            "lens": "Reverse/Rearrange"
+          },
+          {
+            "id": "16",
+            "title": "Prepaid Afternoon Tab",
+            "description": "Sell a discounted prepaid credit bundle that can only be spent in the afternoon window, locking in future visits and shifting demand from the packed morning into the empty hours. For example, $20 buys $26 of credit usable only weekdays 2-5pm.",
+            "tag": "BOLD",
+            "lens": "Reverse/Rearrange"
+          }
+        ],
+        "sixhats": [
+          {
+            "id": "1",
+            "title": "Print an afternoon coupon on every morning receipt",
+            "description": "The register prints a same-day, redeem-after-2pm voucher on each morning receipt, so the people already walking in get a concrete reason to come back. For example, a 7:30am latte buyer gets a slip reading 'show this after 2pm today for a free pastry with any drink.'",
+            "tag": "SAFE",
+            "lens": "White"
+          },
+          {
+            "id": "2",
+            "title": "Repackage idle oven time into a 3pm fresh-bake batch",
+            "description": "Staff bake a small second batch of pastries at 2:30pm using the ovens that otherwise sit cold, and a sandwich board announces 'fresh out of the oven at 3.' For example, cinnamon rolls go in at 2:30 so the smell and a 3pm 'just baked' sign pull walk-ins during the dead window.",
+            "tag": "SAFE",
+            "lens": "White"
+          },
+          {
+            "id": "3",
+            "title": "Set afternoon prices from the real cost of an idle seat",
+            "description": "The owner calculates that an empty 2-5pm table earns nothing and prices a fixed 'afternoon set' (drink plus snack) at a margin that beats zero, advertised only for those hours. For example, a $6 coffee-and-cookie set is offered 2-5pm because even thin margin on a previously empty chair is pure upside.",
+            "tag": "BOLD",
+            "lens": "White"
+          },
+          {
+            "id": "4",
+            "title": "A quiet, slow corner marketed as the city's calmest 3pm",
+            "description": "The cafe leans into the empty room by branding the afternoon as a deliberately unhurried, low-noise refuge and tells customers exactly that. For example, a chalkboard reads 'nobody rushing you here from 2-5 \u2014 stay as long as you like,' selling the emptiness as the feature.",
+            "tag": "BOLD",
+            "lens": "Red"
+          },
+          {
+            "id": "5",
+            "title": "An afternoon 'treat yourself' ritual aimed at the 3pm slump",
+            "description": "Baristas greet the post-lunch dip with a signature indulgent drink-and-sweet pairing positioned as a small daily reward people give themselves. For example, an 'afternoon pick-me-up' menu names a spiced mocha plus brownie as 'the 3 o'clock you deserve.'",
+            "tag": "SAFE",
+            "lens": "Red"
+          },
+          {
+            "id": "6",
+            "title": "A safe landing spot for parents right after school pickup",
+            "description": "The cafe positions itself as the warm, easy place to decompress with a kid after the 3pm school run, with a small kids' snack and a coloring corner. For example, a parent grabbing their child at 3:15 gets 'kid hot chocolate free with any parent drink' and crayons on the table.",
+            "tag": "BOLD",
+            "lens": "Red"
+          },
+          {
+            "id": "7",
+            "title": "Wall off the afternoon menu so it never touches the morning rush",
+            "description": "Afternoon offers are restricted to a separate menu and POS button that only activates at 2pm, so no discount can ever leak into the 7-11am crowd that pays full price. For example, the 'afternoon set' literally cannot be rung up before 2pm, protecting morning revenue from cannibalization.",
+            "tag": "SAFE",
+            "lens": "Black"
+          },
+          {
+            "id": "8",
+            "title": "Pre-sell afternoon slots so empty hours are paid for in advance",
+            "description": "Customers buy a punch-card or prepaid afternoon bundle in the busy morning, converting uncertain afternoon traffic into committed, already-collected revenue. For example, a $20 card sold at the morning register buys five afternoon drinks, locking in five future return visits.",
+            "tag": "BOLD",
+            "lens": "Black"
+          },
+          {
+            "id": "9",
+            "title": "Cap the giveaway with a 'first 20 only' afternoon offer",
+            "description": "Any afternoon promo is hard-limited to a small daily count posted on a sign, so the cost can never run away even if it works too well. For example, 'first 20 afternoon drinks get a free cookie \u2014 counter at the till' bounds the spend while still creating urgency.",
+            "tag": "SAFE",
+            "lens": "Black"
+          },
+          {
+            "id": "10",
+            "title": "Turn the best-selling morning drink into an iced afternoon twin",
+            "description": "The cafe takes its single most popular morning coffee and offers an iced or flavored afternoon version under the same recognizable name, reusing what customers already love. For example, the famous house latte becomes an 'iced house latte, afternoons only,' riding existing demand into a new daypart.",
+            "tag": "SAFE",
+            "lens": "Yellow"
+          },
+          {
+            "id": "11",
+            "title": "Let loyal morning regulars name and shape the afternoon menu",
+            "description": "The owner invites the most frequent morning customers to vote on and co-create the afternoon offerings, turning existing loyalty into afternoon ownership. For example, regulars pick the 'afternoon special of the week' on a tally sheet, and their named pick draws them and their friends back at 3pm.",
+            "tag": "BOLD",
+            "lens": "Yellow"
+          },
+          {
+            "id": "12",
+            "title": "Stamp a streak reward for visiting both morning and afternoon",
+            "description": "A loyalty stamp rewards customers who come in once before 11am and once after 2pm on the same day, amplifying the existing regular habit into a second daily visit. For example, five 'double-visit' days earns a free drink, nudging the already-loyal to return in the afternoon.",
+            "tag": "SAFE",
+            "lens": "Yellow"
+          },
+          {
+            "id": "13",
+            "title": "Rent the empty room to remote workers as a paid afternoon desk",
+            "description": "The cafe sells a low-cost afternoon work pass that guarantees a seat, fast wifi, and unlimited refills, monetizing the dead room as a co-working space. For example, $8 buys 2-5pm of desk time with bottomless drip coffee, filling tables with laptop workers who'd otherwise be home.",
+            "tag": "WILD",
+            "lens": "Green"
+          },
+          {
+            "id": "14",
+            "title": "Host rotating afternoon micro-events that make 3pm a destination",
+            "description": "The owner books recurring small draws \u2014 a local author reading, a craft session, a tasting \u2014 into the empty afternoon so people come for the event and buy drinks while there. For example, 'Thursday 3pm: latte art lesson, $12 includes your drink' turns a dead slot into a ticketed reason to show up.",
+            "tag": "WILD",
+            "lens": "Green"
+          },
+          {
+            "id": "15",
+            "title": "Run a standing afternoon delivery route to nearby offices",
+            "description": "Since no one walks in after lunch, the cafe sends a staffer with a pre-taken order list to drop coffees at nearby workplaces during the idle hours. For example, an office texts a 2:30pm group order by noon and a barista bikes it over, using paid-but-idle staff to chase the customers instead of waiting.",
+            "tag": "WILD",
+            "lens": "Green"
+          },
+          {
+            "id": "16",
+            "title": "Stagger one shift so labor cost follows the afternoon push in sequence",
+            "description": "The owner re-times a single staffer to start late and overlap the 2-5pm experiments, so the new afternoon initiatives are tested with covered labor before scaling, and the morning crew stays untouched. For example, one barista shifts to a 10am-6pm slot specifically to run the afternoon bake, events, and deliveries while morning staffing is unchanged.",
+            "tag": "BOLD",
+            "lens": "Blue"
+          }
+        ]
+      },
+      "judges": [
+        {
+          "tech": "reverse",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "reverse",
+          "v": {
+            "better": "Y",
+            "x_novelty": 3,
+            "x_mechanism": 5,
+            "x_relevance": 4,
+            "x_compliance": 4,
+            "y_novelty": 4,
+            "y_mechanism": 5,
+            "y_relevance": 5,
+            "y_compliance": 4,
+            "reason": "Both are mechanism-rich with concrete actors, prices, and times, but Y's novel ideas attack the stated root causes more precisely: #11 (1:45pm trigger text sent while the choice is live), #10 (day-old waste repurposed into a cheap afternoon snack flight), and #16 (a no-jitters decaf/herbal menu for the 3pm crowd that refuses more caffeine) address \"no trigger to return\" and \"morning-coffee identity\" head-on. X's standout #14 (renting idle ovens to an outside baker) is its single most original entry, but X leans more on standard-playbook items and repeats itself across clusters (#2 office snack-box delivery vs #11 coffee cart; #5 free recurring groups vs #15 hosted social draw; #4 prepaid combo vs #8 monthly pass). Y also clusters on seat-monetization (#4/#5/#15) yet differentiates the mechanisms more cleanly (subscription pass vs physical floor reconfiguration vs per-block bottomless), giving it the edge on substance."
+          }
+        },
+        {
+          "tech": "reverse",
+          "order": 2,
+          "xArm": "reverse",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_novelty": 3,
+            "x_mechanism": 5,
+            "x_relevance": 5,
+            "x_compliance": 4,
+            "y_novelty": 4,
+            "y_mechanism": 5,
+            "y_relevance": 5,
+            "y_compliance": 4,
+            "reason": "Both are concrete and mechanism-first with heavy idea-for-idea overlap (receipt coupon, 3pm bake, desk pass, gym cross-promo, after-school, afternoon punch card), so mechanism ties high. Y pulls ahead on novelty by opening outbound solution-space that directly attacks the \"no afternoon foot traffic\" root cause \u2014 office snack-box deliveries (Y2), a thermos cart to locked-in desk workers (Y11), a bookable meeting venue (Y9), and renting idle oven time to a food maker (Y14) \u2014 whereas X stays almost entirely inbound (pull regulars back). Each collection has comparable internal redundancy (X4/X15 both \"sell a seat\"; Y4/Y8 both \"prepay a second trip\"), and X's sharpest distinct ideas (X16's no-caffeine 3pm insight, X10's waste-to-snack-flight) aren't enough to offset Y's wider, root-cause-targeted range."
+          }
+        },
+        {
+          "tech": "scamper",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "scamper",
+          "v": {
+            "better": "Y",
+            "x_novelty": 3,
+            "x_mechanism": 4,
+            "x_relevance": 4,
+            "x_compliance": 3,
+            "y_novelty": 4,
+            "y_mechanism": 4,
+            "y_relevance": 4,
+            "y_compliance": 4,
+            "reason": "Both share the core moves (desk pass, hot-bake hour, partner crowd, same-day return trigger, room rental, oven wholesale) with vivid, concrete mechanisms \u2014 X's actors are slightly crisper (\"12-person accounting firm,\" \"second-grader two blocks over\"). But X repeats mechanisms within itself: 3/4 both unlock a same-day afternoon discount from a morning purchase, and 5/9 both monetize the empty room via groups (8/13 also overlap on loyalty), which costs it on novelty and the \"distinct mechanisms\" compliance criterion. Y carries genuinely distinct angles X lacks \u2014 Y7 coffee flight tasting, Y9 end-of-day bake clearance turning waste into traffic, and Y13's \"no-line\" repositioning that directly attacks the \"known as a morning stop, not afternoon destination\" root cause \u2014 so it edges ahead on substance."
+          }
+        },
+        {
+          "tech": "scamper",
+          "order": 2,
+          "xArm": "scamper",
+          "yArm": "plain",
+          "v": {
+            "better": "X",
+            "x_novelty": 4,
+            "x_mechanism": 4,
+            "x_relevance": 5,
+            "x_compliance": 4,
+            "y_novelty": 3,
+            "y_mechanism": 4,
+            "y_relevance": 5,
+            "y_compliance": 3,
+            "reason": "X covers a broader span of distinct revenue mechanisms with little internal overlap \u2014 e.g. #11 idle-oven wholesale (revenue with no walk-ins), #9 waste-clearance bin, #7 coffee flight tasting, #15 daypart-exclusive signature, and #12 baking class are each a genuinely different lever. Y has a few sharper single ideas (#16 scent-fan sidewalk intercept, #14 leasing oven time to a maker, #8 subscription priced to reward a second visit), but suffers a within-collection novelty/compliance penalty from three near-duplicate loyalty/prepaid-pricing ideas (#4 two-trip combo, #8 monthly pass, #13 afternoon punch card), plus overlapping room-monetization (#5/#9) and worker-delivery (#2/#11) pairs. Both are equally concrete and relevant, so X wins on substance via greater mechanism diversity."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "sixhats",
+          "v": {
+            "better": "X",
+            "x_novelty": 4,
+            "x_mechanism": 5,
+            "x_relevance": 5,
+            "x_compliance": 4,
+            "y_novelty": 3,
+            "y_mechanism": 4,
+            "y_relevance": 5,
+            "y_compliance": 4,
+            "reason": "X spans a wider set of distinct revenue mechanisms \u2014 B2B snack-box standing orders (X2), oven-lease rent to a food maker (X14), a desk-cart route to locked-in workers (X11), and cross-promo with an afternoon-peak neighbor (X7) \u2014 most of which Y never attempts, giving it stronger novelty and mechanism breadth. Y is sharper on the goal's constraints (idle-cost pricing X3, POS wall-off Y7, first-20 cap Y9, shift-stagger Y16) and clever asset reuse (iced twin Y10, regulars co-create Y11), but it clumps into a positioning cluster (Y4/Y5) and a cost-guardrail cluster (Y3/Y7/Y9), and several of its strongest items (desk pass, receipt coupon, after-school, delivery, events, prepay) closely mirror X's. On substance X wins for distinct mechanisms; Y is the more disciplined, constraint-aware set."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "order": 2,
+          "xArm": "sixhats",
+          "yArm": "plain",
+          "v": {
+            "better": "X",
+            "x_novelty": 3,
+            "x_mechanism": 5,
+            "x_relevance": 5,
+            "x_compliance": 4,
+            "y_novelty": 3,
+            "y_mechanism": 4,
+            "y_relevance": 5,
+            "y_compliance": 3,
+            "reason": "Both share most core moves (morning-receipt voucher, 3pm bake, desk pass, after-school, office delivery, recurring events, afternoon menu), so novelty is comparable. X edges ahead on mechanism and compliance: it adds two distinct operational-defense ideas absent from Y \u2014 #7 POS-button lockout that physically prevents morning cannibalization, #9 \"first 20 only\" hard spend cap, and #16 staggered single-shift labor so the experiments are run with covered cost. These directly address the \"without hurting the morning rush\" / idle-cost constraints rather than just generating demand. Y has nice distinct additions (#7 neighbor cross-sell, #14 renting oven time to a baker for rent-plus-cut), but it leans heavier on overlapping subscription/loyalty/event variants (#4/#8/#13 all repackage two-visit economics) and lacks X's cannibalization-protection and cost-control mechanisms."
+          }
+        }
+      ],
+      "census": {
+        "vocabulary": [
+          {
+            "label": "M1",
+            "gloss": "Sell idle space as paid workspace \u2014 desk pass or seat+bottomless-drip; monetize empty seats from offsite/remote workers"
+          },
+          {
+            "label": "M2",
+            "gloss": "Rent the room as a bookable private venue \u2014 hourly meetings, tutoring, parties, with a catering minimum"
+          },
+          {
+            "label": "M3",
+            "gloss": "Lease idle production capacity (ovens/kitchen/counter) to a third-party maker for rent plus a cut of their sales"
+          },
+          {
+            "label": "M4",
+            "gloss": "Idle-oven B2B wholesale / standing office snack orders \u2014 bake extra to sell to offices and outlets, demand not dependent on walk-ins"
+          },
+          {
+            "label": "M5",
+            "gloss": "Take the product off-premise \u2014 delivery / mobile cart / curbside route to offsite workers who can't leave"
+          },
+          {
+            "label": "M6",
+            "gloss": "Morning-to-afternoon same-day return trigger printed on the morning receipt (coupon/token/stamp)"
+          },
+          {
+            "label": "M7",
+            "gloss": "Prepaid / bundled future-visit purchase \u2014 combo, tab, prepaid credit, or monthly-pass economics that nudge an extra afternoon trip"
+          },
+          {
+            "label": "M8",
+            "gloss": "Loyalty stamp/punch that rewards afternoon (or morning+afternoon double) visits specifically"
+          },
+          {
+            "label": "M9",
+            "gloss": "Time-limited off-peak discount / pricing window \u2014 items priced lower only 2-5pm"
+          },
+          {
+            "label": "M10",
+            "gloss": "Timed idle-oven fresh-bake sensory draw \u2014 a hot batch out at a fixed afternoon time ('warm at 3'), often with smell/signage"
+          },
+          {
+            "label": "M11",
+            "gloss": "New afternoon-specific product or menu framed as a different occasion (tartines/wine, flight, iced twin, no-jitters, shareable)"
+          },
+          {
+            "label": "M12",
+            "gloss": "Cross-promotion with a neighboring afternoon-busy business (gym/salon/studio/daycare) to import foot traffic"
+          },
+          {
+            "label": "M13",
+            "gloss": "Cafe-hosted recurring programming / events \u2014 trivia, readings, themed afternoons, paid classes/tastings as a scheduled draw"
+          },
+          {
+            "label": "M14",
+            "gloss": "Give the dead space to an existing recurring group (book club, knitting, meetup) for a per-head drink minimum"
+          },
+          {
+            "label": "M15",
+            "gloss": "Target a new afternoon-present segment \u2014 after-school parents and kids"
+          },
+          {
+            "label": "M16",
+            "gloss": "Reposition / rebrand the afternoon identity \u2014 flip signage, sell the calm/no-line emptiness, intercept passersby"
+          },
+          {
+            "label": "M17",
+            "gloss": "Repurpose day-old / would-be-waste inventory into a cheap afternoon-only draw"
+          },
+          {
+            "label": "M18",
+            "gloss": "Direct push / SMS afternoon trigger \u2014 text the live choice just before 2pm"
+          },
+          {
+            "label": "M19",
+            "gloss": "Operational guardrail / cost discipline \u2014 anti-cannibalization wall, spend cap, staggered shift; protects rather than grows revenue"
+          },
+          {
+            "label": "M20",
+            "gloss": "Co-create the afternoon offer with existing regulars to convert loyalty into afternoon ownership"
+          }
+        ],
+        "per_arm": [
+          {
+            "arm": "PLAIN",
+            "distinct_count": 15,
+            "repeated_levers": "M7 (prepaid/bundle) x2 (#4 counter combo, #8 monthly-pass economics)",
+            "note": "Broadest and flattest: 15 of 16 ideas are distinct levers and only the prepaid/bundle idea recurs (twice). Maps: #1 M1, #2 M4, #3 M6, #4 M7, #5 M14, #6 M10, #7 M12, #8 M7, #9 M2, #10 M15, #11 M5, #12 M11, #13 M8, #14 M3, #15 M13, #16 M16. Only arm that touches all three idle-asset monetization plays at once (M2 venue, M3 lease ovens, M4 wholesale)."
+          },
+          {
+            "arm": "REVERSE",
+            "distinct_count": 13,
+            "repeated_levers": "M1 (paid workspace) x3 (#4 monthly desk pass, #5 reconfigure floor for lingering, #15 seat+bottomless); M11 (afternoon menu) x2 (#8 shareable platters, #16 no-jitters menu)",
+            "note": "Collapses hard onto the workspace lever \u2014 three of sixteen ideas (#4/#5/#15) are the same 'monetize idle seats as a paid work spot' mechanism in different dress. This M1x3 stack is unambiguous and survives any granularity choice. Sole contributor of M18 (1:45pm SMS push)."
+          },
+          {
+            "arm": "SCAMPER",
+            "distinct_count": 14,
+            "repeated_levers": "M11 (afternoon product/occasion) x2 (#7 coffee flight, #15 afternoon-only signature item); M13 (hosted events) x2 (#8 theme afternoons, #12 baking class)",
+            "note": "Broad like PLAIN (14 distinct, max-repeat only 2). Its apparent third repeat dissolves once #2 'Hot-From-The-Oven Savory Hour' is read as the idle-oven fresh-bake draw (M10) by the same oven-asset test applied to PLAIN6/REV2/SIX2, not a menu reframe. Maps: #1 M1, #2 M10, #3 M3, #4 M6, #5 M12, #6 M9, #7 M11, #8 M13, #9 M17, #10 M2, #11 M4, #12 M13, #13 M16, #14 M5, #15 M11, #16 M7. Adds paid experiences (class/flight) inside M11/M13 that other arms lack."
+          },
+          {
+            "arm": "SIXHATS",
+            "distinct_count": 13,
+            "repeated_levers": "M19 (operational guardrail) x3 (#7 cannibalization wall, #9 spend cap, #16 staggered shift); M11 (afternoon product) x2 (#5 treat-yourself pairing, #10 iced morning-twin)",
+            "note": "Its 13 distinct count is inflated by off-axis levers: M19x3 plus M20 (co-create) are cost-control / process moves that protect or organize rather than generate afternoon demand, so the goal-relevant figure is only ~9-10 mechanisms. The M19x3 guardrail stack is rock-solid and is this arm's signature \u2014 the only arm that turns 'don't hurt the morning' and 'bound the cost' into ideas of their own. Sole owner of M19 and M20."
+          }
+        ],
+        "cross_arm_note": "Six mechanisms appear in all four arms, but only four are robustly shared: M1 (paid workspace), M6 (morning-receipt return trigger), M11 (afternoon product/occasion reframe), and M13 (hosted recurring events) each have an unambiguous instance in every arm \u2014 these are the convergent gravity wells every persona reaches for. M10 (fresh-bake draw) is also in all four. M16 (reposition/rebrand) shows as all-four but is SOFT: it hinges on PLAIN16, which is really a sidewalk-interception + time-limited-price tactic (defensibly M9/M16 blend). Robust uniques and absences: M18 (1:45pm SMS push) is REVERSE-only; M19 (cost/operations guardrail) and M20 (co-create with regulars) are SIXHATS-only; M17 (waste-repurpose) appears only in REVERSE+SCAMPER; M9 (off-peak discount pricing) is notably absent from PLAIN. Diagnostic read: each arm clusters its repeats on a different attractor \u2014 REVERSE on workspace (M1x3), SIXHATS on guardrails (M19x3), while SCAMPER and PLAIN stay flat (max-repeat 2). REVERSE's and SIXHATS's 3x collapses survive any granularity choice; the structured techniques each have a characteristic bias that PLAIN does not.",
+        "most_diverse_arm": "PLAIN \u2014 highest distinct_count (15/16) and lowest maximum repetition (only M7 recurs, and only twice), and the only arm spanning all three idle-asset monetization plays (M2 venue, M3 lease ovens, M4 wholesale). Verdict is invariant: under every borderline reassignment tested, no structured arm can exceed 14 distinct, and PLAIN wins on both distinct_count and lowest max-repeat in all of them. Caveat: SCAMPER is close (14 distinct, also max-repeat 2); and SIXHATS's 13 would drop to ~9-10 once its off-goal guardrail/process levers are excluded, so PLAIN's lead in problem-relevant diversity is wider than the raw counts suggest."
+      }
+    },
+    {
+      "frame": "b2b",
+      "frameTitle": "B2B SaaS \u2014 cut early churn",
+      "coll": {
+        "plain": [
+          {
+            "id": "1",
+            "title": "Auto-draft the first week from a 3-question setup",
+            "description": "When a new team signs up, the tool asks three questions (team size, shifts per day, days open) and instantly generates a complete draft schedule the admin only tweaks instead of building from scratch. A 6-person cafe answers three dropdowns and sees a full Mon-Sun rota pre-filled in under a minute, so the 'aha' lands on day one.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "2",
+            "title": "A 10-minute live setup call that ends with a finished week",
+            "description": "Within 24 hours of signup, a team member books a short screen-share where they co-build the admin's actual first real schedule together and don't hang up until it's published. The admin leaves the call with this week's shifts already live, not a to-do list.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "3",
+            "title": "Turn the competitor CSV into a one-click import that finishes the schedule",
+            "description": "New admins paste or upload their existing spreadsheet or a rival tool's export, and the importer maps columns and produces a working schedule automatically. Someone arriving from a shared Google Sheet drops the file and watches their current week reconstructed inside the product in seconds.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "4",
+            "title": "Pre-built schedule templates by business type",
+            "description": "The admin picks their industry (restaurant, clinic, retail, salon) and gets a ready-made shift pattern with typical roles and hours they edit rather than invent. A new dental clinic selects 'clinic,' lands a front-desk-plus-hygienist weekly pattern, and is 80% done before touching anything.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "5",
+            "title": "A weekly email that converts schedule data into hours-saved",
+            "description": "Every Monday the tool emails the admin a short recap stating how many hours of manual scheduling and back-and-forth the product handled that week, computed from edits and messages avoided. The admin opens 'You saved 3.5 hours and 12 texts last week' and the invisible value becomes a number.",
+            "tag": "SAFE",
+            "lens": "plain"
+          },
+          {
+            "id": "6",
+            "title": "An in-product moment when the first conflict is auto-resolved",
+            "description": "The instant the tool catches a double-booking or coverage gap and fixes it, a small panel surfaces showing exactly what would have gone wrong and what it prevented. An admin assigning overlapping shifts sees 'Caught: Sam booked twice Thursday \u2014 auto-fixed' right when it happens, making the safety net felt.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "7",
+            "title": "A founder benchmark email comparing the team to similar ones",
+            "description": "A few weeks in, the team gets a personal note from the founder showing how their setup compares to peer teams of the same size who stuck around (e.g. fill rate, time-to-publish). A 5-person shop reads 'teams like yours publish in 8 min \u2014 you're at 22, here's the one setting they change' and gets a concrete nudge plus social proof.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "8",
+            "title": "Every team member gets their own personal shift view by invite",
+            "description": "During setup the admin enters the team's names and each person receives a link to a lightweight personal page showing only their upcoming shifts, no account-building required. The admin types five names, five people get 'Here are your shifts this week' the same day, so logins spread past the admin.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "9",
+            "title": "Shift confirmation by tap, so staff acknowledge from their phone",
+            "description": "When a schedule publishes, each worker gets a notification asking them to tap 'Got it' or 'Can't make it' on their own device, pulling them into the product as participants. A line cook taps a thumbs-up on Sunday night and the admin sees who's confirmed without chasing anyone, turning passive staff into active users.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "10",
+            "title": "Auto-post the published schedule into the team's existing chat",
+            "description": "The admin connects their group chat (WhatsApp, Slack, or a shared SMS thread) once, and every published schedule drops in there automatically where the whole team already talks. A retail crew that lives in a WhatsApp group suddenly sees the official rota appear there each week, anchoring the tool in their daily flow.",
+            "tag": "BOLD",
+            "lens": "plain"
+          },
+          {
+            "id": "11",
+            "title": "Make leaving lossy by accumulating swap and coverage history",
+            "description": "As the team uses the tool, it quietly builds a record of who covers for whom, reliability, and recurring availability that a CSV export can't carry away. By week six the admin can see 'Jordan has covered 9 last-minute gaps,' institutional memory that vanishes the moment they switch back to a spreadsheet.",
+            "tag": "WILD",
+            "lens": "plain"
+          },
+          {
+            "id": "12",
+            "title": "Wire scheduling into the tools the team can't easily unplug",
+            "description": "The product connects shifts to the team's calendar and a payroll or timesheet feed so published schedules flow into systems they already depend on. Once hours auto-feed into the admin's payroll run, exporting a CSV to a competitor means rebuilding that whole pipeline, raising the real cost of leaving.",
+            "tag": "WILD",
+            "lens": "plain"
+          },
+          {
+            "id": "13",
+            "title": "Unlock a free month once the whole team is active",
+            "description": "The admin's billing pauses for a month the moment every team member has opened their shift view or confirmed once, tying a real discount to full-team adoption rather than just admin signup. A manager pushes their five teammates to tap-in because doing so wipes next month's bill, solving the single-user problem with money.",
+            "tag": "WILD",
+            "lens": "plain"
+          },
+          {
+            "id": "14",
+            "title": "A publishing streak that rewards consistent weekly use",
+            "description": "The tool tracks how many weeks in a row the admin publishes a complete schedule and surfaces the streak plus a small perk for keeping it alive past the danger zone. An admin on a 4-week streak gets 'one more week unlocks priority support,' creating a habit loop right through the first-60-day churn window.",
+            "tag": "WILD",
+            "lens": "plain"
+          },
+          {
+            "id": "15",
+            "title": "Pair each new team with a real team that already succeeded",
+            "description": "In week one, a new admin is matched with a peer customer of similar size who agreed to be a buddy, and they swap one message about getting their first week live. A new gym owner hears from another gym owner 'here's the trap I hit,' adding human accountability and a reason to push through setup.",
+            "tag": "WILD",
+            "lens": "plain"
+          },
+          {
+            "id": "16",
+            "title": "Detect a stalling team and send a recovery concierge before they quit",
+            "description": "When a team hasn't published a schedule by a set point in their first weeks, the system flags it and a person reaches out offering to build the next week for them directly. An admin who went quiet on day 18 gets 'Want me to set up next week for you? Just reply with your hours,' catching churn at the exact moment it's about to happen.",
+            "tag": "WILD",
+            "lens": "plain"
+          }
+        ],
+        "reverse": [
+          {
+            "id": "1",
+            "title": "Walk them to a finished first week",
+            "description": "A short in-app guide sits beside the schedule and ticks off each shift as it gets filled, so the admin can see exactly how many slots remain until the week is whole. For a 6-person cafe team it might say 'Friday 2-5pm and Saturday open is all that's left \u2014 fill these two and your week is done.'",
+            "tag": "SAFE",
+            "lens": "Never finishing first week"
+          },
+          {
+            "id": "2",
+            "title": "A running tally of minutes saved",
+            "description": "Every time the admin builds or edits a schedule, the tool measures how long it took versus their old spreadsheet baseline and shows a small counter of cumulative time saved this month. After three weeks the admin opens it to '4h 20m saved vs. doing this by hand.'",
+            "tag": "SAFE",
+            "lens": "Time-saved stays invisible"
+          },
+          {
+            "id": "3",
+            "title": "Each member gets their own front door",
+            "description": "When a schedule publishes, every team member receives a personal link showing only their own upcoming shifts and lets them tap to confirm or request a swap, giving them a reason to open the tool that has nothing to do with admin work. A line cook taps 'confirm' on his three shifts and flags Thursday for a swap, all without an admin account.",
+            "tag": "SAFE",
+            "lens": "Only the admin logs in"
+          },
+          {
+            "id": "4",
+            "title": "Let the schedule accumulate a history worth keeping",
+            "description": "The tool quietly stores who worked when, swap patterns, and recurring coverage rules so that after a month the account holds a living record a fresh CSV export would flatten and lose. By week six the admin sees 'Maria covers most Friday closes' surfaced automatically \u2014 a pattern that lives here, not in any exported file.",
+            "tag": "SAFE",
+            "lens": "Switching cost stays low"
+          },
+          {
+            "id": "5",
+            "title": "A fixed weekly building ritual",
+            "description": "The admin picks one recurring time each week and the tool reserves it as a 15-minute 'build next week' moment, prompting them at that exact slot with last week's schedule pre-loaded as a starting draft. Every Thursday at 4pm a reminder opens the half-built next week so scheduling becomes a habit, not a scramble.",
+            "tag": "SAFE",
+            "lens": "No reason to return"
+          },
+          {
+            "id": "6",
+            "title": "Name a backup before the admin goes quiet",
+            "description": "During setup the admin designates one teammate as co-owner who can publish and edit schedules, so the account keeps moving even when the admin is on vacation or distracted. When the owner is out sick, the assistant manager publishes next week's schedule from her own login instead of the whole account stalling.",
+            "tag": "SAFE",
+            "lens": "Admin is single point"
+          },
+          {
+            "id": "7",
+            "title": "Show the day-30 price before day 30",
+            "description": "From the first login a small banner states the exact date and amount of the first charge and lets the admin pick or change their plan early, so billing is never a surprise that triggers an angry export. On day 3 it reads 'Your first charge is $49 on July 6 \u2014 change plan anytime' instead of a silent shock a month later.",
+            "tag": "SAFE",
+            "lens": "Billing surprise at renewal"
+          },
+          {
+            "id": "8",
+            "title": "Start from a schedule that already fits their trade",
+            "description": "At signup the admin picks their kind of team \u2014 restaurant, clinic, retail, agency \u2014 and the tool drops in a starter schedule with typical roles, shift lengths, and coverage rules already laid out to edit rather than a blank grid. A dental office chooses 'clinic' and lands on a Mon-Sat front-desk-plus-hygienist layout they only need to tweak.",
+            "tag": "SAFE",
+            "lens": "Setup is a blank wall"
+          },
+          {
+            "id": "9",
+            "title": "Flag the accounts about to slip",
+            "description": "An internal dashboard scores each new team on whether they finished a first full week, invited members, and logged back in, and surfaces the ones trending toward churn so a human can reach out while it still matters. The founder sees 'Acme Bakery: signed up 11 days ago, zero published schedules' and sends a personal nudge before day 60.",
+            "tag": "BOLD",
+            "lens": "No early-warning signal"
+          },
+          {
+            "id": "10",
+            "title": "Send the time-saved number up the chain",
+            "description": "The admin can opt to have the tool email a monthly one-line recap of hours saved and shifts covered to their own manager or owner, putting the value in front of the person who controls renewal. The owner gets 'Your team saved ~5 hours on scheduling and filled 38 shifts this month' without the admin having to make that case themselves.",
+            "tag": "BOLD",
+            "lens": "Value trapped with admin"
+          },
+          {
+            "id": "11",
+            "title": "Make ignoring it actually cost something",
+            "description": "If a week goes unpublished by a chosen cutoff, the tool sends every member the previous week's stale schedule with a clear 'unconfirmed' mark, so the gap of not using it becomes visible to the whole team instead of silent. Members see 'last week's shifts, not yet confirmed for this week' and start asking the admin to publish.",
+            "tag": "BOLD",
+            "lens": "No pain when ignored"
+          },
+          {
+            "id": "12",
+            "title": "Show how a team like theirs got rolling",
+            "description": "During onboarding the tool shows a short, real example from a same-industry, same-size team \u2014 what their first finished week looked like and how long it took them \u2014 as a concrete benchmark to copy. A new 5-person clinic sees 'clinics your size usually finish their first week in about 20 minutes; here's how one set up their hygienist rotation.'",
+            "tag": "BOLD",
+            "lens": "No peer success proof"
+          },
+          {
+            "id": "13",
+            "title": "Reach out the moment a team stalls",
+            "description": "When a new account goes three days without finishing its first week, the tool automatically sends a context-aware message offering the one next step that unblocks them, tuned to where they actually got stuck. A team that built but never published gets 'You're one tap from publishing \u2014 want us to send it to your crew?' rather than a generic check-in.",
+            "tag": "BOLD",
+            "lens": "Product stays silent on stall"
+          },
+          {
+            "id": "14",
+            "title": "Put the shifts where the team already looks",
+            "description": "Each member can subscribe their published shifts to the calendar app on their phone, so the schedule shows up next to their personal life without anyone opening the product. A bartender sees Friday's 5pm shift appear right in their phone calendar with a reminder, keeping the tool present even on days they never log in.",
+            "tag": "BOLD",
+            "lens": "Schedule is a dead artifact"
+          },
+          {
+            "id": "15",
+            "title": "Next week starts itself from this week",
+            "description": "When a schedule is published, the tool automatically drafts the following week by carrying over the same shifts and people, so the admin edits exceptions instead of rebuilding from scratch. Monday morning next week already exists as a copy of this week, and the admin only changes the two people who requested time off.",
+            "tag": "SAFE",
+            "lens": "Week two feels like week one"
+          },
+          {
+            "id": "16",
+            "title": "Mark the moment the week comes together",
+            "description": "The instant the last open shift is filled, the tool fires a shared celebratory note to the whole team announcing the week is fully covered, turning a private admin task into a collective win everyone feels. The crew chat lights up with 'Next week is fully staffed \u2014 nice work team,' so members associate the tool with a good moment, not admin chores.",
+            "tag": "WILD",
+            "lens": "Wins invisible to team"
+          }
+        ],
+        "scamper": [
+          {
+            "id": "1",
+            "title": "Start with a filled-in week, not a blank grid",
+            "description": "When a new team signs up, the tool generates a complete draft schedule for their coming week from a few setup answers (team size, roles, hours), so the admin edits a finished plan instead of building one from scratch. For a 6-person cafe, the first screen already shows Monday-Sunday shifts assigned, and the admin just drags two people around and hits publish.",
+            "tag": "SAFE",
+            "lens": "Substitute"
+          },
+          {
+            "id": "2",
+            "title": "Let staff confirm shifts by text, no account needed",
+            "description": "Instead of requiring every team member to create a login, the tool texts each person their shifts and they reply to confirm or flag a conflict, so the whole team interacts without ever signing in. A line cook gets 'You're on Tue 4-10pm, reply Y to confirm' and the admin sees a green check appear without that cook ever opening the app.",
+            "tag": "BOLD",
+            "lens": "Substitute"
+          },
+          {
+            "id": "3",
+            "title": "Wire the schedule straight into payroll",
+            "description": "The tool connects published schedules to the team's payroll or timesheet system so approved hours flow automatically into the next pay run, making the schedule the source that feeds people's paychecks. When a manager publishes the week, the hours land in their payroll provider, so dropping the tool would mean rebuilding that pay pipeline by hand.",
+            "tag": "BOLD",
+            "lens": "Combine"
+          },
+          {
+            "id": "4",
+            "title": "Merge scheduling with a shared availability board",
+            "description": "Each team member sets and updates their own weekly availability inside the tool, and the scheduler can only assign shifts within those windows, giving every person a reason to log in regularly. A nurse marks she can't work Thursdays this month, and the admin physically cannot place her there, so the whole team keeps their availability current.",
+            "tag": "SAFE",
+            "lens": "Combine"
+          },
+          {
+            "id": "5",
+            "title": "Email a one-click weekly schedule draft every Sunday",
+            "description": "Each Sunday the tool sends the admin a ready-made schedule for the upcoming week based on past patterns, and a single button in the email publishes it. A retail manager opens the Sunday email, sees next week already laid out like last week, taps 'Use this week,' and is done in under a minute.",
+            "tag": "SAFE",
+            "lens": "Adapt"
+          },
+          {
+            "id": "6",
+            "title": "Track consecutive fully-scheduled weeks as a running count",
+            "description": "The tool counts how many weeks in a row the team has had a complete published schedule and surfaces that number prominently to the admin, turning the core habit into something they don't want to break. After publishing, the admin sees 'Week 4 in a row fully scheduled' and feels the pull to keep the run going next week.",
+            "tag": "BOLD",
+            "lens": "Adapt"
+          },
+          {
+            "id": "7",
+            "title": "Send the whole team a weekly time-saved receipt",
+            "description": "Every week the tool emails the entire team a short summary of hours the manager would have spent scheduling by hand versus the few minutes it actually took, so the value is felt by the people it benefits, not just inferred by the admin. Friday's note to all six staff reads 'This tool saved your manager 3.5 hours this week,' making the payoff visible to everyone.",
+            "tag": "SAFE",
+            "lens": "Modify/Magnify"
+          },
+          {
+            "id": "8",
+            "title": "Build the first week live on a 10-minute setup call",
+            "description": "A team member from the tool hops on a short scheduled call with each new admin within their first few days and co-builds a real, published week together on screen. The founder's onboarding rep shares a screen with a new gym owner and they finish a publishable schedule together in ten minutes, guaranteeing that first complete week happens.",
+            "tag": "BOLD",
+            "lens": "Modify/Magnify"
+          },
+          {
+            "id": "9",
+            "title": "Accumulate shift notes and history that stay inside the tool",
+            "description": "The tool steadily builds up a rich record of swap history, no-show patterns, and per-person notes that grows more valuable each week and isn't part of any export, so the longer a team stays the more institutional memory lives there. After two months a manager relies on 'Jake has called out the last three Fridays' notes that a bare CSV of shifts would never carry.",
+            "tag": "WILD",
+            "lens": "Modify/Magnify"
+          },
+          {
+            "id": "10",
+            "title": "Open a shift-swap board the team runs themselves",
+            "description": "The tool lets any team member post a shift they can't work and lets coworkers claim it, with the admin only approving, so staff log in on their own to cover and grab shifts. A server posts 'Can't do Sat night, anyone?' and a coworker claims it from their phone before the manager even sees it.",
+            "tag": "BOLD",
+            "lens": "Put-to-other-use"
+          },
+          {
+            "id": "11",
+            "title": "Turn the schedule into the team's clock-in point",
+            "description": "Team members tap to clock in and out against their scheduled shift inside the tool, so the schedule doubles as the attendance and worked-hours record the business depends on daily. A barista clocks in from the shift card on their phone, and now the business's actual hours-worked data lives in the tool, making it far stickier than a planning grid.",
+            "tag": "BOLD",
+            "lens": "Put-to-other-use"
+          },
+          {
+            "id": "12",
+            "title": "Import the team's existing spreadsheet on day one",
+            "description": "During signup the admin uploads the spreadsheet or calendar they already schedule with, and the tool parses it into a live editable week so they start with their real data already in place. A restaurant owner drops in the Excel file they've used for a year, and their actual staff and shifts appear instantly, removing the cold-start typing.",
+            "tag": "SAFE",
+            "lens": "Eliminate"
+          },
+          {
+            "id": "13",
+            "title": "Show new teams only the single weekly screen at first",
+            "description": "For the first 60 days the tool hides every feature except the one screen for building and publishing this week, so new admins never get lost hunting through menus before they get value. A new user sees just this week's grid and a publish button, with reporting and settings tucked away until they've published several weeks.",
+            "tag": "WILD",
+            "lens": "Eliminate"
+          },
+          {
+            "id": "14",
+            "title": "Have staff propose the schedule and the admin just approve",
+            "description": "Team members submit which shifts they want for the week and the tool assembles those requests into a proposed schedule that the admin only needs to review and approve, flipping who does the building work. Five employees each pick their preferred shifts, the tool stitches them into a near-complete week, and the manager approves it with minor tweaks.",
+            "tag": "WILD",
+            "lens": "Reverse/Rearrange"
+          },
+          {
+            "id": "15",
+            "title": "Show the projected time savings before any setup",
+            "description": "Right after signup, before the admin builds anything, the tool asks how long they currently spend scheduling and shows a concrete estimate of hours they'll get back, so the payoff is clear from the first minute. A new admin types 'about 4 hours a week,' and the screen immediately responds 'you could get ~3 of those back,' framing the value before they invest effort.",
+            "tag": "BOLD",
+            "lens": "Reverse/Rearrange"
+          },
+          {
+            "id": "16",
+            "title": "Pull a team's data in from a competitor's export file",
+            "description": "The tool accepts the CSV export from rival scheduling apps and rebuilds the team's people and recurring shifts inside it, so the same file that lets people leave a competitor becomes the on-ramp into this tool. A manager frustrated with another app downloads its CSV, drops it in, and their full roster and standing shifts appear ready to publish.",
+            "tag": "WILD",
+            "lens": "Reverse/Rearrange"
+          }
+        ],
+        "sixhats": [
+          {
+            "id": "1",
+            "title": "Hours-Saved Counter On The Home Screen",
+            "description": "The product tallies every minute the admin would have spent manually building, texting, and reshuffling the schedule, and shows a running 'time given back this month' number on the dashboard the moment they log in. For example, after the admin publishes a week the screen reads 'You saved 3h 20m vs. doing this by hand' with a tap-through that breaks it down by swaps auto-resolved and texts not sent.",
+            "tag": "SAFE",
+            "lens": "White"
+          },
+          {
+            "id": "2",
+            "title": "At-Risk Radar From Login And Scheduling Signals",
+            "description": "A background job scores each new account daily on whether it has published a full week and whether more than one person has logged in, and flags accounts trending toward the silent-then-cancel pattern so the team can step in before day 60. For example, a team that hasn't completed a week by day 9 and has a single active seat gets auto-surfaced on an internal 'reach these five today' list.",
+            "tag": "SAFE",
+            "lens": "White"
+          },
+          {
+            "id": "3",
+            "title": "How-You-Compare Snapshot",
+            "description": "The app shows a new team how far along they are versus the median team of similar size at the same age, specifically on completing a first full week. For example, on day 7 the admin sees 'Teams like yours have their first full week scheduled by now \u2014 you're 2 shifts away,' with the two unfilled slots highlighted.",
+            "tag": "BOLD",
+            "lens": "White"
+          },
+          {
+            "id": "4",
+            "title": "Staff See Only Their Own Shifts In One Tap",
+            "description": "Every team member gets a personal link (no account, no password) that opens straight to just their upcoming shifts and lets them confirm or request a swap, so the value lands on the people who actually work the hours. For example, a barista taps a text link and sees 'Your week: Mon 7-3, Wed 7-3, Sat 9-5' with a 'Can't make Wed?' button, and the admin feels the team finally engaging.",
+            "tag": "BOLD",
+            "lens": "Red"
+          },
+          {
+            "id": "5",
+            "title": "One-Tap Team Sentiment On The Posted Schedule",
+            "description": "When the admin publishes a week, each staff member can react with a quick thumbs-up or a flag, and the admin sees the aggregate so the lonely, anxious feeling of 'did anyone even see this' is replaced by visible buy-in. For example, the admin's screen shows '6 of 8 confirmed, Dana flagged Friday' minutes after publishing, giving the emotional reassurance that the team is actually with them.",
+            "tag": "SAFE",
+            "lens": "Red"
+          },
+          {
+            "id": "6",
+            "title": "Schedule Becomes The Payroll And Time-Clock Source Of Truth",
+            "description": "A two-way connection pushes published shifts into the team's payroll or time-tracking tool and pulls clock-ins back, so leaving would mean rewiring how people get paid, not just exporting a CSV. For example, once a team links their payroll, approved hours flow automatically every pay period and a competitor's import can't replicate that wiring without re-doing the integration.",
+            "tag": "BOLD",
+            "lens": "Black"
+          },
+          {
+            "id": "7",
+            "title": "We Build Your First Week For You",
+            "description": "During onboarding a person on the team's side collects names, roles, and availability and hands back a fully populated first week the admin only has to approve, so the breakthrough moment happens before the novelty wears off. For example, a new account books a 20-minute call, sends over a staff list, and two days later opens the app to a ready-to-publish week instead of a blank grid.",
+            "tag": "BOLD",
+            "lens": "Black"
+          },
+          {
+            "id": "8",
+            "title": "Block Publishing Until The Team Is Invited",
+            "description": "The app makes inviting at least a few team members a required step before the first schedule can go out, with a one-paste bulk invite to keep it painless, so the account never collapses into a single-admin dead end. For example, the publish button stays greyed with 'Add 3 teammates to send this schedule' until the admin pastes a list of phone numbers and the invites fire.",
+            "tag": "BOLD",
+            "lens": "Black"
+          },
+          {
+            "id": "9",
+            "title": "Turn The Happy Admin Into A Recruiter",
+            "description": "When a team hits its first smoothly-run full week, the app prompts that admin to invite a peer manager and rewards both accounts with a free month, channeling the people who already 'get it' into pulling in more. For example, an admin who just published their third week sees 'Know another manager drowning in scheduling? Send this \u2014 you both get a month free.'",
+            "tag": "SAFE",
+            "lens": "Yellow"
+          },
+          {
+            "id": "10",
+            "title": "First Full Week Becomes A Streak Worth Keeping",
+            "description": "The moment a team completes its first fully-scheduled week the app marks it with a clear milestone and starts a visible weekly streak, leaning into the satisfaction of the win to pull them into the next week. For example, finishing week one triggers a 'Week 1 locked in \u2014 keep the streak going' banner, and each later week adds to a 'weeks scheduled in a row' count on the dashboard.",
+            "tag": "SAFE",
+            "lens": "Yellow"
+          },
+          {
+            "id": "11",
+            "title": "A Draft Week Auto-Generates From Imported Data",
+            "description": "Right after signup the app ingests whatever the team already has \u2014 a spreadsheet, a calendar, or their old tool's export \u2014 and auto-fills a proposed week the admin edits rather than building from scratch, so they hit a complete schedule on day one. For example, the admin uploads last month's shift spreadsheet and the app instantly proposes next week's grid pre-filled with the same people in the same roles.",
+            "tag": "BOLD",
+            "lens": "Green"
+          },
+          {
+            "id": "12",
+            "title": "Shift Swaps Settled Entirely Over Text",
+            "description": "Team members trade and pick up shifts by replying to text messages, with the app brokering the swap and updating the schedule, so the whole team participates without ever installing or logging into anything. For example, a worker texts 'can't do Sat' and the app texts two eligible coworkers 'pick up Sat 9-5? reply YES,' then locks in the first yes and tells everyone.",
+            "tag": "WILD",
+            "lens": "Green"
+          },
+          {
+            "id": "13",
+            "title": "Public Hours-Saved Wall Across All Teams",
+            "description": "The product runs an opt-in shared board showing anonymized teams and how many hours each clawed back this month, tapping competitive pride to keep teams scheduling and showing newcomers the payoff is real. For example, a new caf\u00e9 sees 'Top teams saved 11+ hours this month' and a slot reading 'your team: 2 hours so far,' nudging them to finish their week and climb.",
+            "tag": "WILD",
+            "lens": "Green"
+          },
+          {
+            "id": "14",
+            "title": "A 14-Day Path Engineered Around The First Full Week",
+            "description": "Onboarding is restructured into a fixed two-week sequence whose single explicit goal is 'one fully-scheduled, team-confirmed week,' with each in-app step gated so the account can't drift past a missing piece. For example, the setup checklist moves the admin from 'add staff' to 'set availability' to 'publish' to 'get confirmations,' and the account isn't considered onboarded until that confirmed week exists.",
+            "tag": "SAFE",
+            "lens": "Blue"
+          },
+          {
+            "id": "15",
+            "title": "Nudges That Fire On Scheduling Progress, Not The Calendar",
+            "description": "Automated reminders are triggered by where the team actually is in building their week rather than by elapsed days, so a stuck account gets the exact prompt for its missing step. For example, a team that added staff but never set availability gets 'You're one step from your first week \u2014 collect availability with this link,' while a team that published but got no confirmations gets a different nudge entirely.",
+            "tag": "SAFE",
+            "lens": "Blue"
+          },
+          {
+            "id": "16",
+            "title": "Human Check-Ins Pinned To Milestones, Not Dates",
+            "description": "A lightweight success cadence reaches out at the three moments that decide early retention \u2014 right after setup, when the first week should be done, and just before the 60-day cliff \u2014 with each contact conditioned on what the account has actually achieved. For example, an account with no completed week by day 12 gets a personal 'want me to finish this with you?' message, while one already cruising gets a 'who else on your team should be in here?' nudge instead.",
+            "tag": "BOLD",
+            "lens": "Blue"
+          }
+        ]
+      },
+      "judges": [
+        {
+          "tech": "reverse",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "reverse",
+          "v": {
+            "x_novelty": 4,
+            "x_mechanism": 5,
+            "x_relevance": 5,
+            "x_compliance": 4,
+            "y_novelty": 4,
+            "y_mechanism": 5,
+            "y_relevance": 5,
+            "y_compliance": 4,
+            "better": "X",
+            "reason": "Both collections are concrete and mechanism-first across all four root causes, but X reaches a higher novelty ceiling on the hardest cause (low switching cost) with two deep, hard-to-copy levers \u2014 payroll/timesheet pipeline lock-in (12) and the free-month-tied-to-full-team-activation money lever (13) \u2014 that no Y idea matches; Y's best distinct contributions are routing the value number to the renewal-decider (10), the co-owner backup (6), and the stale-schedule pressure inversion (11). Each repeats internally: X duplicates pre-fill (1+4) and human-builds-your-week (2+16), while Y duplicates rebuild-reduction (5+15) and runs two near-identical stall-detection ideas (human dashboard 9 + auto-message 13). X edges ahead on substance via the stronger novelty/leverage of its switching-cost and team-adoption-via-money mechanisms."
+          }
+        },
+        {
+          "tech": "reverse",
+          "order": 2,
+          "xArm": "reverse",
+          "yArm": "plain",
+          "v": {
+            "x_novelty": 4,
+            "x_mechanism": 5,
+            "x_relevance": 4,
+            "x_compliance": 4,
+            "y_novelty": 4,
+            "y_mechanism": 5,
+            "y_relevance": 5,
+            "y_compliance": 4,
+            "better": "Y",
+            "reason": "Both are concrete and mechanism-first, but Y attacks all four root causes with higher-leverage mechanisms: #12 turns scheduling into a payroll/timesheet pipeline so leaving means rebuilding (the strongest switching-cost answer in either set), #13 waives a month's bill once every member taps in (ties money directly to the single-user problem), and #3 weaponizes the rival CSV into one-click onboarding. X is strong but leans on more conventional plays (minutes-saved counter #2, industry templates #8, churn dashboard #9, billing transparency #7) and covers switching cost with essentially one idea (#4 history), while showing mild within-collection overlap (#9/#13 stall detection, #1/#15 finish-the-week). Y's only repetition is the human-builds-your-schedule pair (#2/#16), a smaller ding than X's thinner root-cause-4 coverage."
+          }
+        },
+        {
+          "tech": "scamper",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "scamper",
+          "v": {
+            "better": "X",
+            "x_novelty": 4,
+            "x_mechanism": 4,
+            "x_relevance": 5,
+            "x_compliance": 4,
+            "y_novelty": 3,
+            "y_mechanism": 4,
+            "y_relevance": 4,
+            "y_compliance": 4,
+            "reason": "Both have strong who-does-what specificity (cafe rota, line cook tap-confirm, nurse availability), but Y repeats itself: Y12 (import own spreadsheet) and Y16 (import competitor CSV) are the same parse-a-file mechanism with a different input, which X folds into a single idea (X3) \u2014 a novelty failure. X carries a wider spread of distinct retention levers (X16 stalling-team detection with a recovery concierge at the churn moment, X13 free month for full-team adoption, X15 peer buddy), and notably Y has no churn-detection/intervention idea despite the 60-day-churn goal. Y's genuine wins are tighter root-cause fit (Y7 emails the whole team the time-saved receipt vs X5 admin-only, and Y4's availability board as a hard scheduling constraint), but they don't offset X's cleaner distinctness and broader coverage."
+          }
+        },
+        {
+          "tech": "scamper",
+          "order": 2,
+          "xArm": "scamper",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_novelty": 3,
+            "x_mechanism": 4,
+            "x_relevance": 4,
+            "x_compliance": 3,
+            "y_novelty": 4,
+            "y_mechanism": 4,
+            "y_relevance": 5,
+            "y_compliance": 4,
+            "reason": "Both have strong who-does-what mechanism specificity, but X repeats itself on cold-start: #1, #5, #12, and #16 are four near-identical \"don't start from a blank grid\" variants (#12 spreadsheet import and #16 competitor-CSV import are almost the same idea), and its five team-adoption ideas (#2 text-confirm, #4 availability, #10 swap, #11 clock-in, #14 propose) are all \"give staff an in-app task.\" Y is more distinct: it ties billing money to full-team activation (#13 free month when everyone activates) and adds a felt safety-net moment (#6 auto-resolved conflict) and a stall-detection concierge (#16) that have no X counterpart, plus meets the team in their existing chat (#10 auto-post to WhatsApp/Slack) instead of only pulling them into the app. Y's distinct operational levers on the two hardest root causes (team adoption and timing of 'aha') outweigh X, despite Y's own three-way starting-point cluster (#1/#3/#4)."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "sixhats",
+          "v": {
+            "better": "X",
+            "x_novelty": 4,
+            "x_mechanism": 4,
+            "x_relevance": 5,
+            "x_compliance": 4,
+            "y_novelty": 3,
+            "y_mechanism": 4,
+            "y_relevance": 4,
+            "y_compliance": 3,
+            "reason": "Both are concrete and cover all four root causes, but X attacks the switching-cost problem with two genuinely distinct mechanisms \u2014 #11 accumulating swap/coverage history a CSV can't carry (\"Jordan covered 9 gaps\") and #12 payroll/calendar wiring \u2014 plus a novel felt-value moment in #6 (the auto-resolved-conflict panel). Y has sharp ideas (#8 gate publishing until teammates are invited, #12 full swap-by-text, #13 public hours-saved wall) but suffers notable within-collection repetition: #2, #14, #15, and #16 all collapse into the same \"detect progress state and intervene\" family, and #1/#13 both display hours-saved, which dents its effective novelty. X wins on mechanism diversity and breadth across the goal."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "order": 2,
+          "xArm": "sixhats",
+          "yArm": "plain",
+          "v": {
+            "better": "X",
+            "x_novelty": 4,
+            "x_mechanism": 5,
+            "x_relevance": 5,
+            "x_compliance": 5,
+            "y_novelty": 3,
+            "y_mechanism": 4,
+            "y_relevance": 5,
+            "y_compliance": 4,
+            "reason": "X wins on mechanism specificity and distinctness: items like X2 (day-9 + single-seat trigger producing an internal \"reach these five today\" list), X8 (greyed-out publish button gated on inviting teammates), and X12 (full text-broker loop that locks in the first YES) spell out exact who-does-what triggers rather than outcomes. Y has two genuinely sharp originals X lacks \u2014 Y10 (auto-post the rota into the team's existing WhatsApp/Slack) and Y13 (billing pauses only when the whole team activates) \u2014 but suffers worse within-collection repetition, with Y1/Y3/Y4 all being variants of \"pre-fill the first schedule\" and Y2/Y16 both \"a human builds your week,\" dragging novelty down. Both are equally relevant to all four root causes, but X is more uniformly mechanism-first."
+          }
+        }
+      ],
+      "census": {
+        "vocabulary": [
+          {
+            "label": "M1",
+            "gloss": "Auto-draft the first schedule from a few setup answers (team size/roles/hours) so the admin edits a finished plan instead of a blank grid"
+          },
+          {
+            "label": "M2",
+            "gloss": "Industry/business-type starter template with typical roles and shift patterns pre-laid"
+          },
+          {
+            "label": "M3",
+            "gloss": "Import existing or competitor data (spreadsheet/calendar/rival CSV) and rebuild the week from it"
+          },
+          {
+            "label": "M4",
+            "gloss": "A human co-builds or fully builds the first real week (live call or done-for-you concierge)"
+          },
+          {
+            "label": "M5",
+            "gloss": "Auto-carryover: next week auto-drafts from the prior published week, admin edits exceptions"
+          },
+          {
+            "label": "M6",
+            "gloss": "Flip the builder: staff propose/request their shifts and the admin only approves"
+          },
+          {
+            "label": "M7",
+            "gloss": "Quantify the invisible hours/time saved and surface it as a number (to admin, manager, or shared)"
+          },
+          {
+            "label": "M8",
+            "gloss": "Personal per-member shift view via link, no account required, so value lands on each worker"
+          },
+          {
+            "label": "M9",
+            "gloss": "Staff confirm/acknowledge their shifts (tap or text reply) pulling them in as active participants"
+          },
+          {
+            "label": "M10",
+            "gloss": "Staff-run swap/pickup board: members post and claim shifts themselves, admin only approves"
+          },
+          {
+            "label": "M11",
+            "gloss": "Embed the published schedule into the team's existing channel (group chat) or personal calendar app"
+          },
+          {
+            "label": "M12",
+            "gloss": "Staff enter/maintain availability as a hard gate the scheduler must respect, forcing regular logins"
+          },
+          {
+            "label": "M13",
+            "gloss": "Clock-in/attendance against the scheduled shift, making the tool the daily worked-hours record"
+          },
+          {
+            "label": "M14",
+            "gloss": "Gate publishing until teammates are invited, preventing a single-admin dead end"
+          },
+          {
+            "label": "M15",
+            "gloss": "Accumulate proprietary institutional memory (swap/coverage/reliability history) a CSV export can't carry"
+          },
+          {
+            "label": "M16",
+            "gloss": "Deep integration into dependent systems (payroll/timesheet) so leaving means rebuilding a pipeline"
+          },
+          {
+            "label": "M17",
+            "gloss": "Manufacture recurring use via habit mechanics: publishing streaks and/or a fixed weekly build ritual"
+          },
+          {
+            "label": "M18",
+            "gloss": "Peer comparison and human accountability: benchmark vs similar teams and/or a real peer buddy match"
+          },
+          {
+            "label": "M19",
+            "gloss": "Referral growth: turn the happy admin into a recruiter of another manager (mutual reward)"
+          },
+          {
+            "label": "M20",
+            "gloss": "At-risk detection from usage signals plus signal-based intervention (auto nudge or human rescue)"
+          },
+          {
+            "label": "M21",
+            "gloss": "In-product progress guide/checklist that walks the admin to a completed first week"
+          },
+          {
+            "label": "M22",
+            "gloss": "Minimal/focused UI: hide every feature except the core build-and-publish screen early on"
+          },
+          {
+            "label": "M23",
+            "gloss": "Designate a backup co-owner so the account keeps moving when the admin goes quiet"
+          },
+          {
+            "label": "M24",
+            "gloss": "Pricing transparency: show the first-charge date/amount early to prevent shock-driven cancellation"
+          },
+          {
+            "label": "M25",
+            "gloss": "Make non-use visible or costly (stale/unconfirmed schedule shown to the whole team)"
+          },
+          {
+            "label": "M26",
+            "gloss": "Celebratory completion moment when the week comes together, making members feel a collective win"
+          },
+          {
+            "label": "M27",
+            "gloss": "Conflict auto-resolution made visible: surface the double-booking/gap it just caught and fixed"
+          },
+          {
+            "label": "M28",
+            "gloss": "Tie a discount/reward to full-team activation (free month once every member is active)"
+          }
+        ],
+        "per_arm": [
+          {
+            "arm": "PLAIN",
+            "distinct_count": 15,
+            "repeated_levers": "M18 x2 (founder benchmark email #7, peer buddy match #15)",
+            "note": "Most diverse arm; nearly one-idea-per-mechanism, with the only repeat being two flavors of peer-comparison/accountability (M18). Carries the unique-to-PLAIN levers M27 (visible conflict auto-fix) and M28 (full-team activation discount)."
+          },
+          {
+            "arm": "REVERSE",
+            "distinct_count": 14,
+            "repeated_levers": "M7 x2 (minutes-saved counter #2, send time-saved up the chain #10); M20 x2 (internal at-risk dashboard #9, auto context-aware stall outreach #13)",
+            "note": "Flattest repetition (max repeat = 2). Holds four singleton levers unique to it: M23 (co-owner backup), M24 (pricing transparency), M25 (make non-use costly), M26 (celebratory completion)."
+          },
+          {
+            "arm": "SCAMPER",
+            "distinct_count": 14,
+            "repeated_levers": "M7 x2 (team time-saved receipt #7, projected savings before setup #15); M3 x2 (import own spreadsheet #12, import competitor CSV #16)",
+            "note": "Operations-heavy: uniquely contributes M6 (staff-propose-flip), M12 (availability gate), M13 (clock-in), and M22 (minimal UI) \u2014 levers no other arm reaches."
+          },
+          {
+            "arm": "SIXHATS",
+            "distinct_count": 13,
+            "repeated_levers": "M20 x3 (at-risk radar #2, milestone-pinned human check-ins #16, progress-based nudges #15); M7 x2 (hours-saved counter #1, public hours-saved wall #13)",
+            "note": "Least diverse and most concentrated: three separate ideas all reduce to at-risk-detection+intervention (M20). Only arm to use M19 (referral recruiter) and M14 (invite-gate)."
+          }
+        ],
+        "cross_arm_note": "Shared across all four arms: M7 (quantify time saved) and M4 (human builds the first week) appear in every arm; M3 (import data) and M8 (personal shift view) appear in three. M7 is the single largest bucket (7 of 64 ideas) and is spread across all arms rather than concentrated, so it does not by itself discriminate \u2014 but the recipient/variant differs (admin vs manager vs public wall). M20 (at-risk detect+intervene) is the other heavily reused lever (8 of 64), concentrated mostly in REVERSE and SIXHATS (5 of its 8). Arm-unique levers: M27 and M28 are PLAIN-only; M23, M24, M25, M26 are REVERSE-only; M6, M12, M13, M22 are SCAMPER-only; M14 and M19 are SIXHATS-only. So each arm contributes a distinct cluster of singletons (PLAIN: visibility/lock-in edges; REVERSE: retention-hygiene; SCAMPER: operational mechanics; SIXHATS: growth/onboarding gates), while the path-to-first-week seed sources (M1-M5) and the value-visibility lever (M7) form the shared backbone.",
+        "most_diverse_arm": "PLAIN (15 distinct mechanisms of 16, the highest; its only repeat is M18 used twice)"
+      }
+    }
+  ],
+  "report": "The report is durable on disk. Returning the markdown verbatim as my answer.\n\n# Track F \u2014 classical techniques vs the plain default\n\n## Verdict\n\n**No technique beats the plain single-call default on blind substance.** Across all three \u2014\nReverse Brainstorming, SCAMPER, Six Thinking Hats \u2014 the honest call is **ties or losses**,\nnever a clean win.\n\n| Technique | Blind tally vs plain (2 frames \u00d7 2 orders) | Avg substance \u0394 | Honest call |\n|---|---|---|---|\n| Reverse | **1 tech / 3 plain** | +0.00 | **loses the tally, ties on substance** |\n| SCAMPER | 2 tech / 2 plain | \u22120.50 | **ties (2-2), entirely frame-split** |\n| Six Hats | 2 tech / 2 plain | \u22120.25 | **ties (wash), diversity inflated by off-goal levers** |\n| **Overall** | **4 tech / 7 plain** | \u2014 | **plain is at-least-as-good against all three** |\n\nThe reason it's a wash and not a signal: **the deltas invert across frames.** SCAMPER sweeps\nthe cafe blind tally 2-0 (+1.0 substance) and is then swept 0-2 on b2b (\u22122.0). Reverse is\n+0.5 on cafe, \u22120.5 on b2b. Six Hats is \u22120.5 / +0.0. With only **n=2 frames**, a sign that\nflips between them is not a small effect \u2014 it is the definition of no frame-invariant signal,\nwhich is exactly what noise looks like. (These 11\u201314 numbers are batch-aggregate sums over 16\nideas, not the project's 1\u20135 per-idea scale, so the ~0.3 per-idea noise band is a reference,\nnot a mechanical cutoff \u2014 but for the genuinely tiny averages, Reverse 0.0 and Six Hats \u22120.25\nsit comfortably inside it.) The position-swapped pairs say the same thing from the other\ndirection: the only *order-consistent* signals lean **plain** (Reverse b2b 0-2, SCAMPER b2b\n0-2), the lone tech sweep (SCAMPER cafe) is frame-local, and Six Hats is 1-1/1-1 \u2014 pure order\nnoise both frames.\n\nAnd the census confirms these are **in-model reshuffles, not diversity injections**: PLAIN is\nthe **most mechanically diverse arm in BOTH frames** (15/16 distinct each time). Every\ntechnique scores *equal or lower* on problem-relevant distinct mechanisms. Each one trades\ndiversity or relevance for a characteristic bias \u2014 they relocate convergence rather than\nescape it, the same pattern Tracks A/C/D found. **Substance is still model-bound.**\n\n---\n\n## Per-technique\n\n### Reverse Brainstorming\n\n- **Blind tally:** 1 tech win / 3 plain wins. Loses outright. Its only order-consistent\n  signal (b2b, both orders, 0-2) favors **plain**.\n- **Substance:** cafe 13.5 vs 13.0 (+0.5), b2b 13.5 vs 14.0 (\u22120.5) \u2192 **+0.0 average.** Dead\n  even, sign-flipped.\n- **Census diversity:** the **least diverse structured arm** \u2014 13/16 distinct, tied with Six\n  Hats and below plain's 15 and SCAMPER's 14. Its signature is a **3\u00d7 collapse onto paid\n  workspace (M1)**: #4 monthly desk pass, #5 reconfigure floor for lingering, #15 seat +\n  bottomless. It does contribute one robust unique (M18, the \"1:45pm SMS push\") and shares\n  M17 (waste-repurpose) with SCAMPER, but the headline is convergence, not coverage.\n- **Real ideas:**\n  - *\"Morning receipt unlocks an afternoon return \u2014 Print a same-day coupon on every 7-11am\n    receipt that's only redeemable 2-5pm that same day\u2026 'bring this back today 2-5pm for a $2\n    cookie + drip refill.'\"*\n  - *\"A 3pm fresh bake people can smell \u2014 Fire the idle ovens for a single small batch that\n    comes out hot at exactly 3pm daily\u2026 warm cinnamon rolls or savory scones pulled at 3:00\n    and announced on the sidewalk board.\"*\n  - *\"Each member gets their own front door \u2014 When a schedule publishes, every team member\n    receives a personal link showing only their own upcoming shifts and lets them tap to\n    confirm or request a swap.\"*\n- **Signature failure:** **converges within itself.** Despite the \"invert the problem\" framing,\n  it piles three of sixteen ideas onto the single workspace lever \u2014 its inversion engine keeps\n  arriving at the same attractor plain reaches once.\n\n### SCAMPER\n\n- **Blind tally:** 2 tech / 2 plain \u2014 but a clean **frame split**, not a wash of mixed close\n  calls. It **swept cafe 2-0** and was **swept b2b 0-2.** Order-consistent within each frame,\n  opposite across them.\n- **Substance:** cafe 12.5 vs 11.5 (**+1.0**), b2b 11.0 vs 13.0 (**\u22122.0**) \u2192 **\u22120.5 average**,\n  the largest negative of the three, driven entirely by the b2b crater.\n- **Census diversity:** the **least-collapsing technique** \u2014 14/16 distinct in both frames,\n  max-repeat 2, no 3\u00d7 pile-up (the only structured arm as flat as plain). It contributes a\n  distinct cluster of operational singletons on b2b (M6/M12/M13/M22: payroll wiring, availability\n  board, etc.). **Important:** this is \"collapses least,\" **not** \"more diverse than plain\" \u2014\n  plain still leads 15 to 14 in both frames. And SCAMPER's distinctive operational singletons\n  land in **exactly the frame (b2b) where it lost 0-2 and dropped \u22122.0 on substance.**\n- **Real ideas:**\n  - *\"Guest-Baker Residency \u2014 Hand the afternoon counter to a rotating local baker or dessert\n    maker who sells their own goods from the cafe and shares revenue\u2026 a neighborhood pastry\n    chef takes over Tuesday afternoons selling laminated croissants under their own name.\"*\n  - *\"Hot-From-The-Oven Savory Hour \u2014 Fire the idle afternoon ovens for warm savory items the\n    morning menu never carries\u2026 cheese-and-herb scones and personal flatbreads come out fresh\n    at 2:30 and 3:30 daily.\"*\n  - *\"Wire the schedule straight into payroll \u2014 connect published schedules to the team's\n    payroll or timesheet system so approved hours flow automatically into the next pay run.\"*\n- **Signature failure:** **frame volatility + a novelty-for-relevance reshuffle.** SCAMPER's\n  Substitute/Combine/Other-uses prompts generate the most *distinct* moves, but on b2b those\n  distinct moves drift toward **feature-expansion and lock-in** (payroll wiring, availability\n  board, payroll as \"source that feeds paychecks\") \u2014 stickiness adjacent to the goal rather\n  than attacking the actual root cause of early churn (admins never reaching the first-week\n  aha). It bought distinctness and paid in relevance, then lost the blind judgment 0-2. This\n  is the cleanest in-sample demonstration of the prior tracks' reshuffle pattern.\n\n### Six Thinking Hats\n\n- **Blind tally:** 2 tech / 2 plain \u2014 a genuine **wash** (1-1 on each frame, both orders). No\n  order-consistent signal in either direction.\n- **Substance:** cafe 12.5 vs 13.0 (\u22120.5), b2b 12.5 vs 12.5 (+0.0) \u2192 **\u22120.25 average**, inside\n  the noise band.\n- **Census diversity:** 13/16 distinct on paper \u2014 **but inflated.** The census explicitly\n  flags that the raw 13 includes **off-goal guardrail/process levers** and estimates it would\n  drop to **~9-10 once those are excluded**, making plain's lead in *problem-relevant* diversity\n  wider than the raw counts show. Its signature is a **3\u00d7 collapse onto operational guardrails\n  (M19)** on cafe \u2014 cannibalization wall, spend cap, staggered shift \u2014 none of which grow\n  revenue; and **M20 \u00d73** on b2b. The \"Black Hat\" (risk/critique) lens manufactures these.\n- **Real ideas:**\n  - *\"Set afternoon prices from the real cost of an idle seat \u2014 The owner calculates that an\n    empty 2-5pm table earns nothing and prices a fixed 'afternoon set' (drink plus snack) at a\n    margin that beats zero\u2026 a $6 coffee-and-cookie set is offered 2-5pm because even thin\n    margin on a previously empty chair is pure upside.\"*\n  - *\"A quiet, slow corner marketed as the city's calmest 3pm \u2014 leans into the empty room by\n    branding the afternoon as a deliberately unhurried, low-noise refuge\u2026 a chalkboard reads\n    'nobody rushing you here from 2-5 \u2014 stay as long as you like.'\"*\n  - *\"At-Risk Radar From Login And Scheduling Signals \u2014 A background job scores each new account\n    daily on whether it has published a full week and whether more than one person has logged\n    in, and flags accounts trending toward the silent-then-cancel pattern.\"*\n- **Signature failure:** **drifts off-goal.** The hat rotation spends three of sixteen slots on\n  cost-control / risk-mitigation levers (guard against cannibalization, cap spend) that answer\n  \"what could go wrong\" rather than the actual goal (grow revenue / cut churn). Its diversity is\n  partly an artifact of generating ideas that aren't on-topic.\n\n---\n\n## What it means for the skill\n\n**The capture-first decision is unchanged.** Plain stays the default; techniques stay opt-in \u2014\nand Track F gives no reason to move any of them in either direction:\n\n- **No promotion.** No technique consistently beats plain on substance, lifts problem-relevant\n  diversity above plain, or improves relevance. The only sizable substance moves (SCAMPER \u00b11.0/\u22122.0)\n  cancel and frame-flip. There is nothing here that would justify wiring a technique into the\n  default path.\n- **No gutting either \u2014 and this is a scope limit, not an endorsement.** Track F tested\n  techniques as single-context **generators** (each \"produced 16 ideas\" from the frame). The\n  shipped opt-in toolkit uses these same techniques as **transforms on already-captured ideas**\n  \u2014 a different operation that **Track F did not test.** A technique can be a poor cold-start\n  generator and still be a useful \"take these 5 ideas and SCAMPER them\" lens. So Track F neither\n  promotes a technique to default nor argues for removing the opt-in toolkit; the on-demand\n  menu stays as is, untouched by this evidence.\n\n**Tie-back to \"substance is model-bound.\"** This is the answer to Track F's open question:\nsingle-context **plain vs single-context technique**, architecture and sample size held\nconstant. The techniques are **in-model rewords, not out-of-model diversity injections.** Each\nre-derives the same convergent gravity wells the census found shared across all four arms\n(paid workspace, morning-receipt trigger, afternoon-product reframe, hosted events, quantify\ntime-saved, human-builds-week), then adds a **characteristic bias** of its own \u2014 Reverse \u2192\nworkspace convergence, Six Hats \u2192 off-goal drift, SCAMPER \u2192 frame volatility / relevance loss.\nA different prompt structure on the same model moves the *shape* of the convergence, not the\n*amount* of real novelty. **Substance has now resisted a sixth swing** (Tracks A, C, D, and now\nthree classical techniques). The only diversity that pays remains genuinely out-of-model: human\nideas (capture-first), or genuinely different generators (model / temperature / multi-sample-\nthen-select) \u2014 never another in-model reword.\n\n---\n\n## Caveats\n\n- **n=2 frames** (cafe weekday-afternoon revenue; b2b SaaS early churn). Two points cannot\n  separate a frame effect from a technique effect \u2014 which is precisely why the **frame-inverting**\n  deltas read as noise rather than a small real effect.\n- **Single sample per arm.** One 16-idea batch per (frame \u00d7 technique). No within-arm variance\n  estimate; a re-roll could move any single cell.\n- **The blind A/B is the verdict.** Position-swapped, de-anonymized substance comparison is the\n  primary signal: plain at-least-as-good against all three.\n- **The census is a diagnostic, not the verdict.** \"Most diverse\" / \"off-goal\" / \"collapses\n  least\" explain *why* the blind result came out as it did and surface each technique's\n  signature bias \u2014 they don't override the head-to-head judgment.\n- **Generators only.** Techniques-as-transforms (the shipped opt-in flow) remain untested here."
+}

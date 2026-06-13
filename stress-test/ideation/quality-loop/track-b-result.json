@@ -1,0 +1,105 @@
+{
+  "summary": "Track B: 5-round render-judge-improve loop on view.dynamic.html (the dynamic-viz prototype), with a blind baseline-vs-final A/B as the honest result",
+  "agentCount": 18,
+  "logs": [
+    "Round 1/5 — render @ port 7951",
+    "  round 1: ux=3 code=4 render_ok=true",
+    "Round 2/5 — render @ port 7952",
+    "  round 2: ux=4 code=5 render_ok=true",
+    "Round 3/5 — render @ port 7953",
+    "  round 3: ux=4 code=4 render_ok=true",
+    "Round 4/5 — render @ port 7954",
+    "  round 4: ux=4 code=4 render_ok=true",
+    "Round 5/5 — render @ port 7955",
+    "  round 5: ux=4 code=5 render_ok=true",
+    "Blind A/B: render baseline (round-0) and final, then compare blind"
+  ],
+  "result": {
+    "trajectory": [
+      {
+        "round": 1,
+        "ux": 3,
+        "code": 4,
+        "render_ok": true
+      },
+      {
+        "round": 2,
+        "ux": 4,
+        "code": 5,
+        "render_ok": true
+      },
+      {
+        "round": 3,
+        "ux": 4,
+        "code": 4,
+        "render_ok": true
+      },
+      {
+        "round": 4,
+        "ux": 4,
+        "code": 4,
+        "render_ok": true
+      },
+      {
+        "round": 5,
+        "ux": 4,
+        "code": 5,
+        "render_ok": true
+      }
+    ],
+    "blind_ab": {
+      "baseline_ux": 3.25,
+      "final_ux": 3.75,
+      "prefers": [
+        "final",
+        "baseline"
+      ],
+      "reasons": [
+        "Set Y wins systematically across every populated state. It uses rank badges plus color tiers (gold top, muted lower/cut) so winners are instantly visible and the 80-idea board has real top-to-bottom scan structure, whereas Set X renders every card in the same amber weight as a uniform wall where winners are indistinguishable and the 80-board is hard to scan. Y also handles cuts more cleanly (cut cards visibly desaturated/de-emphasized vs. X leaving them near-identical to live ones) and centers its empty/framing checkpoint so it reads as an intentional confirm moment rather than X's stray top-left card.",
+        "The sets are close and nearly identical in the empty/framing states (X edges those slightly by centering the lightbulb and the checkpoint card, whereas Y pins the checkpoint to the top-left corner). But in the populated states where the tool actually lives, Y wins the most important job: its 80-card board color-grades every card by score tier (gold winners at top → orange/tan mid → purple cuts at bottom, monotonic with the visible badges), so distribution, winners, and cuts are all scannable in one glance, plus churn shows score deltas for a dynamic feel. X only isolates a small \"Top picks\" group and leaves the remaining ~70 cards as a uniform dark mass with a ragged, gappy grid, making the full board harder to scan; its sole clear advantage is the framing/empty-state polish."
+      ]
+    },
+    "issues_by_round": [
+      {
+        "round": 1,
+        "top_issues": [
+          "Winners row score/rank contradiction (highest impact): the 15px bold score is the dominant element but is non-monotonic and disagrees with the rank badge (95 is badged #2; #4=45 scores lower than many unranked cards). On both scored and 80 boards this misleads the eye instead of guiding it. Fix: de-emphasize the raw score once a card is ranked (make the #N badge the dominant element for ranked cards) and/or surface the ranking criterion so score and rank reconcile.",
+          "No section break on the populated/80 board: a '.section-label.winners' style is defined in CSS and the header comment promises 'a pinned winners band,' but no JS ever injects a section-label element — it is dead code. Ranked winners flow continuously into 75 scored cards, so past the first row it reads as one undifferentiated scroll. Fix: inject the winners/rest section-label rows in reflow() so the top band is visually separated.",
+          "reflow() runs on every idea_generated and calls getBoundingClientRect across all live cards (O(n^2) over an 80-card stream) with will-change:transform left on every card — a real perf/jank risk on the busy board. Fix: only FLIP-reflow on score/rank/cut events (arrival just appends), and drop will-change after the transition settles."
+        ]
+      },
+      {
+        "round": 2,
+        "top_issues": [
+          "Winners-band score inversion: ranked cards are ordered by authoritative rank (#1=56, #2=95, #3=55), so the gold #1 winner sits ABOVE non-winners scoring 94/93/92 in \"the rest.\" This is the single most jarring read and undercuts \"winners instantly = best.\" Fix: drop the raw score entirely on ranked cards (the design already de-emphasizes it), or relabel the band \"SELECTED\" so it doesn't read as \"top-scored,\" so the rank-vs-score mismatch stops looking like a bug.",
+          "Heat signal is too weak to do its job: a 4px bar on the card's bottom edge is effectively invisible at the 80-card zoom, so \"find strong ideas without reading numbers\" fails and the score number does all the work. Fix: thicken the bar or tint the whole card by score (heatColor already exists — apply it to background instead of a sliver).",
+          "Kind differentiation is near-zero on the dense board: seed/variant/hybrid tints are almost identical yellows, legible only via the 8px colored dot. Fix: push the tint hues further apart (or add a small kind label) so kind is scannable at a glance on the 80 board."
+        ]
+      },
+      {
+        "round": 3,
+        "top_issues": [
+          "Heat compression in the mid-score cluster (scored state): heatColor() maps a FIXED 40-95 range onto olive->orange, so when scores bunch in the 70s those cards render as nearly identical muddy orange and winner-finding collapses back to reading the small number. Fix: normalize heat to the live min/max of currently-scored ideas instead of the hardcoded 40/95, so the visible spread always uses the full color range.",
+          "reflow() jank risk during the scoring burst: idea_scored calls reflow() on every event, and reflow does two full getBoundingClientRect passes (FLIP first + last) over all live cards. Arrival deliberately avoids this storm (per the code comment) but scoring does not — on the 80-card board that is a forced double layout per score event over up to 80 cards. Fix: rAF-coalesce score events (batch into one reflow per frame). This is the main thing keeping code off a clean 5.",
+          "Empty/framing states underuse the viewport: both leave large dead space below a small top-left object (the framing checkpoint card sits in the top-left corner rather than being centered like the empty state). Vertically centering the single-object states would make the 'waiting' moments feel intentional rather than half-loaded."
+        ]
+      },
+      {
+        "round": 4,
+        "top_issues": [
+          "Heat ramp shares hues with semantic colors. The olive→orange score-heat background runs straight through the same green/orange the UI uses for meaning: the olive low-end collides with the dark-green '✓ kept' status text (#2a6030) and the green seed kind-dot; the orange high-end collides with the hybrid kind-dot (#c24410). Acute case: 'Cold-brew growler refills' (score 55, kept) renders dark-green 'kept' on an olive-green card, and 'kept' has no other channel (no border/badge) to carry it. Fix: move the heat low-end to a cool/neutral hue off the green axis, or carry kept/kind on a non-color channel (border, icon, badge).",
+          "The 80-board's 'the rest' section is one undifferentiated score-sorted scroll. Below the winners band there's no intra-rest chunking across ~75 cards / ~2800px — the only section break is winners-vs-rest. Mid- and low-board scanning degrades to reading raw numbers. Fix: insert score-band dividers (e.g. 90s / 80s / 70s / <70) so the long tail breaks into scannable tiers.",
+          "Optional/secondary: heat direction is debatable as an affordance. Green conventionally reads 'good' but here olive = the weakest current idea while orange/red = the strongest; position already puts winners on top, so warm-at-top can read as reinforcing — but the green low-end still risks 'low score looks fine.' Lower priority than the collision; addressed automatically if the low-end moves off the green axis."
+        ]
+      },
+      {
+        "round": 5,
+        "top_issues": [
+          "Kind is illegible on scored cards: once a card is scored the background switches to heat and kind collapses to a single 9px dot (green seed / purple variant / orange hybrid). At 80-card zoom these dots are nearly indistinguishable, so the seed/variant/hybrid axis — a primary dimension — is effectively lost on the dense board. Fix: keep the short text kind-label visible (it already exists in markup) and/or add a thin kind-colored left edge stripe that survives the heat repaint, instead of relying solely on the small dot.",
+          "Score-band dividers and the compost bar are too low-contrast to do their job. The 90s/80s/70s/<70 tier labels and the 'cut — set aside' bar are small dim text (#6a5a30 / #7a5c40) on the dark background; on the 80-board they nearly vanish, undercutting the section-break and cut-tray affordances they were built for. Fix: brighten the band labels, add a subtle full-width rule/background tint per band, and give the compost bar a clearer pill/contrast so the cut tray reads as a real, clickable section.",
+          "Mid-pack heat is too subtle to discriminate when scores bunch. Because the ramp is normalized to the live min/max, a cluster of 70s-80s spreads across the palette in theory, but in the rendered board most 'rest' cards still read as similar warm yellows — the eye finds the very top and very bottom but not relative standing within a tier. Fix: widen the lightness/contrast delta across the ramp (or add a thin proportional heat-fill bar back), so within-band ranking is visible at a glance, not just the extremes."
+        ]
+      }
+    ]
+  }
+}

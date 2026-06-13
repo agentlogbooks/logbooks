@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ideation — Live Wall (dynamic prototype)</title>
+<!--
+  Dynamic-viz PROTOTYPE for the ideation live wall.
+  Drop-in: consumes the EXACT same SSE event contract as live/view.html
+  (session_started, plan_set, phase_started, op_started/finished,
+   checkpoint_*, idea_generated/scored/kept/cut/ranked, session_complete).
+  Vanilla HTML/JS/SSE — no libraries.
+
+  What it adds over the static wall ("more dynamic when something there"):
+   1. Reorder-on-score with FLIP motion — winners float up as scores arrive.
+   2. Score → heat bar + tint, so the eye finds strong ideas without reading numbers.
+   3. Rank badges + a pinned "winners" band for ranked ideas.
+   4. Cut cards slide into a collapsed "compost" tray instead of lingering.
+   5. Streaming activity pulse + newest-card glow, so it feels alive while ideas land.
+   6. A live activity line narrating the latest transition.
+-->
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: #1a1408; color: #e8dfc0; font-family: 'Segoe UI', system-ui, sans-serif; min-height: 100vh; }
+
+header { padding: 12px 20px; border-bottom: 1px solid #2e2410; display: flex; align-items: center; gap: 10px; background: #150f04; }
+header h1 { font-size: 13px; font-weight: 600; color: #a09060; letter-spacing: 0.06em; text-transform: uppercase; }
+.live-dot { width: 8px; height: 8px; border-radius: 50%; background: #c8a020; animation: pulse 1.5s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.25} }
+.activity { margin-left: auto; font-size: 11px; color: #8a7640; font-style: italic; max-width: 46vw; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; transition: color .3s; }
+.activity.flash { color: #f0d878; }
+
+.phases { display: flex; align-items: center; padding: 9px 20px; border-bottom: 1px solid #2e2410; background: #120d03; flex-wrap: wrap; gap: 4px; }
+.phase { display: flex; align-items: center; gap: 7px; font-size: 11px; color: #5a4c28; transition: color .3s; }
+.phase.done { color: #7a9a50; }
+.phase.active { color: #d4a020; }
+.phase-dot { width: 8px; height: 8px; border-radius: 50%; border: 1.5px solid #3a3018; transition: all .3s; flex-shrink: 0; }
+.phase.done .phase-dot { background: #7a9a50; border-color: #7a9a50; }
+.phase.active .phase-dot { background: #d4a020; border-color: #d4a020; animation: pdot 1s ease-in-out infinite; }
+@keyframes pdot { 0%,100%{box-shadow:0 0 0 0 rgba(212,160,32,.5)} 50%{box-shadow:0 0 0 5px rgba(212,160,32,0)} }
+.phase-line { width: 24px; height: 1px; background: #2e2410; margin: 0 2px; }
+
+.plan-rail { padding: 8px 20px; background: #120d03; border-bottom: 1px solid #2e2410; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 11px; min-height: 32px; }
+.plan-rail:empty::before { content: "no plan yet"; color: #3a3018; font-style: italic; padding: 4px 0; }
+.plan-step { display: flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 12px; background: #1f1808; color: #5a4c28; transition: all .25s; }
+.plan-step.active { background: #2e2410; color: #d4a020; box-shadow: 0 0 0 1px #d4a020; }
+.plan-step.active .plan-step-num::after { content: " ●"; animation: pulse 1.4s ease-in-out infinite; }
+.plan-step.done { color: #7a9a50; }
+.plan-step.done .plan-step-num::before { content: "✓ "; }
+.plan-step.checkpoint { font-style: italic; }
+.plan-step-num { font-weight: 700; opacity: .65; }
+.plan-step-desc { white-space: nowrap; max-width: 240px; overflow: hidden; text-overflow: ellipsis; }
+
+.stats { display: flex; gap: 18px; padding: 6px 20px; background: #120d03; border-bottom: 1px solid #2e2410; font-size: 11px; color: #5a4c28; flex-wrap: wrap; align-items: center; }
+.stats span { display: flex; align-items: center; gap: 5px; }
+.stat-val { font-weight: 700; color: #c8a020; transition: transform .2s; }
+.stat-val.bump { transform: scale(1.5); color: #f0d878; }
+#cutCount { color: #7a5c40; }
+#keptCount { color: #7a9a50; }
+.sortmode { margin-left: auto; font-size: 10px; color: #6a5a30; text-transform: uppercase; letter-spacing: .05em; }
+.sortmode b { color: #d4a020; }
+
+/* Section labels appear only once a section has content */
+.section-label { grid-column: 1/-1; font-size: 10px; text-transform: uppercase; letter-spacing: .08em; color: #6a5a30; padding: 6px 2px 0; display: none; }
+.section-label.show { display: block; }
+.section-label.winners { color: #d4a020; }
+
+.board { padding: 18px 20px; display: grid; grid-template-columns: repeat(auto-fill, minmax(210px, 1fr)); gap: 14px; align-items: start; }
+/* framing/empty states: only a single object on the board (empty prompt or a lone
+   checkpoint/op card). Switch to a centered flex column so the "waiting" moment
+   fills the viewport intentionally instead of stranding a small card top-left. */
+.board.framing { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: calc(100vh - 220px); }
+.board.framing .card { width: min(320px, 80vw); }
+
+.card {
+  background: #e8d860;
+  border-radius: 3px;
+  padding: 14px 14px 12px;
+  cursor: pointer;
+  position: relative;
+  box-shadow: 3px 3px 8px rgba(0,0,0,.45), inset 0 0 0 1px rgba(0,0,0,.06);
+  transition: box-shadow .15s, opacity .4s;
+  animation: cardIn .4s cubic-bezier(.34,1.56,.64,1) both;
+  min-height: 104px;
+}
+@keyframes cardIn { from{opacity:0;transform:translateY(18px) rotate(-1.5deg) scale(.92)} to{opacity:1;transform:translateY(0) rotate(0) scale(1)} }
+/* Unscored cards keep a faint kind tint; once scored the background is driven
+   inline by score-heat (see cardHTML), so kind is carried by the dot + label,
+   not the background — that keeps kind scannable across the whole heat range. */
+.card.seed-tint    { background: #e8d860; }
+.card.variant-tint { background: #e6cf78; }
+.card.hybrid-tint  { background: #f0c98a; }
+.card:hover { box-shadow: 5px 5px 14px rgba(0,0,0,.5), inset 0 0 0 1px rgba(0,0,0,.06); z-index: 5; }
+.card.cut { opacity: .9; }
+.card.newest { box-shadow: 0 0 0 2px #f0d878, 3px 3px 14px rgba(240,216,120,.45); animation: cardIn .4s cubic-bezier(.34,1.56,.64,1) both, glow 1.6s ease-out; }
+@keyframes glow { 0%{box-shadow:0 0 0 3px #fff, 0 0 18px 4px rgba(240,216,120,.7)} 100%{box-shadow:0 0 0 2px #f0d878, 3px 3px 14px rgba(240,216,120,.45)} }
+
+/* score heat: once a card is scored, heatColor fills the whole card background
+   (set inline in cardHTML) so strong ideas read at a glance at 80-card zoom.
+   This thin top edge is a kind-colored accent stripe, not the score signal. */
+.heat { position: absolute; left: 0; right: 0; top: 0; height: 4px; border-radius: 3px 3px 0 0; background: transparent; transition: background .5s; }
+.card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; gap: 6px; }
+/* kind chip: colored dot + short text label so kind is scannable on the dense
+   board without relying on near-identical background tints. */
+.kind-chip { display: flex; align-items: center; gap: 5px; }
+.kind-dot { width: 9px; height: 9px; border-radius: 50%; flex-shrink: 0; box-shadow: 0 0 0 1px rgba(0,0,0,.18); }
+/* label stays uniform dark for contrast across the whole heat range; the DOT
+   carries the kind hue (distinct green/purple/orange + dark ring). */
+.kind-label { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: .05em; color: rgba(26,20,8,.72); }
+.kind-seed .kind-dot { background: #2f7a4a; }
+.kind-variant .kind-dot { background: #8a3fb0; }
+.kind-hybrid .kind-dot { background: #c24410; }
+.status-tag { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: .05em; color: rgba(0,0,0,.4); }
+.card.kept .status-tag { color: #2a6030; }
+
+.card-title { font-size: 13px; font-weight: 700; color: #1a1408; line-height: 1.34; margin-bottom: 6px; }
+.card.cut .card-title { text-decoration: line-through; text-decoration-color: rgba(0,0,0,.45); }
+.card-desc { font-size: 11.5px; color: rgba(26,20,8,.62); line-height: 1.5; }
+.card-footer { margin-top: 10px; display: flex; align-items: center; justify-content: space-between; min-height: 16px; }
+.card-score { font-size: 15px; font-weight: 800; color: #1a1408; }
+.rank-badge { font-size: 10px; font-weight: 800; color: #fff; background: #1a1408; border-radius: 10px; padding: 1px 7px; }
+.card.rank1 .rank-badge { background: #c89020; color: #1a1408; }
+/* once ranked, rank is authoritative — the raw score is dropped entirely so the
+   #1 winner never appears to "score lower" than cards below it (rank-vs-score
+   mismatch was reading as a bug). The #N badge becomes the dominant element. */
+.card.ranked .card-score { display: none; }
+.card.ranked .rank-badge { font-size: 14px; padding: 2px 11px; }
+
+.card::before { content: ''; position: absolute; top: -6px; left: 50%; transform: translateX(-50%); width: 40px; height: 14px; background: rgba(255,255,255,.32); border-radius: 2px; }
+
+/* SELECTED band: ranked cards get a uniform premium gold (driven by rank, NOT
+   score) so they read as a cohesive winner block. They are exempt from
+   score-heat tinting — heat lives only in "the rest", where it discriminates. */
+.card.ranked { background: #f3cf52 !important; box-shadow: 0 0 0 2px #d4a020, 4px 4px 12px rgba(0,0,0,.45); }
+.card.rank1 { background: #f6c93a !important; box-shadow: 0 0 0 3px #f0c020, 5px 5px 16px rgba(212,160,32,.5); }
+.card.ranked .heat { display: none; }
+
+/* compost tray for cut ideas — collapses clutter on a populated board */
+.compost { padding: 0 20px 24px; }
+.compost-bar { display: none; align-items: center; gap: 10px; cursor: pointer; font-size: 11px; color: #7a5c40; padding: 8px 0; border-top: 1px dashed #2e2410; }
+.compost-bar.show { display: flex; }
+.compost-bar .chev { transition: transform .2s; }
+.compost.open .compost-bar .chev { transform: rotate(90deg); }
+.compost-items { display: none; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap: 8px; margin-top: 6px; }
+.compost.open .compost-items { display: grid; }
+.compost-items .card { min-height: 64px; opacity: .55; animation: none; }
+.compost-items .card::before { display: none; }
+
+/* placeholders for ops in flight + checkpoints */
+.card.placeholder { background: #1f1808; border: 1px dashed #5a4c28; min-height: 80px; box-shadow: 2px 2px 4px rgba(0,0,0,.3); animation: phIn .25s ease both, phPulse 1.8s ease-in-out infinite; cursor: default; }
+.card.placeholder::before { display: none; }
+.card.placeholder .card-title { color: #d4a020; font-size: 12px; font-weight: 700; }
+.card.placeholder .card-desc { color: rgba(212,160,32,.55); font-style: italic; font-size: 11px; }
+.card.placeholder .status-tag { color: #c8a020; }
+.card.placeholder .kind-dot { background: #c8a020 !important; animation: pulse 1.4s ease-in-out infinite; }
+.card.placeholder.checkpoint { border-style: solid; border-color: #c8a020; background: #2a2008; }
+.card.placeholder.checkpoint .kind-dot { background: transparent !important; animation: none; width: auto; height: auto; font-size: 12px; }
+.card.placeholder.failed { border-color: #a04030; background: #2a1408; animation: none; }
+.card.placeholder.failed .status-tag { color: #d05030; }
+@keyframes phIn { from{opacity:0;transform:scale(.92)} to{opacity:1;transform:scale(1)} }
+@keyframes phPulse { 0%,100%{box-shadow:2px 2px 4px rgba(0,0,0,.3), inset 0 0 0 1px rgba(212,160,32,.15)} 50%{box-shadow:2px 2px 10px rgba(212,160,32,.25), inset 0 0 0 1px rgba(212,160,32,.45)} }
+
+.empty { grid-column: 1/-1; padding: 48px 20px; text-align: center; color: #5a4c28; }
+.empty-icon { font-size: 34px; margin-bottom: 12px; animation: pulse 2s ease-in-out infinite; }
+.empty small { display:block; margin-top: 8px; color:#3a3018; font-size:12px; }
+
+/* modal */
+.backdrop { display: none; position: fixed; inset: 0; background: rgba(10,8,2,.75); z-index: 100; align-items: center; justify-content: center; }
+.backdrop.open { display: flex; }
+.modal { background: #e8d860; border-radius: 4px; width: min(520px,92vw); max-height: 84vh; overflow-y: auto; padding: 28px 24px 24px; box-shadow: 6px 6px 24px rgba(0,0,0,.6); position: relative; }
+.m-close { position: absolute; top: 10px; right: 14px; background: none; border: none; color: rgba(26,20,8,.4); font-size: 20px; cursor: pointer; }
+.m-meta { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .08em; color: rgba(26,20,8,.4); margin-bottom: 8px; display: flex; gap: 12px; }
+.m-title { font-size: 19px; font-weight: 800; color: #1a1408; margin-bottom: 18px; line-height: 1.3; }
+.m-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 16px; }
+.m-cell { background: rgba(255,255,255,.3); border-radius: 4px; padding: 8px 10px; }
+.m-clabel { font-size: 9px; color: rgba(26,20,8,.45); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 3px; }
+.m-cval { font-size: 12px; color: #1a1408; font-weight: 600; }
+hr.div { border: none; border-top: 1px solid rgba(0,0,0,.12); margin: 14px 0; }
+.m-lbl { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: .07em; color: rgba(26,20,8,.45); margin-bottom: 6px; }
+.m-body { font-size: 13px; color: rgba(26,20,8,.8); line-height: 1.65; }
+.m-note { background: rgba(0,0,0,.07); border-radius: 4px; padding: 10px 12px; font-size: 12px; color: rgba(26,20,8,.7); line-height: 1.55; font-style: italic; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="live-dot" id="liveDot"></div>
+  <h1 id="wallTitle">ideation — live wall</h1>
+  <div class="activity" id="activity"></div>
+</header>
+
+<div class="phases" id="phaseStrip"></div>
+<div class="plan-rail" id="planRail"></div>
+
+<div class="stats">
+  <span>Ideas: <span class="stat-val" id="totalCount">0</span></span>
+  <span>Active: <span class="stat-val" id="activeCount">0</span></span>
+  <span>Kept: <span class="stat-val" id="keptCount">0</span></span>
+  <span>Cut: <span class="stat-val" id="cutCount">0</span></span>
+  <span class="sortmode" id="sortMode">order: <b>arrival</b></span>
+</div>
+
+<div class="board" id="board">
+  <div class="section-label winners" id="labelWinners">🏆 selected — final ranking</div>
+  <div class="section-label" id="labelRest">the rest — by score</div>
+  <div class="empty" id="empty">
+    <div class="empty-icon">💡</div>
+    <div>Ready — the first idea lands here.</div>
+    <small>Cards stream in live, then reorder by score as they're judged.</small>
+  </div>
+</div>
+
+<div class="compost" id="compost">
+  <div class="compost-bar" id="compostBar">
+    <span class="chev">▸</span>
+    <span><b id="compostCount">0</b> cut — set aside</span>
+  </div>
+  <div class="compost-items" id="compostItems"></div>
+</div>
+
+<div class="backdrop" id="backdrop">
+  <div class="modal">
+    <button class="m-close" onclick="closeModal()">×</button>
+    <div id="modalContent"></div>
+  </div>
+</div>
+
+<script>
+const ideas = {};                 // id -> idea object
+let counts = { total: 0, active: 0, kept: 0, cut: 0 };
+let phaseDefs = [], planSteps = [];
+let anyScored = false;
+const board = document.getElementById('board');
+
+function esc(s){ return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+function kindClass(k){ return {seed:'kind-seed',variant:'kind-variant',hybrid:'kind-hybrid'}[k]||'kind-seed'; }
+function kindTint(k){ return {seed:'seed-tint',variant:'variant-tint',hybrid:'hybrid-tint'}[k]||'seed-tint'; }
+function kindLabel(k){ return {seed:'seed',variant:'variant',hybrid:'hybrid'}[k]||'seed'; }
+function kindAccent(k){ return {seed:'#2f7a4a',variant:'#8a3fb0',hybrid:'#c24410'}[k]||'#2f7a4a'; }
+function statusLabel(s){ return {active:'active',kept:'✓ kept',cut:'✕ cut'}[s]||s; }
+
+function setActivity(msg, flash){
+  const a = document.getElementById('activity');
+  a.textContent = msg;
+  if (flash){ a.classList.add('flash'); setTimeout(()=>a.classList.remove('flash'), 600); }
+}
+function bump(id){ const el=document.getElementById(id); el.classList.add('bump'); setTimeout(()=>el.classList.remove('bump'),200); }
+
+/* ---- plan rail / phases (same as static wall) ---- */
+function renderPlanRail(){
+  const rail=document.getElementById('planRail');
+  if(!planSteps.length){ rail.innerHTML=''; return; }
+  rail.innerHTML=planSteps.map(s=>{
+    const st=s.done?'done':(s.active?'active':''); const tp=s.type==='checkpoint'?'checkpoint':'';
+    const num=s.type==='checkpoint'?'⏸':s.n;
+    return `<span class="plan-step ${st} ${tp}"><span class="plan-step-num">${num}</span><span class="plan-step-desc">${esc(s.description||'')}</span></span>`;
+  }).join('');
+}
+function advanceStep(n){
+  if(!planSteps.length) return; let t=false;
+  for(const s of planSteps){ if(s.n<n&&!s.done){s.done=true;s.active=false;t=true;} else if(s.n===n&&!s.active){s.active=true;s.done=false;t=true;} }
+  if(t) renderPlanRail();
+}
+function renderPhases(active){
+  if(!phaseDefs.length) return;
+  document.getElementById('phaseStrip').innerHTML=phaseDefs.map((p,i)=>{
+    const cls=p.done?'done':p.name===active?'active':'';
+    const line=i<phaseDefs.length-1?'<div class="phase-line"></div>':'';
+    return `<div class="phase ${cls}"><div class="phase-dot"></div>${p.name}</div>${line}`;
+  }).join('');
+}
+function updateStats(){
+  document.getElementById('totalCount').textContent=counts.total;
+  document.getElementById('activeCount').textContent=counts.active;
+  document.getElementById('keptCount').textContent=counts.kept;
+  document.getElementById('cutCount').textContent=counts.cut;
+}
+
+/* ---- card rendering ---- */
+function heatColor(score, lo, hi){
+  // Normalize against the LIVE min/max of currently-scored ideas (not a hardcoded
+  // 40-95) so the visible spread always uses the full olive->orange range — when
+  // scores bunch in the 70s, the cluster still spreads across the whole palette
+  // and the winner stays findable by color, not just by the small number.
+  // Fallback to hottest when there's no spread (one idea, or all-equal scores).
+  const t = (hi>lo) ? Math.max(0,Math.min(1,(score-lo)/(hi-lo))) : 1;
+  const r=Math.round(120+t*120), g=Math.round(150-t*40), b=Math.round(80-t*60);
+  return `rgb(${r},${g},${b})`;
+}
+/* live heat population = scored, not-yet-ranked, not-cut ideas. min/max over this
+   exact set drives normalization, and the SAME set is repainted each flush so the
+   board is never a mix of old-range and new-range colors. */
+function heatBounds(){
+  let lo=Infinity, hi=-Infinity;
+  for(const i of Object.values(ideas)){
+    if(i.score!=null && i.rank==null && i.status!=='cut'){
+      if(i.score<lo) lo=i.score; if(i.score>hi) hi=i.score;
+    }
+  }
+  return [lo,hi];
+}
+function cardHTML(idea){
+  // ranked cards drop the raw score entirely — rank is authoritative, so showing
+  // a (lower) score next to a #1 badge read as a bug. Unranked scored cards keep it.
+  const scoreHtml = (idea.score!=null && idea.rank==null)
+    ? `<span class="card-score">${idea.score}</span>`
+    : '<span></span>';
+  const rankHtml  = idea.rank!=null ? `<span class="rank-badge">#${idea.rank}</span>` : '';
+  const accent = kindAccent(idea.kind);
+  return `
+    <div class="heat" style="background:${accent}"></div>
+    <div class="card-header"><div class="kind-chip"><div class="kind-dot"></div><span class="kind-label">${kindLabel(idea.kind)}</span></div><span class="status-tag">${statusLabel(idea.status||'active')}</span></div>
+    <div class="card-title">${esc(idea.title)}</div>
+    <div class="card-desc">${esc((idea.description||'').slice(0,88))}${(idea.description||'').length>88?'…':''}</div>
+    <div class="card-footer">${scoreHtml}${rankHtml}</div>`;
+}
+function makeCard(idea){
+  const el=document.createElement('div');
+  el.id=`card-${idea.id}`;
+  el.onclick=()=>openModal(idea.id);
+  applyCardClasses(el,idea);
+  el.innerHTML=cardHTML(idea);
+  return el;
+}
+function applyCardClasses(el,idea){
+  el.className='card '+kindClass(idea.kind||'seed')+' '+kindTint(idea.kind||'seed')
+    +(idea.status==='cut'?' cut':'')+(idea.status==='kept'?' kept':'')
+    +(idea.rank!=null?' ranked':'')+(idea.rank===1?' rank1':'');
+  // Heat background is owned exclusively by paintHeat() (run in the rAF flush), since
+  // each new score shifts the live range and ALL scored cards must be repainted
+  // together. Here we only clear the inline background for cards that should NOT
+  // carry heat (ranked → CSS gold; unscored → CSS kind-tint).
+  if(idea.score==null || idea.rank!=null) el.style.background='';
+}
+
+/* ---- FLIP reflow: animate cards to new sorted positions ---- */
+function sortKey(a){
+  // winners (ranked) first by rank; then active/kept by score desc; arrival as tiebreak
+  if(a.rank!=null) return [0, a.rank, a.id];
+  if(a.score!=null) return [1, -a.score, a.id];
+  return [2, 0, a.id];
+}
+function orderedIds(){
+  return Object.values(ideas).filter(i=>i.status!=='cut')
+    .sort((x,y)=>{ const a=sortKey(x),b=sortKey(y); return a[0]-b[0]||a[1]-b[1]||a[2]-b[2]; })
+    .map(i=>i.id);
+}
+/* repaint heat backgrounds for the whole live-scored set against the current range.
+   Called from the flush so every scored card uses the same (latest) normalization. */
+function paintHeat(){
+  const [lo,hi]=heatBounds();
+  for(const i of Object.values(ideas)){
+    if(i.score!=null && i.rank==null && i.status!=='cut'){
+      const el=document.getElementById(`card-${i.id}`);
+      if(el) el.style.background=heatColor(i.score,lo,hi);
+    }
+  }
+}
+
+/* rAF-coalesce the layout-reading work. idea_scored can fire in a burst; running
+   reflow() (two getBoundingClientRect passes over up to 80 cards) per event is the
+   main jank source. We batch all score/rank/cut events into ONE paint+reflow per
+   frame. The cheap per-event work (score text, activity line) stays immediate. */
+let reflowScheduled=false;
+function scheduleReflow(){
+  if(reflowScheduled) return;
+  reflowScheduled=true;
+  requestAnimationFrame(()=>{ reflowScheduled=false; paintHeat(); reflow(); });
+}
+
+function reflow(){
+  const all=Object.values(ideas).filter(i=>i.status!=='cut');
+  const ranked=all.filter(i=>i.rank!=null);
+  const rest=all.filter(i=>i.rank==null);
+  const ids=orderedIds();
+  const live=ids.map(id=>document.getElementById(`card-${id}`)).filter(Boolean);
+  // also keep placeholders (op/checkpoint cards) pinned at the end, in DOM order
+  const placeholders=[...board.querySelectorAll('.card.placeholder')];
+  const lblWin=document.getElementById('labelWinners');
+  const lblRest=document.getElementById('labelRest');
+  // FLIP: record first positions
+  const first=new Map();
+  live.forEach(el=>first.set(el,el.getBoundingClientRect()));
+  // reorder DOM — interleave the section labels so the winners band is visually separated.
+  // Inserting them here (before the 'last' rect capture) lets cards FLIP smoothly around their height.
+  if(ranked.length){ board.insertBefore(lblWin,board.firstChild); lblWin.classList.add('show'); }
+  else lblWin.classList.remove('show');
+  let inserted=false;
+  ids.forEach(id=>{
+    const el=document.getElementById(`card-${id}`); if(!el) return;
+    // drop the "rest" label right before the first unranked card, only if winners also exist
+    if(!inserted && ideas[id] && ideas[id].rank==null && ranked.length && rest.length){
+      board.appendChild(lblRest); lblRest.classList.add('show'); inserted=true;
+    }
+    board.appendChild(el);
+  });
+  if(!inserted) lblRest.classList.remove('show');
+  placeholders.forEach(el=>board.appendChild(el));
+  // invert + play (only the cards that actually move get will-change, cleared on transition end)
+  live.forEach(el=>{
+    const a=first.get(el); if(!a) return;
+    const b=el.getBoundingClientRect();
+    const dx=a.left-b.left, dy=a.top-b.top;
+    if(Math.abs(dx)<1&&Math.abs(dy)<1) return;
+    el.style.willChange='transform';
+    el.style.transition='none';
+    el.style.transform=`translate(${dx}px,${dy}px)`;
+    requestAnimationFrame(()=>{
+      el.style.transition='transform .55s cubic-bezier(.22,1,.36,1)';
+      el.style.transform='';
+    });
+    // last-move-wins reset: rapid re-entrant reflows cancel transitions (transitioncancel,
+    // not transitionend), so a per-element timer is the reliable way to drop will-change after settle.
+    clearTimeout(el._wcTimer);
+    el._wcTimer=setTimeout(()=>{ el.style.willChange=''; el._wcTimer=null; },650);
+  });
+  const sm=document.getElementById('sortMode');
+  sm.innerHTML = anyScored ? 'order: <b>by score</b>' : 'order: <b>arrival</b>';
+}
+
+function clearEmpty(){ const e=document.getElementById('empty'); if(e) e.remove(); }
+
+/* "framing" = nothing but a single waiting object on the board (the empty prompt,
+   or a lone checkpoint/op placeholder while we wait). In that state we center the
+   board vertically so the moment reads as intentional, not half-loaded. The moment
+   a real idea card lands we drop framing and never re-enter on a populated board. */
+function updateFraming(){
+  const realCards=board.querySelectorAll('.card:not(.placeholder)').length;
+  const placeholders=board.querySelectorAll('.card.placeholder').length;
+  const hasEmpty=!!document.getElementById('empty');
+  // center while there are zero real cards AND at most one waiting object on screen
+  const objects=placeholders+(hasEmpty?1:0);
+  board.classList.toggle('framing', realCards===0 && objects<=1);
+}
+
+/* ---- compost tray ---- */
+function toCompost(idea){
+  const tray=document.getElementById('compostItems');
+  const old=document.getElementById(`card-${idea.id}`);
+  const el=makeCard(idea);
+  if(old) old.remove();
+  tray.appendChild(el);
+  const bar=document.getElementById('compostBar'); bar.classList.add('show');
+  document.getElementById('compostCount').textContent=counts.cut;
+}
+
+/* ---- modal ---- */
+function openModal(id){
+  const f=ideas[id]; if(!f) return;
+  document.getElementById('modalContent').innerHTML=`
+    <div class="m-meta"><span>${(f.kind||'seed').toUpperCase()}</span>${f.rank!=null?`<span>#${f.rank} ranked</span>`:''}</div>
+    <div class="m-title">${esc(f.title)}</div>
+    <div class="m-grid">
+      <div class="m-cell"><div class="m-clabel">Status</div><div class="m-cval">${statusLabel(f.status||'active')}</div></div>
+      <div class="m-cell"><div class="m-clabel">Score</div><div class="m-cval">${f.score!=null?f.score:'—'}</div></div>
+    </div>
+    <hr class="div"><div class="m-lbl">Description</div><div class="m-body">${esc(f.description||'')}</div>
+    ${f.rationale?`<hr class="div"><div class="m-lbl">Why it's interesting</div><div class="m-note">${esc(f.rationale)}</div>`:''}
+    ${f.stress_note?`<hr class="div"><div class="m-lbl">Why it was cut</div><div class="m-note">${esc(f.stress_note)}</div>`:''}`;
+  document.getElementById('backdrop').classList.add('open');
+}
+function closeModal(){ document.getElementById('backdrop').classList.remove('open'); }
+document.getElementById('backdrop').onclick=e=>{ if(e.target.id==='backdrop') closeModal(); };
+document.addEventListener('keydown',e=>e.key==='Escape'&&closeModal());
+document.getElementById('compostBar').onclick=()=>document.getElementById('compost').classList.toggle('open');
+
+/* ---- event handlers (same contract as live/view.html) ---- */
+const handlers={
+  session_started:p=>{
+    if(p.topic) document.getElementById('wallTitle').textContent=`ideation — ${p.topic}`;
+    if(p.phases){ phaseDefs=p.phases.map(n=>({name:n,done:false})); renderPhases(null); }
+    setActivity('session started');
+  },
+  plan_set:p=>{ if(Array.isArray(p.steps)){ planSteps=p.steps.map(s=>({...s,active:false,done:false})); renderPlanRail(); setActivity('plan approved — '+p.steps.length+' steps'); } },
+  phase_started:p=>{ phaseDefs.forEach((ph,i)=>{ if(ph.name===p.name) phaseDefs.slice(0,i).forEach(x=>x.done=true); }); renderPhases(p.name); setActivity('phase: '+p.name, true); },
+  phase_done:p=>{ phaseDefs.forEach(ph=>{ if(ph.name===p.name) ph.done=true; }); renderPhases(null); },
+  op_started:p=>{
+    if(p.step_n) advanceStep(p.step_n);
+    const id=`op-${p.op_run_id}`; if(document.getElementById(id)) return;
+    const label=p.persona?`${p.operator} · ${p.persona}`:(p.operator||'operator');
+    const sub=[]; if(p.description) sub.push(p.description); if(p.cohort_size>0) sub.push(`cohort: ${p.cohort_size}`);
+    const el=document.createElement('div'); el.className='card placeholder'; el.id=id;
+    el.innerHTML=`<div class="card-header"><div class="kind-dot"></div><span class="status-tag">running</span></div>
+      <div class="card-title">${esc(label)}</div><div class="card-desc">${esc(sub.join(' · ')||'…')}</div>`;
+    clearEmpty(); board.appendChild(el); updateFraming();
+    setActivity('running '+label, true);
+  },
+  op_finished:p=>{
+    const el=document.getElementById(`op-${p.op_run_id}`); if(!el) return;
+    if(p.status==='failed'){ el.classList.add('failed'); el.querySelector('.status-tag').textContent='failed';
+      const d=el.querySelector('.card-desc'); if(d&&p.error) d.textContent=p.error; setActivity('op failed: '+(p.error||''),true); setTimeout(()=>{el.remove();updateFraming();},4500); }
+    else { el.remove(); }
+    updateFraming();
+  },
+  checkpoint_reached:p=>{
+    if(p.step_n) advanceStep(p.step_n);
+    const id=`cp-${p.name}`; if(document.getElementById(id)) return;
+    const el=document.createElement('div'); el.className='card placeholder checkpoint'; el.id=id;
+    el.innerHTML=`<div class="card-header"><div class="kind-dot">⏸</div><span class="status-tag">checkpoint</span></div>
+      <div class="card-title">${esc(p.name)}</div><div class="card-desc">Waiting for your confirmation…</div>`;
+    clearEmpty(); board.appendChild(el); updateFraming(); setActivity('paused — '+p.name+' checkpoint', true);
+  },
+  checkpoint_resolved:p=>{ const el=document.getElementById(`cp-${p.name}`); if(el) el.remove(); updateFraming(); },
+  idea_generated:p=>{
+    if(ideas[p.id]) return;
+    ideas[p.id]={...p,status:p.status||'active'};
+    counts.total++; counts.active++;
+    clearEmpty();
+    const el=makeCard(ideas[p.id]);
+    el.classList.add('newest');
+    // arrival just appends (no FLIP/getBoundingClientRect storm on the busy stream).
+    // insertBefore the first placeholder keeps the card ahead of in-flight op/checkpoint cards;
+    // a null ref makes this behave exactly like appendChild.
+    board.insertBefore(el, board.querySelector('.card.placeholder'));
+    updateFraming();
+    setTimeout(()=>el.classList.remove('newest'),1700);
+    updateStats(); bump('totalCount');
+    setActivity('💡 '+p.title);
+  },
+  idea_scored:p=>{
+    const it=ideas[p.id]; if(!it) return;
+    it.score=p.score; if(p.rationale) it.rationale=p.rationale;
+    if(!anyScored){ anyScored=true; }
+    // immediate, cheap per-event work: refresh classes + score number. The heat
+    // background and FLIP reorder are deferred to a single rAF flush (paintHeat
+    // recomputes the live range and repaints ALL scored cards together).
+    const el=document.getElementById(`card-${p.id}`); if(el){ applyCardClasses(el,it); el.innerHTML=cardHTML(it); }
+    scheduleReflow();
+  },
+  idea_ranked:p=>{
+    const it=ideas[p.id]; if(!it) return;
+    it.rank=p.rank;
+    const el=document.getElementById(`card-${p.id}`); if(el){ applyCardClasses(el,it); el.innerHTML=cardHTML(it); }
+    setActivity('🏆 #'+p.rank+' — '+it.title, true);
+    // ranking removes this card from the heat population, so the range must
+    // recompute (and the rest repaint) — go through the same coalesced flush.
+    scheduleReflow();
+  },
+  idea_kept:p=>{
+    const it=ideas[p.id]; if(!it) return;
+    if(it.status==='active'){ counts.active--; counts.kept++; }
+    it.status='kept';
+    const el=document.getElementById(`card-${p.id}`); if(el){ applyCardClasses(el,it); el.innerHTML=cardHTML(it); }
+    updateStats();
+  },
+  idea_cut:p=>{
+    const it=ideas[p.id]; if(!it) return;
+    if(it.status==='active'){ counts.active--; counts.cut++; } else if(it.status==='kept'){ counts.kept--; counts.cut++; }
+    it.status='cut'; if(p.stress_note) it.stress_note=p.stress_note;
+    toCompost(it); updateStats();
+    // a cut also leaves the heat population — recompute range via the flush.
+    scheduleReflow(); updateFraming();
+  },
+  session_complete:()=>{
+    phaseDefs.forEach(p=>p.done=true); renderPhases(null);
+    planSteps.forEach(s=>{ s.done=true; s.active=false; }); renderPlanRail();
+    document.querySelectorAll('.card.placeholder').forEach(el=>el.remove());
+    updateFraming();
+    const dot=document.getElementById('liveDot'); dot.style.background='#7a9a50'; dot.style.animation='none';
+    setActivity('session complete', true);
+  },
+};
+
+updateFraming();  // center the initial "ready" empty state in the viewport
+new EventSource('/events').onmessage=e=>{ try{ const ev=JSON.parse(e.data); handlers[ev.type]?.(ev.payload); }catch{} };
+</script>
+</body>
+</html>

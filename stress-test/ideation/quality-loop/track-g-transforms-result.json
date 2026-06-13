@@ -1,0 +1,755 @@
+{
+  "summary": [
+    {
+      "frame": "cafe",
+      "technique": "reverse",
+      "tech_wins": 0,
+      "plain_wins": 2,
+      "ties": 0,
+      "tech_quality": 11.5,
+      "plain_quality": 13.5
+    },
+    {
+      "frame": "cafe",
+      "technique": "scamper",
+      "tech_wins": 1,
+      "plain_wins": 1,
+      "ties": 0,
+      "tech_quality": 12,
+      "plain_quality": 12
+    },
+    {
+      "frame": "cafe",
+      "technique": "sixhats",
+      "tech_wins": 0,
+      "plain_wins": 2,
+      "ties": 0,
+      "tech_quality": 12,
+      "plain_quality": 14.5
+    },
+    {
+      "frame": "b2b",
+      "technique": "reverse",
+      "tech_wins": 2,
+      "plain_wins": 0,
+      "ties": 0,
+      "tech_quality": 14,
+      "plain_quality": 12
+    },
+    {
+      "frame": "b2b",
+      "technique": "scamper",
+      "tech_wins": 0,
+      "plain_wins": 2,
+      "ties": 0,
+      "tech_quality": 12,
+      "plain_quality": 13.5
+    },
+    {
+      "frame": "b2b",
+      "technique": "sixhats",
+      "tech_wins": 2,
+      "plain_wins": 0,
+      "ties": 0,
+      "tech_quality": 13,
+      "plain_quality": 12
+    }
+  ],
+  "liftSummary": [
+    {
+      "frame": "cafe",
+      "arm": "plain",
+      "dev_won": true,
+      "raw_won": false,
+      "tie": false,
+      "dev_quality": 14,
+      "raw_quality": 7
+    },
+    {
+      "frame": "cafe",
+      "arm": "reverse",
+      "dev_won": true,
+      "raw_won": false,
+      "tie": false,
+      "dev_quality": 15,
+      "raw_quality": 7
+    },
+    {
+      "frame": "cafe",
+      "arm": "scamper",
+      "dev_won": true,
+      "raw_won": false,
+      "tie": false,
+      "dev_quality": 15,
+      "raw_quality": 8
+    },
+    {
+      "frame": "cafe",
+      "arm": "sixhats",
+      "dev_won": true,
+      "raw_won": false,
+      "tie": false,
+      "dev_quality": 15,
+      "raw_quality": 8
+    },
+    {
+      "frame": "b2b",
+      "arm": "plain",
+      "dev_won": true,
+      "raw_won": false,
+      "tie": false,
+      "dev_quality": 13,
+      "raw_quality": 9
+    },
+    {
+      "frame": "b2b",
+      "arm": "reverse",
+      "dev_won": true,
+      "raw_won": false,
+      "tie": false,
+      "dev_quality": 14,
+      "raw_quality": 11
+    },
+    {
+      "frame": "b2b",
+      "arm": "scamper",
+      "dev_won": true,
+      "raw_won": false,
+      "tie": false,
+      "dev_quality": 14,
+      "raw_quality": 10
+    },
+    {
+      "frame": "b2b",
+      "arm": "sixhats",
+      "dev_won": true,
+      "raw_won": false,
+      "tie": false,
+      "dev_quality": 15,
+      "raw_quality": 9
+    }
+  ],
+  "perFrame": [
+    {
+      "frame": "cafe",
+      "frameTitle": "Cafe \u2014 grow weekday-afternoon revenue",
+      "coll": {
+        "plain": [
+          {
+            "seed_id": "Seed 1",
+            "title": "Afternoon desk pass with a built-in spend floor",
+            "description": "Sell a 2-5pm $8 'desk pass' that reserves a power-outlet seat and credits the full $8 toward anything ordered, so the seat only stays free while the person keeps spending past the credit. A freelancer taps in at 2pm, the $8 covers their first latte and a tartine, and when they want to stay past 4pm a gentle '$5 more to hold your seat till 5' prompt converts the dead chair into a second order instead of a parked squatter on bottomless drip.",
+            "what_changed": "Replaced the margin-killing flat fee plus bottomless refills with a credit-toward-purchase floor that forces ongoing spend and caps free seat time, so the prime afternoon square footage actually earns.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 5",
+            "title": "Recurring group room with an organizer-held prepaid tab",
+            "description": "Give the 2-5pm room free to a recurring group only if the organizer pre-loads a per-head tab (e.g. $4/person x expected headcount) a day ahead, which the cafe draws drinks against and keeps whether or not everyone shows. The Wednesday 3pm Spanish group's organizer prepays a $40 tab for 10 seats on Tuesday night; if only 7 arrive the cafe still has the $40, and the organizer recoups it by charging members at signup, so the cafe never has to count heads or chase no-shows.",
+            "what_changed": "Moved enforcement and no-show risk off the cafe by making the organizer prepay a guaranteed per-head tab in advance instead of relying on members to each buy a drink at the door.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 8",
+            "title": "Monthly pass whose value only unlocks on a SECOND, afternoon-only drink",
+            "description": "Sell a $39/month pass that gives the morning drink at a small discount but makes the math only pay off if you redeem a second drink between 2-5pm, when each afternoon redemption is near-free to the cafe. A regular who already buys a $5 morning coffee finds the pass breaks even only by also tapping it for a 3pm drink, so the price structure manufactures the extra afternoon trip rather than just discounting the morning one they'd buy anyway.",
+            "what_changed": "Gated the pass's payoff specifically to an afternoon-window second redemption (instead of any unlimited drip), so it pulls in new 2-5pm trips without cannibalizing or giving away the morning sale.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "Seed 12",
+            "title": "A 2-5pm 'apero' menu of zero-cook, high-margin small plates",
+            "description": "Flip the chalkboard at 2pm to a short afternoon menu of items that need no cooking and no morning prep overlap, built on shelf-stable, high-margin components: assembled-to-order tartines, a $9 cheese-and-olive board, canned spritzes, and (where licensing allows) a glass of wine. At 2pm the board reads 'Afternoon: boards, spritzes, wine,' a barista plates a tartine in 90 seconds from pre-portioned toppings with no extra kitchen labor, and the cafe reads as an evening-ish hangout rather than leftover morning.",
+            "what_changed": "Constrained the menu to no-cook, pre-portioned, high-margin items so it adds afternoon revenue without adding kitchen labor or prep at a dead-staffed hour, and flagged the wine as licensing-dependent.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "Seed 15",
+            "title": "A named weekly afternoon happening with a cover that becomes drink credit",
+            "description": "Run one recurring, named 2-5pm event with a fixed weekly host and a small cover (e.g. $5 to play 'Thursday 4pm Trivia') that converts entirely into a drink credit, guaranteeing revenue per attendee while the cover still feels free. Each of a six-person friend group pays $5 at the door for trivia, every dollar comes back as a drink, the cover funds the host, and because seats are limited and ticketed in advance the cafe knows turnout before deciding whether the host shows.",
+            "what_changed": "Added a credit-back cover and advance ticketing so the event guarantees per-head spend and predictable turnout that funds the host, replacing the weak honor-system one-drink minimum and uncertain attendance.",
+            "tag": "WILD"
+          }
+        ],
+        "reverse": [
+          {
+            "seed_id": "Seed 1",
+            "title": "Afternoon desk pass with drip-only self-serve and a hard 5pm end",
+            "description": "Sell a $6 2-5pm pass for a designated counter stool or small two-top (not the prime tables) that includes self-serve bottomless drip from a back station, with the pass timing out at 5pm sharp. A freelancer taps to pay at 2pm, sits at a labeled work seat, refills their own drip, and the seat is clear for the evening trade by 5.",
+            "what_changed": "Closed the refill-margin bleed by moving bottomless to zero-labor self-serve drip, and closed the overstay-past-5pm gap with an enforced time-out on a non-prime seat.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 5",
+            "title": "Recurring group slot booked with a prepaid per-head drink credit",
+            "description": "Give recurring local groups the 2-5pm room on a standing slot, but the organizer prepays a per-head drink-credit deposit when they reserve the recurring time, redeemed as counter vouchers each session. The Wednesday 3pm Spanish group's organizer pays for 10 drink credits up front each month, so attendance and the drink order are locked in before anyone walks in.",
+            "what_changed": "Made the 'guaranteed minimum' actually collectible and immune to no-shows by converting a verbal promise into an organizer-prepaid deposit.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "Seed 8",
+            "title": "Monthly drink pass whose unlimited value is afternoon-only",
+            "description": "Sell a flat monthly drink subscription where the morning visit is paid normally (or one capped redemption) just as the regular already does, and the pass's unlimited refills only kick in during 11am-5pm. A $45/month regular still buys their 8am cup as usual, then swings back at 3pm to redeem freely and 'get their money's worth,' driving the second trip without unlimited redemptions during the 7-11 crush.",
+            "what_changed": "Closed the adverse-selection and morning-cannibalization trap by time-gating the unlimited value to afternoons so the pass only rewards the extra afternoon visit, not the existing rush.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "Seed 12",
+            "title": "An afternoon menu of assembly-only items that share no kitchen labor",
+            "description": "Flip the chalkboard at 2pm to a small afternoon list built entirely from no-cook, assembly-only items (tartines on pre-baked bread, canned/bottled spritzes, a prepped charcuterie plate), starting with just three items and adding wine only once the right local license clears. The board reads 'Afternoon: tartines, spritzes, plates,' a counter person assembles each in seconds with no extra line cook, and an unlicensed cafe runs a non-alcoholic ap\u00e9ritif in the wine slot until the permit lands.",
+            "what_changed": "Closed the labor-cost-for-an-empty-room and unsold-prep risk by restricting the launch menu to no-cook assembly items and three SKUs, and routed around the wine-licensing lead time with a stand-in pour.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 15",
+            "title": "A named afternoon happening with a drink-minimum cover and attendance-tied host pay",
+            "description": "Run a recurring named 4pm event (trivia, an acoustic set) where each player buys a per-round drink to participate and the host is paid partly on heads counted, staged in a sound-contained back area so it doesn't drown out the rest of the room. 'Thursday 4pm Trivia' charges every player a drink per round to keep their table, the host earns a base plus a per-attendee bonus, and the noise stays boxed in the back so other patrons aren't pushed out.",
+            "what_changed": "Closed the host-cost-without-turnout, low-conversion, and noise-drives-off-patrons risks by tying spend to participation, host pay to attendance, and the event to an acoustically separate space.",
+            "tag": "BOLD"
+          }
+        ],
+        "scamper": [
+          {
+            "seed_id": "1",
+            "title": "Afternoon work-and-stay seats",
+            "description": "Turn the empty 2-5pm room into a paid quiet-work spot where remote workers pay a low first-hour rate that steps up each additional hour, with only a fixed handful of tables flagged as work seats so the rest stay open for walk-in food-and-drink customers. For example, a freelancer pays $4 for the first hour, $6 for the second, $8 for the third, and once all four work tables are claimed the app shows 'sold out' so a camper can never crowd out a higher-spend customer.",
+            "what_changed": "Replaced the flat $6/3-hour price with hourly-escalating pricing plus a hard cap on work-tables, so a single low-spend camper can no longer earn less than the seat is worth or block paying customers.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "5",
+            "title": "Host recurring afternoon groups",
+            "description": "Offer the dead 2-5pm room to recurring local groups like book clubs or language meetups, but the organizer pre-pays a per-head deposit at booking that converts into drink-and-snack credit redeemable only during that session. For example, a 10-person Spanish group's organizer pays $50 ($5 a head) when reserving the 3pm Wednesday slot, and each member walks in with $5 of credit already on the cafe's books whether or not everyone shows.",
+            "what_changed": "Swapped the unenforceable one-drink-per-head minimum for an upfront organizer-paid deposit that converts to credit, so revenue is locked before arrival and no-shows still pay.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "8",
+            "title": "Monthly pass that rewards the second visit",
+            "description": "Sell a flat monthly drink subscription where the morning drink is at near-full price but any drink claimed after 2pm the same day is free, so the only way to extract real value is to come back in the afternoon. For example, a $40/month regular who only ever comes at 8am barely breaks even, but the moment they swing back at 3pm for their free second cup the pass starts paying off, pulling them into the slow window the cafe actually wants to fill.",
+            "what_changed": "Re-tied the pass's payoff specifically to the same-day afternoon return rather than total volume, so it stops quietly subsidizing mornings-only regulars and only rewards the extra 2-5pm trip.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "12",
+            "title": "A distinct afternoon menu that isn't coffee",
+            "description": "Launch a separate 2-5pm menu whose items are assembled almost entirely from ingredients and prep already on hand from the morning service, so it reads as a new occasion while adding little new labor or waste. For example, the chalkboard flips at 2pm to 'Afternoon: tartines, spritzes, wine,' where the tartines are built on the morning's unsold baguettes and pastry, the spritz uses the same espresso machine and citrus already prepped, and only the wine and aperitif are genuinely new stock.",
+            "what_changed": "Built the afternoon menu from existing morning mise en place and day-old bake rather than a fresh second prep line, turning the dead window into high-margin revenue while cutting morning waste.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "15",
+            "title": "A standing afternoon social draw with a host",
+            "description": "Create a recurring named afternoon happening run by a community host on a pre-committed ticket model, where attendees buy a $5 entry that includes their first drink before the day arrives, so the cover funds the host and the headcount is known in advance. For example, 'Thursday 4pm Trivia' sells 30 pre-paid spots online by Wednesday night, the cafe pays the host from that pot, and a packed room is guaranteed instead of hoped for.",
+            "what_changed": "Flipped the cafe-pays-host-and-hopes-for-turnout model into attendee pre-paid tickets that fund the host and confirm the crowd before the event, removing the cafe's downside risk.",
+            "tag": "BOLD"
+          }
+        ],
+        "sixhats": [
+          {
+            "seed_id": "1",
+            "title": "Afternoon desk pass, fenced to the empty hours",
+            "description": "Sell a $6 pass that's only redeemable after 1pm and only for a roped-off block of back tables, each with a power outlet, giving remote workers bottomless drip and a reserved seat while leaving every morning-rush seat untouched. A freelancer taps to buy a 3-hour pass at 2pm, sits in the designated work zone, and the cafe earns seat revenue plus near-free refills on chairs that were sitting empty.",
+            "what_changed": "Restricted redemption to after the rush and to a fixed set of back tables so the work crowd can never occupy a seat a morning customer would have paid for.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "5",
+            "title": "Recurring groups with a pre-counted drink floor",
+            "description": "Give the 2-5pm room to a recurring local group (book club, knitting circle, language meetup) in exchange for a confirmed headcount and a one-drink-per-person minimum collected as a small per-seat hold when they book, not promised at the door. A 10-person Spanish group books Wednesday 3pm by reserving 10 seats with a $4 hold each, so the cafe banks its minimum even if two people flake, and the holds convert to actual drinks on arrival.",
+            "what_changed": "Turned the per-head minimum from an honor-system promise into a booking-time hold so flaky turnout can't leave the cafe with a full room and no sales.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "8",
+            "title": "Two-cup pass where the second cup is the afternoon one",
+            "description": "Sell a $45/month drip pass that covers one morning cup at the regular counter price plus a second cup that only unlocks after 1pm, so the math only works if the holder actually comes back in the afternoon. A morning regular who already buys daily sees the pass as 'my morning coffee plus a free afternoon one,' and starts swinging by at 3pm to claim the second cup they've already paid for.",
+            "what_changed": "Tied the pass's value to a time-gated second redemption so it provably manufactures an afternoon trip instead of just discounting cups the customer already buys at peak.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "12",
+            "title": "The 2pm chalkboard flip to a wine-and-bites menu",
+            "description": "At 2pm the board flips to a short afternoon list of high-margin savory tartines, iced spritzes, and a glass of wine, anchored by a named happy-hour deal (tartine plus a glass for a set price) that signals a different occasion, not leftover morning food. A 4pm walk-in sees 'Afternoon: tartine + wine, $14' on the chalkboard and orders a check three times the size of a coffee, on prep that uses the same kitchen during its dead stretch.",
+            "what_changed": "Anchored the menu around an alcohol-and-food combo deal whose check size and margin justify the added prep labor and license the dead window otherwise can't pay for.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "15",
+            "title": "A named weekly afternoon draw that earns its host",
+            "description": "Launch a recurring named afternoon happening (e.g. 'Thursday 4pm Trivia') with a drink-to-play rule, starting with one volunteer-run night and only adding a paid host once a turnout threshold proves the night sells enough drinks to cover the pay. A friend group books Thursdays around trivia, each buying a drink to join, and once the room reliably fills the cafe hires a regular host whose cost is already covered by the drink sales the night generates.",
+            "what_changed": "Made host pay conditional on a proven turnout-and-drink-sales threshold so a thin-attendance night can't run at a loss before demand is established.",
+            "tag": "BOLD"
+          }
+        ]
+      },
+      "judges": [
+        {
+          "tech": "reverse",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "reverse",
+          "v": {
+            "better": "X",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 4,
+            "y_value": 3,
+            "reason": "X develops sharper revenue mechanisms across more seeds: seed 1's $8 fully-credited pass plus \"$5 to hold till 5\" upsell captures more per-seat spend than Y's flat $6 self-serve drip; seed 5's prepaid tab explicitly handles no-shows (\"if only 7 arrive the cafe still has $40\"); and seed 8's pass that only breaks even on a SECOND afternoon redemption manufactures the extra trip rather than discounting an existing one. Y adds real (non-padding) operational substance X glosses over \u2014 seed 12's non-alcoholic ap\u00e9ritif bridge until the wine permit lands, and seed 15's sound-contained back area so the event doesn't push out other patrons \u2014 but these are risk-mitigations rather than additional revenue capture. X is more concrete and on-goal on revenue across seeds 1/5/8/15, so it edges the win despite Y's stronger realism on 12."
+          }
+        },
+        {
+          "tech": "reverse",
+          "order": 2,
+          "xArm": "reverse",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Both sets develop all five seeds substantively, but Y adds a sharper revenue-or-risk mechanism per seed: the Seed 1 \"$8 credit + '$5 to hold till 5' upsell\" directly fixes the bottomless-drip-squatter weakness X leaves open, Seed 5's day-ahead prepaid tab explicitly solves no-shows and head-counting where X's vouchers don't, and Seed 8's \"pass only breaks even on a SECOND afternoon drink\" engineers the extra trip more tightly. X's real strengths are operational guards (hard 5pm clear-out, sound-contained event space, NA-ap\u00e9ritif licensing staging) but its desk-pass and group ideas leave the actual revenue softer, making Y the stronger development overall."
+          }
+        },
+        {
+          "tech": "scamper",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "scamper",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Both sets are well-developed with little padding, but Y carries the two sharpest mechanisms aimed squarely at the dual constraint: its seed-8 pass (\"morning full price, any after-2pm drink free\") is the crispest economic nudge across either set and most faithful to the \"pays off on second visit\" intent, and its seed-1 cap of only four flagged work tables with an app \"sold out\" directly prevents low-spend campers from crowding out higher-spend customers \u2014 protecting the morning/walk-in revenue better than X's full-credit-plus-\"$5 to hold\" prompt. X is marginally tighter on seed 5's no-show tab economics and seed 15's \"cover becomes drink credit,\" and its seed-12 zero-cook/high-margin angle is excellent, but Y's seed-12 \"build the afternoon menu from morning leftovers and existing prep\" adds a distinct waste-reduction insight rather than restating margin, edging Y ahead on per-seed substance."
+          }
+        },
+        {
+          "tech": "scamper",
+          "order": 2,
+          "xArm": "scamper",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 3,
+            "y_strength": 4,
+            "y_concreteness": 4,
+            "y_value": 4,
+            "reason": "Judged on economic coherence and the explicit \"don't hurt the morning rush\" constraint, Y is the sounder development. X's seed-8 pass is internally inconsistent (a $40/month fee plus near-full-price morning drinks means a morning-only customer loses money, not \"barely breaks even\"), whereas Y's version coherently makes value unlock only on the 2-5pm second drink and explicitly avoids discounting the morning trip they'd buy anyway. Y's seed-12 apero menu (shelf-stable, high-margin, 90-second plate, no morning-prep overlap) is more robustly executable than X's reliance on unsold morning baguettes, which is unreliable given a slammed morning; Y's seed-5 also adds sharper operational substance (no head-counting, no-show protection). X's genuine edges (seed-1 hard table cap protecting walk-ins, seed-15 funding-flow detail) are real but don't outweigh Y's consistency."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "sixhats",
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 5,
+            "x_value": 5,
+            "y_strength": 4,
+            "y_concreteness": 4,
+            "y_value": 4,
+            "reason": "Both sets develop the seeds well and avoid padding, but X tends to stack a second mechanism per idea: seed 1 adds a full-credit spend floor PLUS a \"$5 to hold till 5\" extension upsell; seed 5's day-ahead organizer-held tab eliminates head-counting AND lets the organizer recoup at signup; seed 15 converts the cover into drink credit AND uses advance ticketing so the cafe knows turnout before the host shows. Y is excellent and sometimes more directly addresses the no-harm-to-morning constraint (seed 1's roped-off back-table fencing, seed 12's quantified \"3x the check\" named combo), but its items are mostly single, clean mechanisms, whereas X consistently adds an extra layer of economic/operational logic, especially the seed 8 near-free-redemption breakeven framing and seed 12's zero-cook, no-labor, no-morning-prep-overlap menu."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "order": 2,
+          "xArm": "sixhats",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Y wins the two clearest-diverging seeds: on seed 1 it replaces the original \"bottomless drip\" squatter trap with an $8-credit-toward-spend model plus a \"$5 more to hold till 5\" upsell that actively converts the dead chair into orders, fixing the seed's core revenue flaw; on seed 12 its \"zero-cook, no morning-prep-overlap, 90-second plating from pre-portioned toppings\" detail genuinely engineers the \"without hurting the morning rush\" half rather than just naming a deal. This extra length is real operational substance, not padding. X is tighter and develops seed 15 more sharply (its volunteer-to-paid-host turnout-threshold bootstrap is the better cost-de-risking mechanism), but Y develops more seeds more strongly toward both halves of the goal."
+          }
+        }
+      ],
+      "lifts": [
+        {
+          "arm": "plain",
+          "devIsX": true,
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 3,
+            "y_concreteness": 3,
+            "y_value": 1,
+            "reason": "Set X develops each seed with a sharper economic mechanism rather than length: Seed 1 swaps bottomless-drip-squatting for an $8 spend-credit floor with a \"$5 to hold your seat till 5\" upsell that converts dead chairs into reorders; Seed 5 adds a prepaid organizer-held tab that kills no-show risk and head-counting; Seed 8 makes the second drink afternoon-only so the structure manufactures the 2-5pm trip instead of discounting an existing morning one. Set X also adds real operational substance (90-second zero-cook plating from pre-portioned toppings, ticketed turnout known before paying the host). Set Y is the unchanged seed text, so its value_added is essentially nil; the one place X drifts toward padding is the apero menu's extra adjectives, but even there the no-morning-prep-overlap insight is genuine."
+          }
+        },
+        {
+          "arm": "reverse",
+          "devIsX": true,
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 5,
+            "x_value": 5,
+            "y_strength": 3,
+            "y_concreteness": 3,
+            "y_value": 1,
+            "reason": "Y is the five seeds reproduced verbatim, so it adds zero development (value_added floor), though the seeds themselves are well-formed with concrete examples (strength/concreteness ~3). X adds real mechanism on every seed: Seed 8's unlimited refills are restricted to 11am-5pm, directly serving the stated \"without hurting the morning rush\" constraint that Y never addresses; Seed 1 moves work-seats to non-prime stools with self-serve drip and a hard 5pm cutoff to protect evening trade and eliminate labor; Seed 5 swaps vague \"must buy\" for prepaid per-head drink credits that lock in revenue against no-shows. These are constraint-resolving additions, not padding, even though X is longer."
+          }
+        },
+        {
+          "arm": "scamper",
+          "devIsX": true,
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 5,
+            "x_value": 5,
+            "y_strength": 3,
+            "y_concreteness": 3,
+            "y_value": 2,
+            "reason": "Set X develops each seed with a real mechanism that closes a gap latent in Y: seed 1 adds stepped hourly pricing plus a capped number of work tables so campers can't crowd out higher-spend walk-ins; seed 5 swaps Y's hard-to-enforce minimum-order for a pre-paid per-head deposit that captures revenue even on no-shows; seed 8 replaces Y's vague pricing with a sharp lever (morning drink near full price, post-2pm drink free), and seed 15 adds a pre-paid ticket model that funds the host and locks in headcount in advance. Seed 12 even adds margin/feasibility substance by building the afternoon menu from morning's already-prepped and unsold inventory. None of X's additions read as padding \u2014 each targets a concrete risk (camping, no-shows, attendance uncertainty, labor cost) that Y leaves unresolved."
+          }
+        },
+        {
+          "arm": "sixhats",
+          "devIsX": true,
+          "v": {
+            "better": "X",
+            "x_strength": 5,
+            "x_concreteness": 5,
+            "x_value": 5,
+            "y_strength": 3,
+            "y_concreteness": 3,
+            "y_value": 2,
+            "reason": "X is stronger because its development adds real mechanism, not length. Seed 8 is the standout: Y's \"unlimited drip\" pass is economically incoherent (it doesn't specifically force an afternoon trip), while X restructures it so the second cup only unlocks after 1pm, structurally guaranteeing the return visit. Seed 1 adds the missing \"without hurting the morning rush\" fence (post-1pm redemption, roped-off back tables), and seeds 5 (prepaid $4 per-seat hold replacing an unenforceable door-promise) and 15 (staged volunteer-to-paid host gated on a turnout threshold) close real enforcement/cost gaps Y leaves open; seed 12 is X's lightest touch, where the $14 anchor is a genuine concreteness add but \"3x a coffee\" and \"same kitchen\" are explanatory framing rather than new mechanism."
+          }
+        }
+      ]
+    },
+    {
+      "frame": "b2b",
+      "frameTitle": "B2B SaaS \u2014 cut early churn",
+      "coll": {
+        "plain": [
+          {
+            "seed_id": "1",
+            "title": "A three-question draft that flags its own guesses",
+            "description": "The new-team setup still asks three things (team size, shifts per day, days open) and instantly builds a full Mon-Sun rota, but every cell the tool had to assume is visibly marked as a guess with a one-tap 'this is right' / 'fix this' on it. A 6-person cafe sees its week pre-filled in under a minute, with the three Saturday-night slots highlighted as 'we guessed two people here, confirm?' so the admin trusts what's solid and only touches the five things actually uncertain.",
+            "what_changed": "Added self-flagged uncertainty so a wrong auto-guess prompts a quick confirm instead of silently breaking trust on day one.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "5",
+            "title": "A same-day hours-saved counter, not just a Monday email",
+            "description": "Instead of waiting for the first Monday, the tool sets a baseline at signup ('teams your size spend ~5 hrs/week scheduling by hand') and shows a live running tally of hours and messages saved from the first day, then the weekly email just confirms the number the admin already watched climb. A new gym admin who finishes setup sees 'you've already avoided 8 texts and ~40 minutes today' that afternoon, so the value lands inside the fragile first 60 days rather than weeks later.",
+            "what_changed": "Pulled the value signal forward to day one with a signup baseline and live tally, fixing that the first weekly email arrives after many early churners have already left.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "8",
+            "title": "Personal shift links that report back who's seen their week",
+            "description": "Each team member still gets a no-login personal page of just their upcoming shifts via an invite link, but each page now sends one signal back, a 'got it' tap, and the admin's dashboard shows who has and hasn't acknowledged this week's shifts. The admin types five names, five people get 'here are your shifts,' and by evening the admin sees '4 of 5 confirmed, Dana hasn't opened hers' so the personal view becomes the admin's coverage radar they check every week.",
+            "what_changed": "Closed the loop back to the admin with per-person acknowledgement, turning a one-way staff convenience into a confirmation tool the admin depends on weekly.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "12",
+            "title": "Make the first payroll run already depend on the schedule",
+            "description": "The product still wires shifts into the calendar and a payroll or timesheet feed, but setup is sequenced so the team's very first pay period inside the first month is run straight from published hours, not just offered as an option for later. By day 30 a cafe's first payroll already pulled its totals from the schedule, so by the time anyone considers leaving, exporting a CSV means rebuilding the pipeline that's already cutting their actual paychecks, raising the cost of leaving while teams are still deciding whether to stay.",
+            "what_changed": "Compressed the integration so the hard-to-unplug payroll dependency is load-bearing within the 60-day churn window instead of months later.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "15",
+            "title": "A buddy match with one scripted, guaranteed-answered exchange",
+            "description": "A new admin is still paired in week one with a peer customer of similar size, but the swap is reduced to one specific prompt the buddy answers from a short menu ('what tripped you up in week one?') and if the assigned buddy doesn't reply within 24 hours, a stand-in answer from another matched peer is shown so the new admin always gets the message. A new gym owner reliably hears 'here's the trap I hit getting my first week live' within a day, turning a hoped-for human touch into a dependable one that actually pushes them through setup.",
+            "what_changed": "Made the single peer exchange reliable with a scripted prompt and a peer fallback, fixing the seed's dependence on a volunteer buddy happening to be available and responsive.",
+            "tag": "WILD"
+          }
+        ],
+        "reverse": [
+          {
+            "seed_id": "Seed 1",
+            "title": "A first-week draft that flags its own guesses",
+            "description": "After the admin answers team size, shifts per day, and days open, the tool generates a full Mon-Sun draft but visibly tags the cells it had to guess (who works which shift, breaks, coverage gaps) so the admin fixes the marked spots instead of inspecting everything or trusting a hidden mistake. A 6-person cafe sees a pre-filled rota where four shifts are confirmed and three are highlighted 'I guessed Sam here -- confirm or swap,' plus a banner 'Tuesday has nobody on the late shift.' Nothing publishes until the admin clears the flags.",
+            "what_changed": "Closed the 'plausible-but-wrong draft gets published and breaks the real first week' failure by making the draft expose its own assumptions and coverage gaps and blocking publish until they're resolved, instead of presenting a guessed schedule as finished.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 5",
+            "title": "A Monday recap that shows its math and never lands flat",
+            "description": "Each Monday the tool emails the admin a recap of hours saved, but every number is tied to a line the admin can verify ('14 shift edits you made in one click instead of redoing the grid = ~40 min; 12 schedule texts the team self-served from their own page') and is capped at conservative per-action estimates so it never claims more than is credible. In a quiet week with little activity it sends a forward-looking nudge ('schedule next week in 2 min -- here's last week pre-filled') instead of a deflating 'you saved 0 hours.' A cafe admin reads 'You saved ~3.5 hrs, here's exactly how' and trusts it because the breakdown matches what they did.",
+            "what_changed": "Closed two trust-killers -- an inflated unbelievable number and a near-zero 'you barely used us' email that reminds quiet-week admins to churn -- by grounding each figure in the admin's own verifiable actions with conservative caps and swapping the low-activity email for a re-engagement nudge.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 8",
+            "title": "Personal shift links that confirm they landed and stay live",
+            "description": "During setup the admin enters team names and each person gets a link to a personal page showing only their upcoming shifts; the tool tracks who has actually opened theirs and shows the admin a simple 'seen' list, nudging unopened people once by the same channel, and the page always reflects the live published schedule with a visible 'updated 2 min ago' stamp and a one-tap 'got it' on changes. The admin types five names; by end of day the dashboard shows '4 of 5 opened, Jordan hasn't -- resend?', and when the admin moves a shift, that person sees the new time, not a stale one. ",
+            "what_changed": "Closed the 'invites silently die and a stale shift sends someone to work at the wrong time' failure by adding open-tracking with a re-nudge so adoption is visible and recoverable, plus a live-freshness stamp and change-acknowledgement so the personal view can never show an outdated shift.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 12",
+            "title": "A one-click hours feed with a human gate before payroll",
+            "description": "Instead of a heavy upfront integration, the tool offers a one-click connect to the team's calendar and a single hours-export/timesheet feed early in week one, but anything that touches money runs through a review screen where the admin approves the hours total before it leaves the product, with a one-week reconciliation showing exported vs scheduled hours. A gym owner clicks 'send hours to payroll,' sees 'Confirm: 312 hours across 5 staff' before it posts, and after a few weeks the auto-feed is part of their payroll run -- so leaving means rebuilding that pipeline. The lock-in is built from a feed that's safe enough to turn on in the first 60 days.",
+            "what_changed": "Closed two failures -- integration too heavy to ever configure during the churn-critical first 60 days, and a silent bad sync paying someone wrong (catastrophic trust/legal loss) -- by making the early hook a one-click low-friction feed and forcing a human approve-and-reconcile gate before any hours touch payroll.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "Seed 15",
+            "title": "A vetted buddy and a seeded exchange that can't go silent",
+            "description": "In week one the new admin is matched with a similar-size peer drawn from a small pool of buddies who opted in, were screened for being genuinely happy, and get a small perk; the product seeds the first message with a concrete prompt ('share the one setup trap you hit') and gives the buddy a 48-hour window, auto-substituting a fresh buddy or a short founder-recorded tip if no reply comes. A new gym owner gets 'Maria, who runs a 9-person gym, says: don't skip naming your staff first' within a day, and if Maria goes quiet the new owner still gets the value instead of silence. ",
+            "what_changed": "Closed the 'matched buddy flakes or bad-mouths the product, leaving the new admin feeling ignored -- worse than no match' failure by drawing buddies from a screened, incentivized, satisfied pool, product-seeding the exchange prompt, and adding a 48-hour fallback so the new admin always gets useful first-week input.",
+            "tag": "BOLD"
+          }
+        ],
+        "scamper": [
+          {
+            "seed_id": "1",
+            "title": "Start from a real team that looks like yours, not a blank page",
+            "description": "Instead of answering abstract dropdowns, a new admin picks the closest match from a few example businesses ('6-person cafe, two shifts, open 7 days') and the tool clones that real team's proven Mon-Sun rota shape into their account to tweak. A new cafe owner taps the cafe card and lands on a full week already laid out the way working cafes actually run it, so the first draft is right enough to keep instead of generic enough to delete.",
+            "what_changed": "Swapped the three guess-based questions for picking a real similar-business template, so the auto-draft starts accurate instead of plausibly generic.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "5",
+            "title": "Show them the mess the tool quietly handled this week",
+            "description": "Each Monday the admin gets a recap that puts the old way next to the new way: 'Last week you'd have sent ~12 texts and rebuilt the rota twice by hand; here's the 3.5 hours and the back-and-forth the tool absorbed instead.' By anchoring the saved time to the specific manual chore it replaced, the number reads as believable proof rather than a figure the admin suspects the tool invented.",
+            "what_changed": "Replaced the bare hours-saved figure with a side-by-side of the exact manual chore it displaced, fixing the 'nobody believes the number' weakness.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "8",
+            "title": "Personal shift pages that talk back to the admin",
+            "description": "Each team member's invite link shows their upcoming shifts and lets them tap to confirm, flag a conflict, or request a swap right there, and those taps land back in the admin's view automatically. The cafe admin sends five links and by that evening sees three 'confirmed,' one 'can't do Friday,' and a swap request waiting, so the schedule maintains itself instead of living in the admin's group chat.",
+            "what_changed": "Flipped the member page from read-only to a two-way channel whose responses route back to the admin, turning passive viewers into the source of the schedule's upkeep.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "12",
+            "title": "One-tap calendar subscribe for the whole team in week one",
+            "description": "Instead of standing up a payroll or timesheet pipeline, each published schedule offers every member a one-tap 'add to my calendar' subscription, so once shifts auto-appear in people's phones the schedule quietly becomes the team's source of truth. By the end of the first week all eight staff have the rota syncing to their personal calendars, and leaving for a competitor now means getting every one of them to re-subscribe somewhere new. The deeper payroll hook can still come later, but the lock-in starts on day one rather than months out.",
+            "what_changed": "Scaled the heavy payroll/timesheet integration down to a zero-config team-wide calendar subscribe so the switching cost starts building inside the 60-day churn window, not after it.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "15",
+            "title": "Borrow the actual first week of a team like yours",
+            "description": "Rather than scheduling a live buddy exchange, a new admin is handed a real peer customer's published first-week schedule plus the one note that peer wrote about the trap they hit setting it up ('don't forget to block the Sunday close'). A new gym owner opens another gym's actual opening-week rota and their warning, gets the same de-risking peer wisdom on day one, and nobody has to be online at the same time. If the new admin wants to ask a follow-up, the peer is still reachable, but the value no longer waits on two calendars lining up.",
+            "what_changed": "Removed the live, schedule-dependent buddy session and substituted the peer's already-recorded first-week schedule and warning note, so the peer de-risking lands instantly without coordination friction.",
+            "tag": "BOLD"
+          }
+        ],
+        "sixhats": [
+          {
+            "seed_id": "Seed 1",
+            "title": "Three-question setup that hands the admin a ready-to-publish first week",
+            "description": "On signup the tool reads what it already knows (industry and team size from billing) plus one or two quick answers (shifts per day, days open) and generates a complete editable draft rota with low-confidence cells visibly flagged, then drives the admin straight to publishing it in the same session. A 6-person cafe confirms two dropdowns, sees a full Mon-Sun draft with the questionable Sunday-night slot marked 'we guessed-check this,' tweaks two cells, and hits Publish before leaving the page.",
+            "what_changed": "Retargeted the feature from 'admin sees a schedule' to the measured activation event of first publish, and made the draft visibly humble so a wrong guess invites a fix instead of breaking trust.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 5",
+            "title": "Monday recap that only sends a number it can defend",
+            "description": "Each Monday the tool computes hours saved from a fixed, disclosed baseline (minutes per edit avoided, texts replaced) and emails the admin the figure timed to land near the billing date, but suppresses or reframes any week where the honest number is near zero so the email never signals the product was useless. The admin opens 'You saved 3.5 hours and 12 texts last week-here's how we count it' the week before renewal, while a quiet week instead shows 'You kept 6 shifts covered' rather than a hollow zero.",
+            "what_changed": "Added a credibility floor: a disclosed baseline so the number is defensible, plus a zero-week guardrail so a weak email can't itself become a churn trigger.",
+            "tag": "SAFE"
+          },
+          {
+            "seed_id": "Seed 8",
+            "title": "Personal shift pages that fire off the first publish, with a one-tap confirm back",
+            "description": "The moment the admin publishes their first real schedule, the tool emails each named teammate a link to a lightweight page showing only their upcoming shifts plus a 'Got it' button, so every page has real content and the admin sees who has confirmed. The admin publishes week one and five teammates get 'Here are your shifts' the same hour, four tap 'Got it,' and the admin watches 'logins' spread while gaining live confirmation that coverage is acknowledged.",
+            "what_changed": "Tied the invite to the first-publish moment so pages are never empty, and added a confirm-back loop so member spread produces real admin-side value instead of being a one-way vanity feature.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "Seed 12",
+            "title": "Start with a calendar feed that pays off day one, earn the payroll moat later",
+            "description": "The product first pushes published shifts into each person's calendar-cheap to build, low-maintenance, instantly useful-and only later, for accounts that survive their first months, adds a one-click 'send this week's hours to payroll' that deepens into a standing feed. A new cafe gets shifts auto-appearing in Google Calendar in week one, and three months in the surviving admin starts pushing hours to their payroll run, at which point leaving means rebuilding that pipeline.",
+            "what_changed": "Imposed a build order-light sticky integration first for immediate value, heavy lock-in later-so the moat is earned without a brittle payroll sync becoming a churn cause for fragile new accounts.",
+            "tag": "BOLD"
+          },
+          {
+            "seed_id": "Seed 15",
+            "title": "Same-segment peer help with a tiny ask and a recorded fallback",
+            "description": "A new admin is matched in week one with a same-segment customer who agreed to send one short templated message about getting live, incentivized with account credit, and if no live buddy replies the admin instead gets a recorded 'first-week trap' note from a real peer in that segment. A new gym owner gets one async message-'here's the trap I hit'-from another gym owner earning a credit for it, or, if none is free, a 90-second recorded tip from a gym peer, so the human nudge always arrives.",
+            "what_changed": "Built a supply-and-scale mechanism-tiny async ask, buddy incentive, recorded-peer fallback, single-segment pilot-so the program survives past a handful of matches and never leaves a new admin with an unanswered intro.",
+            "tag": "WILD"
+          }
+        ]
+      },
+      "judges": [
+        {
+          "tech": "reverse",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "reverse",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 5,
+            "reason": "Both are concrete and largely padding-free, but Y adds a second real failure-mode fix per seed: seed 1 gains a coverage-gap banner (\"Tuesday has nobody on the late shift\") plus a publish gate, seed 8 fixes stale shifts via live sync (\"updated 2 min ago\"), and seed 15 vets/incentivizes the buddy pool rather than only handling silence. Y's seed 12 is the sharpest churn-aware insight in either set \u2014 a human review gate and reconciliation make the money-feed safe enough to actually enable inside the first 60 days, whereas X's \"run real payroll by day 30\" assumes trust it never builds. X's one clear win is seed 5's same-day live tally landing value inside the fragile window, but it isn't enough to outweigh Y's broader, equally concrete development."
+          }
+        },
+        {
+          "tech": "reverse",
+          "order": 2,
+          "xArm": "reverse",
+          "yArm": "plain",
+          "v": {
+            "better": "X",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 4,
+            "y_value": 3,
+            "reason": "X adds a second distinct mechanism to nearly every seed \u2014 publish-gate plus coverage-gap banner on S1, conservative caps plus quiet-week forward nudge on S5, open-tracking plus auto-resend plus 'updated 2 min ago' live-sync on S8, a human approval/reconciliation gate that makes the payroll feed safe to enable in the first 60 days on S12, and vetting-plus-perk-plus-dual-fallback on S15 \u2014 making it more concrete and substantive overall. Y lands two genuinely sharper strategic insights tuned to the churn window (a same-day live tally from signup on S5, and sequencing the first real payroll run by day 30 on S12), but its S8 and S15 developments are mostly reframes that add less new mechanism, and its bold/wild tags don't translate into deeper build-out. X's consistent breadth and who-does-what precision edge out Y's narrower-but-pointed timing wins."
+          }
+        },
+        {
+          "tech": "scamper",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "scamper",
+          "v": {
+            "better": "X",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 5,
+            "y_value": 3,
+            "reason": "Both sets are equally sharp and concrete (4-of-5 confirmed, tap the cafe card, 8 staff calendar-syncing), so the brief \u2014 cut churn in the first 60 days \u2014 decides it on timing-of-value and moat strength. X's seed 5 is the strongest single item across both sets: it pulls value to a same-day live counter inside the fragile window, where Y keeps value in the weekly email. X also preserves each seed's strategic substance, whereas Y twice subtracts it for a retention goal \u2014 seed 12 explicitly defers the lock-in moat (\"deeper payroll hook can still come later\") and seed 15 drops the live human accountability that was the seed's whole point, so its boldness reads as reframing rather than added retention substance. Y genuinely wins seed 8 (confirm/flag-conflict/swap vs X's single got-it tap) and is more feasible on seed 12, but X is more on-target for early retention overall."
+          }
+        },
+        {
+          "tech": "scamper",
+          "order": 2,
+          "xArm": "scamper",
+          "yArm": "plain",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 5,
+            "y_value": 5,
+            "reason": "Y wins the two most goal-critical seeds: on seed 5 it moves hours-saved to a same-day live counter with a signup baseline so value lands inside the fragile 60-day window (X's side-by-side recap is credible but still Monday-only/late), and on seed 12 it keeps the strong payroll moat while sequencing the first pay period into month one, so lock-in bites before churn decisions (X retreats to easily-reversible calendar re-subscribe). X is genuinely stronger on seed 8 (two-way pages with confirm/conflict/swap vs Y's one-way read-receipt) and roughly ties on seeds 1 and 15, but its seed-12 trades away the real switching cost. Both are concrete and substantive with little padding; Y's repeated re-engineering of timing to fit the explicit early-churn problem is the decisive edge."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "order": 1,
+          "xArm": "plain",
+          "yArm": "sixhats",
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Both develop all five tightly, but Y adds a sharper new mechanism on four seeds: billing-autofill plus drive-to-Publish-same-session (s1), hollow-zero suppression \"You kept 6 shifts covered\" (s5), triggering invites off the first publish so pages aren't empty (s8), and an account-credit incentive plus recorded-peer fallback (s15) \u2014 each a concrete who-does-what addition that addresses a real failure mode. X's standout is timing: the same-day running tally (s5) and day-30 payroll (s12) push value inside the 60-day window, which is the strongest goal-fit move in either set, but s12's \"first real payroll by day 30\" is the least feasible mechanism here and Y's calendar-first/payroll-later split is more realistic while still delivering week-one value. X's s12 closer (\"while teams are still deciding whether to stay\") is mild padding; net Y edges it on concreteness and failure-mode robustness across more seeds."
+          }
+        },
+        {
+          "tech": "sixhats",
+          "order": 2,
+          "xArm": "sixhats",
+          "yArm": "plain",
+          "v": {
+            "better": "X",
+            "x_strength": 4,
+            "x_concreteness": 5,
+            "x_value": 4,
+            "y_strength": 4,
+            "y_concreteness": 4,
+            "y_value": 4,
+            "reason": "Both sets sharpen the same five seeds well, and several developments are near-identical (Seed 8's \"got it\" confirm-back, Seed 15's buddy fallback). X edges ahead by adding more genuine substance per idea: Seed 1 pulls industry/size from billing to cut the question count AND drives a same-session Publish, and Seed 12 phases a cheap day-one calendar feed before the survivor-only payroll moat, which is more credible than Y's assumption that a real payroll run happens inside month one. X's Seed 5 also handles the hollow-zero failure mode and discloses its baseline, though Y's same-day live counter is arguably better aimed at the early-60-day window \u2014 the one place Y clearly out-develops X."
+          }
+        }
+      ],
+      "lifts": [
+        {
+          "arm": "plain",
+          "devIsX": false,
+          "v": {
+            "better": "Y",
+            "x_strength": 3,
+            "x_concreteness": 4,
+            "x_value": 2,
+            "y_strength": 4,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Set Y adds genuine, goal-relevant mechanism rather than length: seed 1 marks assumed cells as taggable guesses so trust lands while the admin only fixes the 5 truly uncertain slots; seed 5 moves value into the fragile window with a signup baseline and same-day running tally instead of waiting for Monday; seed 8 adds a 'got it' acknowledgment that turns the personal page into the admin's weekly coverage radar; seed 12 sequences the first pay period to actually run from the schedule by day 30, making the lock-in concrete during the deciding window; and seed 15 adds a 24-hour stand-in fallback that converts a hoped-for buddy reply into a guaranteed one. The only slightly thinner addition is seed 5's baseline figure, but each item closes a real failure mode in X (X's seed 5 'invisible value' arrives too late, X's seed 8 gives no admin signal, X's seed 15 can silently fail to deliver), so the development is substance, not padding."
+          }
+        },
+        {
+          "arm": "reverse",
+          "devIsX": false,
+          "v": {
+            "better": "Y",
+            "x_strength": 4,
+            "x_concreteness": 4,
+            "x_value": 3,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Set Y's development adds real operative mechanisms and failure-mode handling rather than length: seed 1 adds self-flagged guesses plus a publish gate (\"I guessed Sam here -- confirm or swap\"), seed 5 adds verifiable math, conservative caps, and a quiet-week forward nudge instead of a deflating \"you saved 0 hours\" \u2014 directly relevant to low-activity new teams, and seed 12 reframes heavy lock-in into a one-click feed with a \"Confirm: 312 hours\" gate that is actually turn-on-able inside the first 60 days. Seed 8 (delivery confirmation + live-sync) and seed 15 (vetted buddies with a 48-hour auto-substitution so it can't go silent) each resolve the most likely failure of the original seed. Set X's seeds are already concrete and strong, but Y improves on every one with substantive, scenario-anchored additions, so the development genuinely earns its weight."
+          }
+        },
+        {
+          "arm": "scamper",
+          "devIsX": false,
+          "v": {
+            "better": "Y",
+            "x_strength": 3,
+            "x_concreteness": 4,
+            "x_value": 3,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 4,
+            "reason": "Set Y develops each seed by naming a specific failure of the original and re-engineering the mechanism: seed 1 swaps a generic blank-page draft for cloning a real team's proven rota (\"right enough to keep instead of generic enough to delete\"); seed 5 anchors the saved-hours number to the specific manual chore so it reads as proof, not an invented figure; seed 8 turns a read-only shift page into two-way confirm/conflict/swap taps that flow back to the admin so the schedule maintains itself. Seed 15's async handoff of a peer's actual first-week rota plus their warning removes the original's fragile two-calendar coordination, and seed 12's day-one calendar subscribe fits the early-churn/60-day window better than slow payroll lock-in. These are substantive re-engineerings rather than padding; seed 12 is the one trade-off (it sacrifices deep payroll lock-in for speed) but justifies it for the early-churn goal and keeps the payroll hook as a later step."
+          }
+        },
+        {
+          "arm": "sixhats",
+          "devIsX": false,
+          "v": {
+            "better": "Y",
+            "x_strength": 3,
+            "x_concreteness": 4,
+            "x_value": 2,
+            "y_strength": 5,
+            "y_concreteness": 5,
+            "y_value": 5,
+            "reason": "Set Y develops every seed with real mechanism upgrades, not length: seed 1 adds low-confidence cell flagging plus a same-session drive-to-Publish (turning \"draft seen\" into \"schedule shipped,\" the true activation event); seed 5 adds a disclosed baseline, renewal-date timing, and suppression/reframing of near-zero weeks so the email never advertises uselessness; seed 12 sequences a cheap day-one calendar feed before the payroll moat, directly matching the 60-day churn window; seeds 8 and 15 add a publish-triggered confirm-back loop and a recorded peer fallback that fix the seeds' open failure modes. Set X is the seeds verbatim \u2014 strong, concrete starting ideas but with zero added development. None of Y's additions read as padding; each closes a gap the seed left open."
+          }
+        }
+      ]
+    }
+  ],
+  "report": "# Track G \u2014 classical techniques as transforms (develop mode)\n\n## Verdict\n\n**No technique beats plain-develop. But developing the seeds beats the raw seeds every single time (8/8).** That split is the whole finding.\n\n- **Reverse Brainstorming** \u2014 *ties-by-cancellation* with plain-develop. Loses cafe 0\u20132, wins b2b 2\u20130. The frames invert; the deltas mirror each other. Treat as noise.\n- **SCAMPER** \u2014 *ties-to-loses* plain-develop. Ties cafe 1\u20131 (quality 12 = 12), loses b2b 0\u20132. It never wins a frame outright \u2014 the only non-inverting technique, and it leans the wrong way.\n- **Six Thinking Hats** \u2014 *ties-by-cancellation* with plain-develop. Loses cafe 0\u20132, wins b2b 2\u20130. Same mirror-image inversion as Reverse. Noise.\n\nThe honest aggregate is **2\u20132 / 1\u20133 / 2\u20132** (tech wins\u2013plain wins across the two frames for Reverse / SCAMPER / Six Hats), but the aggregate hides the structure: for Reverse and Six Hats each frame produced an opposite result of equal size. That is not a stable tie \u2014 it is exactly what n=2 noise looks like. So the blind A/B verdict is: **the specific lens is indistinguishable from \"just improve it.\"** The generator-mode null (Tracks A, C, D, F) extends cleanly into develop mode for *which technique*.\n\nThe lift result is the opposite \u2014 and it is unanimous: **every developed arm, including plain-develop, beat its raw seeds (8 of 8 comparisons, no ties, no raw wins).** So developing helps a lot; which lens you develop *through* does not.\n\n## Per-technique\n\n### Reverse Brainstorming\n- **Blind vs plain-develop:** cafe 0\u20132 (loss), b2b 2\u20130 (win) \u2192 frame-inverting \u2192 noise.\n- **Quality:** cafe 11.5 vs 13.5; b2b 14 vs 12. Inverts with the frame.\n- **Lift:** beats raw seeds in both frames (cafe 15 vs 7; b2b 14 vs 11).\n- **Examples:** none available. The provided excerpt has `(missing)` for all four Reverse develop samples (cafe seeds 1 & 5, b2b seeds 1 & 5), so no real before\u2192after can be quoted here without fabricating. Its tally and quality numbers above are from the aggregate block.\n- **Signature:** no observable signature in this run \u2014 the develop outputs weren't captured, and the blind result is a frame-flip wash.\n\n### SCAMPER\n- **Blind vs plain-develop:** cafe 1\u20131 (tie, 12 = 12), b2b 0\u20132 (loss). Never wins a frame; net ties-to-loses.\n- **Quality:** cafe 12 vs 12; b2b 12 vs 13.5.\n- **Lift:** beats raw seeds in both frames (cafe 15 vs 8; b2b 14 vs 10).\n- **Example (cafe, Seed 1 \u2014 \"Afternoon work-and-stay seats\"):**\n  - *Seed:* \"Turn the empty 2-5pm room into a paid quiet-work spot where remote workers buy a $6 'desk pass' that includes bottomless drip coffee and a reserved seat with a power outlet\u2026\"\n  - *SCAMPER develop:* \"\u2026remote workers pay a low first-hour rate that steps up each additional hour, with only a fixed handful of tables flagged as work seats\u2026 $4 first hour, $6 second, $8 third, and once all four work tables are claimed the app shows 'sold out'\u2026\"\n  - *what_changed:* \"Replaced the flat $6/3-hour price with hourly-escalating pricing plus a hard cap on work-tables, so a single low-spend camper can no longer earn less than the seat is worth or block paying customers.\"\n- **Example (b2b, Seed 1 \u2014 \"Auto-draft the first week from a 3-question setup\"):**\n  - *Seed:* \"\u2026the tool asks three questions (team size, shifts per day, days open) and instantly generates a complete draft schedule the admin only tweaks\u2026\"\n  - *SCAMPER develop:* \"\u2026a new admin picks the closest match from a few example businesses ('6-person cafe, two shifts, open 7 days') and the tool clones that real team's proven Mon-Sun rota shape into their account\u2026\"\n  - *what_changed:* \"Swapped the three guess-based questions for picking a real similar-business template, so the auto-draft starts accurate instead of plausibly generic.\"\n- **Signature:** SCAMPER's \"Substitute\" reliably swaps a brittle mechanism for a sturdier one (flat price \u2192 escalating + cap; dropdowns \u2192 clone-a-real-team). Solid develops \u2014 but plain-develop matched or beat them, so the *Substitute lens added no edge over just-improve-it*.\n\n### Six Thinking Hats\n- **Blind vs plain-develop:** cafe 0\u20132 (loss), b2b 2\u20130 (win) \u2192 frame-inverting \u2192 noise.\n- **Quality:** cafe 12 vs 14.5; b2b 13 vs 12. Inverts with the frame.\n- **Lift:** beats raw seeds in both frames (cafe 15 vs 8; b2b 15 vs 9).\n- **Example (cafe, Seed 1 \u2014 \"Afternoon work-and-stay seats\"):**\n  - *Seed:* \"\u2026remote workers buy a $6 'desk pass' that includes bottomless drip coffee and a reserved seat with a power outlet.\"\n  - *Six Hats develop:* \"Sell a $6 pass that's only redeemable after 1pm and only for a roped-off block of back tables\u2026 leaving every morning-rush seat untouched.\"\n  - *what_changed:* \"Restricted redemption to after the rush and to a fixed set of back tables so the work crowd can never occupy a seat a morning customer would have paid for.\"\n- **Example (cafe, Seed 5 \u2014 \"Host recurring afternoon groups for free space\"):**\n  - *Seed:* \"\u2026in exchange for a guaranteed minimum drink order per head\u2026 each member must buy at least one drink to attend.\"\n  - *Six Hats develop:* \"\u2026a one-drink-per-person minimum collected as a small per-seat hold when they book, not promised at the door\u2026 10 seats with a $4 hold each, so the cafe banks its minimum even if two people flake\u2026\"\n  - *what_changed:* \"Turned the per-head minimum from an honor-system promise into a booking-time hold so flaky turnout can't leave the cafe with a full room and no sales.\"\n- **Signature:** Six Hats' \"Black Hat\" risk-hardening shows clearly \u2014 it hunts the failure mode (campers blocking high-spend seats, no-shows leaving empty rooms) and fences it. Genuinely useful develops, yet it lost the frame where plain-develop happened to do the same risk-hardening on its own. No durable edge.\n\n## Lift \u2014 does developing help at all?\n\nYes, unambiguously, and this is the real result. **All 8 developed arms beat their raw seeds \u2014 0 raw wins, 0 ties.**\n\n| frame | arm | dev quality | raw quality | dev won |\n|---|---|---|---|---|\n| cafe | plain | 14 | 7 | \u2713 |\n| cafe | reverse | 15 | 7 | \u2713 |\n| cafe | scamper | 15 | 8 | \u2713 |\n| cafe | sixhats | 15 | 8 | \u2713 |\n| b2b | plain | 13 | 9 | \u2713 |\n| b2b | reverse | 14 | 11 | \u2713 |\n| b2b | scamper | 14 | 10 | \u2713 |\n| b2b | sixhats | 15 | 9 | \u2713 |\n\nQuality jumps from the ~7\u201311 raw band to a tight ~13\u201315 developed band across every arm \u2014 and **plain-develop is inside that band**, doing it without any technique. The value lives in the *deepening* (pinning a mechanism, pricing it, hardening the failure mode), not in the choice of lens. The before\u2192after examples show why: every develop replaces a vague promise (\"buy a drink to attend\") with an enforceable mechanism (\"a $4 per-seat hold at booking\"). That is what the seeds lacked, and any of the four arms supplies it.\n\n## What it means for the skill\n\n**Recommendation: plain \"develop idea N\" is enough. Do not feature or wire any one technique as the recommended quality-booster transform.**\n\n- The blind A/B \u2014 the verdict that counts \u2014 says the lens is noise. SCAMPER never wins a frame; Reverse and Six Hats win one and lose the other by mirror-image margins. Promoting \"develop with SCAMPER\" over \"develop\" would be selling noise as signal.\n- Keep the existing `transform.*` operators (`transform.scamper`, `transform.invert` \u2248 Reverse, `transform.refine`, `transform.ratchet`, `evaluate.hats`) as **optional flavor / on-request lenses**, not as a default or as a recommended path in the develop playbook. They produce good develops; they just don't out-develop a plain refine. The capture-first default should route to plain develop/refine, with techniques available when a user explicitly wants a particular angle (e.g. risk-hardening \u2192 Six Hats/Black Hat).\n- **Develop-mode is a genuine out-of-model lever \u2014 this is the contrast with the null generator tracks.** Generator-mode (Tracks A, C, D, F) asks the model to manufacture substance from a cold prompt; substance is model-bound, so it came back null six times. Develop-mode is different in *kind*: it operates on a **user-selected seed** and adds **iteration/deepening** \u2014 two things that don't come from the model's raw substance ceiling. That is exactly why every develop arm cleared the raw-seed bar while every generator swing did not. The lever that works is \"take a captured idea the user chose and make it concrete,\" not \"pick a clever technique to do it.\"\n\n## Caveats\n\n- **n=2 frames, 5 seeds each, single sample.** Tiny. Frame-inverting deltas (Reverse, Six Hats) are read as noise precisely because of this \u2014 a stable tie would not flip sign across frames.\n- **Blind position-swapped A/B is the verdict;** lift is a one-order diagnostic (developed vs raw), not a blind head-to-head, so its 8/8 cleanliness is suggestive of effect size, not a significance test.\n- **No Reverse develop samples were captured** in the provided excerpt (all `(missing)`), so Reverse's qualitative behavior is uncharacterized here \u2014 its tally/quality stand, but no before\u2192after evidence backs them.\n- Quality scores are single-judge single-sample; the tight 13\u201315 developed band could compress real differences the panel size can't resolve."
+}

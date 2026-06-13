@@ -1,0 +1,25 @@
+######## SMOKE: lean capture default plumbing ########
+init-topic OK
+
+== 1. Light-frame precondition (orchestrator inserts placeholder frame; no subagent, no checkpoint) ==
+  light frame inserted (op=1)
+  active-frame problem statement:
+"problem_statement": "How can a corner bookstore grow weekday-morning visits?"
+
+== 2. generate.brainstorm writes off the light frame (FK resolves) ==
+  4 ideas written (op=2)
+  active ideas:
+[
+  1,
+  2,
+  3,
+  4
+]
+
+== 3. wall emits (the generate.* emit loop the orchestrator runs) ==
+  emitted 4 idea_generated events
+  live-events.jsonl:
+       5 .logbooks/ideation/capture-first-smoke/live-events.jsonl
+
+== 4. RESULT ==
+  lean default plumbing works: light frame → FK resolved → brainstorm ideas landed → wall populated. ✓

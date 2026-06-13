@@ -1,0 +1,101 @@
+{
+  "summary": "The GATE for the lean-default move: does ONE plain brainstorm call (no frame/personas/techniques) lose idea quality vs the current starter default (frame + 2 personas)? Blind substance A/B (relevance held) + distinct-mechanism census. Same N=16/condition, both arms use the real mechanism-first output-rules so the only variable is the generation machinery.",
+  "agentCount": 12,
+  "logs": [
+    "cafe-afternoon-revenue: prefers=plain,plain | distinct plain/starter=14/11",
+    "b2b-saas-early-churn: prefers=plain,plain | distinct plain/starter=12/12"
+  ],
+  "result": {
+    "verdict_note": "GATE for lean default. Green light = plain TIES or BEATS starter on blind substance with relevance not down. n=2 frames; only a LARGE delta is interpretable (substance bounces ~0.3 in noise). distinct_all16 shows whether one plain call is more/less diverse than 2 personas.",
+    "substance": {
+      "plain": 4.09,
+      "starter": 3.88
+    },
+    "axes": {
+      "plain": {
+        "novelty": 3.38,
+        "mechanism": 4.38,
+        "relevance": 4.5,
+        "compliance": 4.5
+      },
+      "starter": {
+        "novelty": 3.5,
+        "mechanism": 4.25,
+        "relevance": 3.88,
+        "compliance": 4.38
+      }
+    },
+    "distinct_all16": {
+      "plain": 13,
+      "starter": 11.5
+    },
+    "prefers_overall": [
+      "plain",
+      "plain",
+      "plain",
+      "plain"
+    ],
+    "per_topic": [
+      {
+        "topic": "cafe-afternoon-revenue",
+        "plain": {
+          "novelty": 4,
+          "mechanism": 4.5,
+          "relevance": 4.5,
+          "compliance": 4.5,
+          "count": 16
+        },
+        "starter": {
+          "novelty": 3,
+          "mechanism": 4.5,
+          "relevance": 4.5,
+          "compliance": 4,
+          "count": 16
+        },
+        "prefers": [
+          "plain",
+          "plain"
+        ],
+        "reasons": [
+          "X has higher substance. Mechanism and relevance are effectively tied — both collections are uniformly concrete (named actors, euro figures, specific times) and stay tightly on the dead-hours problem while protecting the morning rush, so neither bought novelty at the cost of relevance even in their wildest entries. The decisive axis is novelty via within-collection repetition: Y wastes slots on a hard duplicate (Y1 ≈ Y9, morning receipt/stub redeemable 2-5pm) plus heavy clustering (3 morning-trigger entries Y1/Y7/Y9; Y6/Y15 both price-drops-as-room-empties; Y2/Y12 both idle-ovens; Y3/Y10 both sell-the-seat), which the rubric explicitly penalizes as a novelty failure, whereas X covers ~16 distinct mechanisms with no hard duplicate and reaches categories Y omits (parents segment X5, menu-pivot X9, pickup-locker X16). Y does contain a few of the single most original ideas in either set (Y11 sell-tomorrow's-rush, Y13 locked-out drinks, Y14 expert-holds-court), which lifts its ceiling, but the duplication lowers its effective coverage and tips substance to X (14 vs 13); Y also takes a minor compliance ding for the \"B2B revenue line\" jargon in Y12.",
+          "Y has higher substance. The two sets share most of their peak ideas (price-drops-as-room-empties, off-peak subscription, separate afternoon brand, paid workspace, idle-oven wholesale, borrow-a-partner's-crowd), so they tie on mechanism (both concrete with euro amounts, named personas, specific times) and relevance (both attack the dead-hours root cause). The discriminator is within-collection repetition: X burns three of sixteen slots on near-verbatim or heavily overlapping repeats (1 is essentially 9; 6 is essentially 15; 3 heavily overlaps 10), which is a direct novelty/coverage failure by the task's own rule, whereas Y spreads across more distinct occasions (parents/nap-time, offices, food-waste clearance, savory/wine pivot, parcel-pickup traffic) with only mild overlap (Y1/Y13, Y2/Y14). Neither bought novelty at the cost of relevance egregiously, though X13's manufactured-unavailability play drifts slightly from actually growing revenue."
+        ],
+        "distinct": {
+          "plain": 14,
+          "starter": 11,
+          "note": "Collection 1 = 14 distinct mechanisms; Collection 2 = 11 distinct mechanisms. C2 has lower overall variety, driven mainly by tripling the morning-voucher/loyalty move (M1 at #1, #7, #9) plus doubling dynamic-pricing, sell-the-seat, and external-group-fills-room. Full per-idea labels and shared vocabulary are in set1/set2 notes."
+        }
+      },
+      {
+        "topic": "b2b-saas-early-churn",
+        "plain": {
+          "novelty": 2.75,
+          "mechanism": 4.25,
+          "relevance": 4.5,
+          "compliance": 4.5,
+          "count": 16
+        },
+        "starter": {
+          "novelty": 4,
+          "mechanism": 4,
+          "relevance": 3.25,
+          "compliance": 4.75,
+          "count": 16
+        },
+        "prefers": [
+          "plain",
+          "plain"
+        ],
+        "reasons": [
+          "X has higher substance, narrowly, carried by relevance. Y is genuinely more inventive (lock-in via learned swap-memory, a wilting schedule, client-booking dependency, a guided goodbye), so it wins raw novelty even after docking for repetition — but its most original ideas are clustered and duplicated (5/12/13 all lean on the same learned-memory lock-in, 3/9 both surface \"hours you got back,\" and 1/2/11/16 all circle \"teammate claims their own shift\"). Critically, Y bought that novelty at the cost of relevance: its novelty leaders (5, 6, 12, 13) are switching-cost/late-retention mechanisms that need months of accumulated history — 12 literally says \"a year\" — so they barely touch first-60-day churn, the stated problem. X pays the opposite price: ideas 1/2/4/6 are first-reach answers (import data, invite button, templates) that drag its novelty down, but nearly every X idea — including the wild ones (swap marketplace, public team page, auto-generate, concierge, buyback) — stays squarely aimed at early activation, whole-team adoption, and the founder catching the stall. Mechanism specificity and plain-language compliance are a tie; the verdict turns on Y drifting to the wrong time horizon exactly where it is most creative.",
+          "Substance is genuinely close, but Y edges X. X is the more inventive set (wilting-schedule decay, guided-goodbye exit that itemizes the loss, gated week-unlock, pooled hours-saved dividend), yet its novelty is inflated by heavy within-collection repetition — claim-your-own-shift (#1/#11/#16) and team-memory lock-in (#5/#12/#13) collapse roughly six ideas into two — and it bought novelty at the cost of relevance: the lock-in/moat cluster (#5, #6, #12) builds switching cost that cannot bite inside the first 60 days, the exact window the founder cares about, since a team that churns that early has accumulated no \"shift memory\" to lose. Y inversely bought relevance at the cost of novelty — half of it is the canonical SaaS-churn playbook (pause-not-cancel, import-your-data, trade templates, founder-calls-everyone, money-back guarantee, health-flag dashboard), all first-reach answers — but each variant carries a distinct, operationally concrete mechanism and the set attacks the stated root causes (first-60-day setup friction and partial-team adoption) head-on, tuned to the real facts (400 teams lets the founder personally call each; day-3 detection buys a 57-day head start). Y's relevance-plus-mechanism advantage on the founder's actual problem outweighs X's repetition-discounted novelty, so Y wins substance by a nose, not a blowout."
+        ],
+        "distinct": {
+          "plain": 12,
+          "starter": 12,
+          "note": "Method: built ONE shared mechanism vocabulary from the pooled 32 ideas, stripped prose to the core retaining move, labeled all 32 against it, then distinct_all16 = count of distinct labels among each collection's 16. Granularity = mid-level \"core move\" applied identically to both. SAFE/BOLD/WILD ignored (boldness tiers, not mechanisms). Trigger-vs-action rule applied uniformly: when an idea bundles a detection trigger with a downstream move, label by the MOVE (e.g. C2#7 stall-trigger -> M3 auto-generate; C2#16 first-tap-trigger -> M11 board-visibility); detection IS the move only for founder-facing alerting with no automated product action (M9). Delivery channel (SMS vs in-app) treated as a detail, not a mechanism (C1#12 -> M5).\n\nShared vocabulary: M1 auto-populate initial state from existing customer data (calendar/spreadsheet import); M2 prefill from template/peer pattern; M3 auto-generate state from constraints (algorithmic); M4 push value-output to non-users (view-only digest); M5 direct each member to a personal actionable hook (claim/confirm/swap your own shift); M6 one-step bulk team activation; M7 gate/block completion until N teammates participate; M8 concierge/high-touch human does the work; M9 founder-facing early-warning detection; M10 peer-driven re-engagement; M11 social-visibility pressure within team; M12 lock-in via accumulated learned value (internal); M13 lock-in via external-party dependency; M14 exit-interception / honest-friction at cancel; M15 strong guarantee/commitment device; M16 affective alive/decaying status signal; M18 surface quantified value/ROI as engagement reward; M-swap peer-to-peer bottom-up shift trading (C1-only, genuinely unique move).\n\nC1 labels: 1->M1, 2->M6, 3->M9, 4->M1, 5->M8, 6->M2, 7->M5, 8->M7, 9->M14, 10->M8, 11->M9, 12->M5, 13->M-swap, 14->M15, 15->M3, 16->M11. Distinct = {M1,M2,M3,M5,M6,M7,M8,M9,M11,M14,M15,M-swap} = 12 (4 ideas lost to repeats: M1, M5, M8, M9 each twice).\n\nC2 labels: 1->M5, 2->M5, 3->M18, 4->M4, 5->M12, 6->M13, 7->M3, 8->M10, 9->M18, 10->M7, 11->M5, 12->M12, 13->M14, 14->M16, 15->M2, 16->M11. Distinct = {M2,M3,M4,M5,M7,M10,M11,M12,M13,M14,M16,M18} = 12 (4 ideas lost to repeats: M5 x3, M18 x2, M12 x2).\n\nPersonal-hook merge rule (key consistency control): C1#7, C1#12 and C2#1/#2/#11 all collapse into M5 (route a personal confirm/claim/swap action to the affected individual). This dissolved a would-be C1-only \"recurring nudge\" label into M5 and prevented splitting in C1 what was merged in C2.\n\nCross-check (both directions, passes): shared labels M2/M3/M5/M7/M11/M14 have members doing the same move in each collection; C2-only labels (M4/M10/M12/M13/M16/M18) and C1-only labels (M1/M6/M8/M9/M15/M-swap) reflect mechanisms the other collection genuinely never explores, not granularity asymmetry. M12 vs M13 kept distinct as a deliberate causal-pathway choice (internal accumulated-state vs external-party dependency).\n\nResult: a legitimate tie at 12/12 overall variety. The discriminating texture is NOT in the integers (both shed exactly 4 to repeats) but in concentration: C2 converges harder, with a 3-idea personal-actionable-hook cluster (M5: #1/#2/#11) plus two paired mechanisms (M12, M18), whereas C1's repeats are four scattered pairs. Equal diversity, C2 more concentrated on one mechanism. Relative texture is more defensible than the absolute counts."
+        }
+      }
+    ]
+  }
+}

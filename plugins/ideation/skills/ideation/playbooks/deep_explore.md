@@ -9,7 +9,7 @@ Full-treatment ideation for a fresh problem. Scout the problem space, generate f
 
 ## When NOT to pick
 
-- **Default case — user said "brainstorm" / "ideate" / "ideas for X" with no modifier.** Use `starter`.
+- **No-modifier / no-signal case — user said "brainstorm" / "ideate" / "ideas for X".** Use the lean capture default (`generate.brainstorm`, SKILL.md Step 3c) — not `starter`, and not this. `starter` is itself opt-in (`--techniques`).
 - The user asked only for scoring/ranking — use `quick_seed`.
 - The user already has a shortlist and wants validation — use `stress_test_shortlist`.
 - The user wants to build on specific existing ideas — use `followup_develop`.

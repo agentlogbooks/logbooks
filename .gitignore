@@ -11,3 +11,4 @@ plugins/*/change-requests/
 __pycache__/
 *.pyc
 .idea/
+.archive/

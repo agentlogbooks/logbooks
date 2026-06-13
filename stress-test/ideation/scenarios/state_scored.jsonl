@@ -1,0 +1,48 @@
+{"ts": 0, "type": "session_started", "payload": {"topic": "cafe-afternoon-revenue", "phases": ["Frame", "Generate", "Transform", "Evaluate", "Decide"]}}
+{"ts": 0.2, "type": "plan_set", "payload": {"steps": [{"n": 1, "type": "op", "description": "Identify root causes and framing questions"}, {"n": 2, "type": "checkpoint", "description": "Confirm the framing"}, {"n": 3, "type": "parallel", "description": "Generate ~20 diverse ideas in parallel"}, {"n": 4, "type": "op", "description": "Present them side-by-side in a short report"}]}}
+{"ts": 1, "type": "phase_started", "payload": {"name": "Decide"}}
+{"ts": 1.01, "type": "idea_generated", "payload": {"id": 1, "title": "Loyalty happy-hour after 2pm", "description": "Punch-card that only fills on weekday afternoons, so regulars learn the slow hours are the cheap hours and start drifting in then.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.02, "type": "idea_generated", "payload": {"id": 2, "title": "Laptop-corner day pass", "description": "Sell a $6 afternoon pass for a quiet corner with outlets and fast wifi; the coffee's extra, the seat is the product.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.03, "type": "idea_generated", "payload": {"id": 3, "title": "Pastry rescue box", "description": "Bag up the morning's unsold pastries at 3pm for half price; turns waste into a reason to walk in after lunch.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.04, "type": "idea_generated", "payload": {"id": 4, "title": "Second-cup half-price token", "description": "Anyone who bought a morning coffee gets a token for a half-price afternoon refill, redeemable same day only.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.05, "type": "idea_generated", "payload": {"id": 5, "title": "Neighborhood remote-work club", "description": "A monthly membership that reserves afternoon seating and a bottomless drip, aimed at the work-from-home crowd nearby.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.06, "type": "idea_generated", "payload": {"id": 6, "title": "Kids draw, parents stay", "description": "Free crayons and a wall to pin drawings on; parents on the school run linger and order a second drink.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.07, "type": "idea_generated", "payload": {"id": 7, "title": "Afternoon tasting flight", "description": "Three 4oz pours of single-origin for the price of a latte, framed as a slow-hour ritual, not a rush purchase.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.08, "type": "idea_generated", "payload": {"id": 8, "title": "Bring-a-friend 3-to-5", "description": "Between 3 and 5, two drinks ring up as one-and-a-half; the empty room fills because nobody comes alone.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.09, "type": "idea_generated", "payload": {"id": 9, "title": "Standing pre-order for offices", "description": "Nearby offices set a recurring 3pm tray order; you batch-make it, they expense it, the lull disappears.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.1, "type": "idea_generated", "payload": {"id": 10, "title": "Silent-hour study deal", "description": "Declare 2-4pm phone-free and discount drip 30%; the vibe itself becomes the draw for students.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.11, "type": "idea_generated", "payload": {"id": 11, "title": "Cold-brew growler refills", "description": "Sell branded growlers, refill cold brew cheap in the afternoon; regulars stock their fridge and your slow hours move volume.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.12, "type": "idea_generated", "payload": {"id": 12, "title": "Barista's-choice mystery cup", "description": "A $3 afternoon-only mystery drink the barista improvises; cheap experiment that turns dead time into a game.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.13, "type": "idea_generated", "payload": {"id": 13, "title": "Afterschool hot-chocolate route", "description": "Partner with the school two blocks over for a hot-chocolate punch card kids redeem walking home.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.14, "type": "idea_generated", "payload": {"id": 14, "title": "Co-working stamp partnership", "description": "Tie up with a co-working space: their members flash a badge for afternoon discounts, you get their overflow.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.15, "type": "idea_generated", "payload": {"id": 15, "title": "Slow-hour catering sampler", "description": "Use the lull to bake mini catering samplers and hand them to office managers who walk past at 3.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.16, "type": "idea_generated", "payload": {"id": 16, "title": "Pay-what-it-weighs cookies", "description": "Afternoon cookies priced by the gram on a little scale at the counter; novelty pulls the curious in.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.17, "type": "idea_generated", "payload": {"id": 17, "title": "Reverse rush-hour playlist", "description": "A posted live DJ-style afternoon playlist; people come for the set, the coffee is incidental.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 1.18, "type": "idea_generated", "payload": {"id": 18, "title": "Two-for-Tuesday iced drinks", "description": "Every Tuesday afternoon, iced drinks are buy-one-gift-one; the gifted one drags in a new face.", "kind": "seed", "tag": "BOLD", "status": "active"}}
+{"ts": 1.19, "type": "idea_generated", "payload": {"id": 19, "title": "Window-seat reservation app", "description": "Let people reserve the good window seat for an afternoon hour for a small fee that's redeemable on food.", "kind": "seed", "tag": "WILD", "status": "active"}}
+{"ts": 1.2, "type": "idea_generated", "payload": {"id": 20, "title": "Local-maker pop-up shelf", "description": "Rent a shelf to a local maker who hosts an afternoon demo; their followers become your 3pm traffic.", "kind": "seed", "tag": "SAFE", "status": "active"}}
+{"ts": 3.01, "type": "idea_scored", "payload": {"id": 1, "score": 77, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.02, "type": "idea_scored", "payload": {"id": 2, "score": 58, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.03, "type": "idea_scored", "payload": {"id": 3, "score": 95, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.04, "type": "idea_scored", "payload": {"id": 4, "score": 76, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.05, "type": "idea_scored", "payload": {"id": 5, "score": 57, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.06, "type": "idea_scored", "payload": {"id": 6, "score": 94, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.07, "type": "idea_scored", "payload": {"id": 7, "score": 75, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.08, "type": "idea_scored", "payload": {"id": 8, "score": 56, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.09, "type": "idea_scored", "payload": {"id": 9, "score": 93, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.1, "type": "idea_scored", "payload": {"id": 10, "score": 74, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.11, "type": "idea_scored", "payload": {"id": 11, "score": 55, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.12, "type": "idea_scored", "payload": {"id": 12, "score": 92, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.13, "type": "idea_scored", "payload": {"id": 13, "score": 73, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.14, "type": "idea_scored", "payload": {"id": 14, "score": 54, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.15, "type": "idea_scored", "payload": {"id": 15, "score": 91, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.16, "type": "idea_scored", "payload": {"id": 16, "score": 72, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.17, "type": "idea_scored", "payload": {"id": 17, "score": 53, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.18, "type": "idea_scored", "payload": {"id": 18, "score": 90, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.19, "type": "idea_scored", "payload": {"id": 19, "score": 71, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 3.2, "type": "idea_scored", "payload": {"id": 20, "score": 52, "rationale": "Scored on reach \u00d7 effort \u00d7 margin."}}
+{"ts": 5.05, "type": "idea_ranked", "payload": {"id": 8, "rank": 1}}
+{"ts": 5.1, "type": "idea_ranked", "payload": {"id": 3, "rank": 2}}
+{"ts": 5.15, "type": "idea_ranked", "payload": {"id": 11, "rank": 3}}
+{"ts": 5.2, "type": "idea_ranked", "payload": {"id": 1, "rank": 4}}
+{"ts": 5.25, "type": "idea_ranked", "payload": {"id": 17, "rank": 5}}

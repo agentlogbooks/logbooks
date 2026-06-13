@@ -51,8 +51,8 @@ Ideas that `decide.route` parks in iteration N have their `status` patched to `p
 
 Checked by the playbook before invoking the planner. Pre-flight, not an operator step:
 
-1. Active frame exists — else error: "No active frame. Run `ideation <slug>: <intent>` with the `starter` playbook or `frame.discover` first."
-2. At least 5 active ideas — else error: "Pool has fewer than 5 active ideas. Run `generate.seed` or the `starter` playbook first."
+1. Active frame exists — else error: "No active frame. Seed the topic first — `ideation <slug>: <intent>` (lean capture) gives a light frame, or use `--techniques` / `frame.discover` for a full one."
+2. At least 5 active ideas — else error: "Pool has fewer than 5 active ideas. Seed more first — `ideation <slug>: <intent>` (lean capture / `generate.brainstorm`), import your own with `ideation <slug>: import these ideas: …`, or `--techniques` for the structured treatment."
 
 ## Expected output
 

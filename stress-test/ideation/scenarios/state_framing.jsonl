@@ -1,0 +1,6 @@
+{"ts": 0, "type": "session_started", "payload": {"topic": "cafe-afternoon-revenue", "phases": ["Frame", "Generate", "Transform", "Evaluate", "Decide"]}}
+{"ts": 0.2, "type": "plan_set", "payload": {"steps": [{"n": 1, "type": "op", "description": "Identify root causes and framing questions"}, {"n": 2, "type": "checkpoint", "description": "Confirm the framing"}, {"n": 3, "type": "parallel", "description": "Generate ~20 diverse ideas in parallel"}, {"n": 4, "type": "op", "description": "Present them side-by-side in a short report"}]}}
+{"ts": 1, "type": "phase_started", "payload": {"name": "Frame"}}
+{"ts": 1, "type": "op_started", "payload": {"op_run_id": 1, "operator": "frame.discover", "persona": "", "cohort_size": 0, "step_n": 1, "description": "Identify root causes and framing questions"}}
+{"ts": 2, "type": "op_finished", "payload": {"op_run_id": 1, "status": "succeeded", "ideas_count": 0}}
+{"ts": 2, "type": "checkpoint_reached", "payload": {"name": "framing", "step_n": 2}}

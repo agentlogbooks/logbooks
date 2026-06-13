@@ -1,0 +1,109 @@
+{
+  "summary": "Track D: idea quality via INPUT diversification (each persona gets a disjoint slice of the frame) vs baseline. Blind substance A/B (relevance held) is the verdict; census reports OVERALL distinct mechanisms across all 16 (real diagnostic) + cross-persona collisions (manipulation check).",
+  "agentCount": 14,
+  "logs": [
+    "cafe-afternoon-revenue: base distinct16=10 fix distinct16=11 | prefers=fix,fix",
+    "b2b-saas-early-churn: base distinct16=8 fix distinct16=8 | prefers=tie,base"
+  ],
+  "result": {
+    "verdict_note": "Verdict = blind substance A/B with relevance flat-or-up. Census distinct_all16 is the real diversity diagnostic (overall variety); cross_maker_collisions is only a manipulation check (partitioning inputs drops it near-tautologically). Watch for \"collisions down, distinct_all16 flat, substance flat\" = lever engaged, didn't help. n=2 frames.",
+    "substance": {
+      "base": 3.75,
+      "fix": 3.83
+    },
+    "axes": {
+      "base": {
+        "novelty": 3.25,
+        "mechanism": 4,
+        "relevance": 4,
+        "compliance": 4.25
+      },
+      "fix": {
+        "novelty": 3.75,
+        "mechanism": 4,
+        "relevance": 3.75,
+        "compliance": 4.25
+      }
+    },
+    "census_distinct_all16": {
+      "base": 9,
+      "fix": 9.5
+    },
+    "prefers_overall": [
+      "fix",
+      "fix",
+      "tie",
+      "base"
+    ],
+    "per_topic": [
+      {
+        "topic": "cafe-afternoon-revenue",
+        "base": {
+          "novelty": 3,
+          "mechanism": 4,
+          "relevance": 4,
+          "compliance": 4.5
+        },
+        "fix": {
+          "novelty": 4,
+          "mechanism": 4,
+          "relevance": 4,
+          "compliance": 4.5
+        },
+        "prefers": [
+          "fix",
+          "fix"
+        ],
+        "reasons": [
+          "Both collections draw from the same shared core (idle-oven product, morning-to-afternoon unlock token, quiet-work-room brand, rent-the-kitchen, sliding price, separate afternoon identity, selling idleness), and both are strongly relevant — each explicitly protects the morning rush from cannibalisation, with concrete who-does-what mechanisms throughout. The discriminator is internal repetition versus coverage: X clusters hard, carrying three near-duplicate pairs (rent-kitchen A4≈B5, price-drop A6≈B1, sell-idleness A5≈B3) plus a quiet-space triple (A3/A8/B7), which is a real novelty-and-coverage failure under the rubric. Y repeats less (only a couple of overlapping pairs) and adds genuine singletons that broaden the attack — nap-and-sip recharge slots, a ticketed speakeasy listening room, scarcity tide-chart, beat-the-barista timer, pre-sold supper boxes — without scattering into unrelated micro-topics, since nearly all still target afternoon revenue plus non-cannibalisation. Y did pay a small relevance price on ~3 soft-revenue gimmicks (book swap, mug trade-in for credit, the honesty bar which cuts cost rather than growing revenue), but that minority hit is smaller than X's structural repetition, so Y has the higher substance.",
+          "X has higher substance. Both collections share the same core archetypes (idle-oven bake, morning-token return, quiet-room rebrand, rent-the-kitchen, sliding price, different-concept), and both are highly concrete (named personas, specific actions) and clean coffee-talk, so mechanism and compliance are roughly tied. X edges ahead on novelty: Maker B contributes genuinely non-obvious, varied entries (nap-and-sip recharge slots, beat-the-barista timer game, password speakeasy, tide-chart scarcity, travel-mug trade-in) and Maker A adds a cost-side attack (near-unstaffed honesty bar that turns a thin trickle profitable) and demand-known supper boxes — broad coverage with little overlap. Y achieved breadth partly by reskinning: the \"sell silence\" idea recurs four times (quiet room, sell stillness, no-clocks, enforced library hour) and sliding price appears twice (Y-A6 and Y-B1), which is a within-collection repetition/novelty failure, and Maker A's whole set is textbook-archetypal. Neither badly traded novelty for relevance — Y's most novel additions (dog-hour, parcel pickup) are very on-point, while X's nap-and-sip and speakeasy lean novel-but-low-revenue — so X wins on novelty and lower repetition while staying even elsewhere."
+        ],
+        "census": {
+          "base": {
+            "distinct_all16": 10,
+            "cross_maker_collisions": 5
+          },
+          "fix": {
+            "distinct_all16": 11,
+            "cross_maker_collisions": 2
+          },
+          "note": "See set1/set2 fields and the detailed breakdown above."
+        }
+      },
+      {
+        "topic": "b2b-saas-early-churn",
+        "base": {
+          "novelty": 3.5,
+          "mechanism": 4,
+          "relevance": 4,
+          "compliance": 4
+        },
+        "fix": {
+          "novelty": 3.5,
+          "mechanism": 4,
+          "relevance": 3.5,
+          "compliance": 4
+        },
+        "prefers": [
+          "tie",
+          "base"
+        ],
+        "reasons": [
+          "Both collections are near-mirror images, disciplined across the same five early-churn levers (activation/setup, whole-team adoption, value-visibility, lock-in, stall/silence intervention) — neither achieved variety by scattering into unrelated micro-topics. Their failures offset: X traded novelty for safety, with X-A reaching for the most obvious answers and three near-duplicate cross-maker pairs (A4≈B4 time-saved counter, A7≈B3 CSV lock-in, A8≈B8 silence signal), so novelty leans Y. Conversely Y bought novelty at the cost of relevance via its lock-in cluster — Y-B is half lock-in (B3/B4/B7/B8: rank, dress-rehearsal-for-quitting, weird-rules, exit-door) which are the cleverest-feeling ideas but bet on accumulated value the first-60-day churning cohort hasn't built yet, while X stays more evenly on-target; relevance leans X. Mechanism is a wash (both use concrete named scenarios; the B-makers' analogy dressing inflates perceived novelty but the underlying who-does-what is comparable), netting substance to X 11 / Y 11 — a genuine tie.",
+          "The two collections are near mirror-images at the concept level (pre-built first week, hours-saved counter, anyone-can-draft, schedule-in-chat, history-a-CSV-can't-carry, one-tap rescue, the wilting/starving-schedule metaphor, peer-gap visibility, and a silence/canary churn signal all appear in both), so coverage and mechanism are effectively tied and both are equally concrete on who-does-what. The decisive gap is the rubric's named novelty failure: X's Maker B spends 4 of 8 ideas (B3, B4, B7, B8) on the same export/lock-in moment, repeating one concept three times, which costs X on novelty. X did partly buy that variety at the cost of relevance, since lock-in/track-record ideas fight retention of established accounts rather than the stated first-60-day churn, but X offsets this with the single most on-target idea in either set (A4, importing the team's existing messy spreadsheet to kill the setup wall), keeping relevance roughly even. Neither collection achieved variety by scattering into unrelated micro-topics, and compliance is even; Y wins substance by a hair purely on the within-collection-repetition penalty against X."
+        ],
+        "census": {
+          "base": {
+            "distinct_all16": 8,
+            "cross_maker_collisions": 4
+          },
+          "fix": {
+            "distinct_all16": 8,
+            "cross_maker_collisions": 2
+          },
+          "note": "Mechanism diversity audit complete. Both collections have equal overall variety (8 distinct mechanisms each). Collection 1: 4 cross-maker collisions. Collection 2: 2 cross-maker collisions, but this lower number reflects within-maker convergence (Maker B used raise-switching-cost 4 of 8 times), not broader coverage."
+        }
+      }
+    ]
+  }
+}

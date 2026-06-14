@@ -222,7 +222,7 @@ Stages table for its spec:
 |---|---|---|---|---|---|
 | summarize | `summarize_status IS NULL AND summarize_attempts < 3 AND (lease free)` | read URL, write summary | `'done'` | `'irrelevant'` | `'failed'` (3 claims) |
 | assess | `assess_status IS NULL AND summarize_status='done' AND assess_attempts < 3 AND (lease free)` | rate relevance+credibility | `'done'` | — | `'failed'` (3 claims) |
-| verdict | `verdict IS NULL AND assess_status='done'` | include/exclude/needs-human | non-null | `'exclude'`, `'needs-human'` | — |
+| verdict | `verdict IS NULL AND assess_status='done'` | include/exclude/needs-human | `'include'` | `'exclude'` | `'needs-human'` (dead-letter) |
 
 Funnel:
 
@@ -230,14 +230,16 @@ Funnel:
 SELECT 'summarize' stage, count(*) n FROM sources WHERE summarize_status IS NULL
 UNION ALL SELECT 'assess',  count(*) FROM sources WHERE assess_status IS NULL AND summarize_status='done'
 UNION ALL SELECT 'verdict', count(*) FROM sources WHERE verdict IS NULL AND assess_status='done'
-UNION ALL SELECT 'skipped', count(*) FROM sources WHERE summarize_status='irrelevant'
-UNION ALL SELECT 'parked',  count(*) FROM sources WHERE summarize_status='failed' OR assess_status='failed'
-UNION ALL SELECT 'done',    count(*) FROM sources WHERE verdict IS NOT NULL;
+UNION ALL SELECT 'skipped', count(*) FROM sources WHERE summarize_status='irrelevant' OR verdict='exclude'
+UNION ALL SELECT 'parked',  count(*) FROM sources WHERE summarize_status='failed' OR assess_status='failed' OR verdict='needs-human'
+UNION ALL SELECT 'done',    count(*) FROM sources WHERE verdict='include';
 ```
 
-Every row lands in exactly one bucket (terminal-skips get their own — without the `skipped` line,
-`'irrelevant'` rows vanish from the funnel), so the buckets sum to `count(*)` and the funnel doubles
-as the completeness partition.
+Every row lands in exactly one bucket — `'include'` is the positive terminal (`done`),
+`'irrelevant'`/`'exclude'` are terminal-skips (`skipped`), and `'failed'`/`'needs-human'` are the
+dead-letter set (`parked`) — so the buckets sum to `count(*)`. These are the *same* buckets the render
+projection's partition bar uses (`references/visualization.md`), so the funnel and the partition
+agree row-for-row rather than classifying `'exclude'`/`'needs-human'` differently.
 
 Every footgun is handled: `summary` may be `''` when `summarize_status='done'` (sentinel); the lease +
 atomic claim let multiple summarizers run safely (concurrency); `assess` waits on `summarize_status='done'`

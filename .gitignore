@@ -12,3 +12,4 @@ __pycache__/
 *.pyc
 .idea/
 .archive/
+.viz-check/

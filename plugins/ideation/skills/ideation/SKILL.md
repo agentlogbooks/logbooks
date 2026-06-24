@@ -646,9 +646,9 @@ The planner emits cohort references; the orchestrator resolves them via the CLI:
 The live wall is mandatory (see Step 2). This section is the canonical event reference for every emit call you make during plan execution.
 
 Infrastructure lives in `live/` next to this file:
-- `live/serve.py` — SSE server on port 7878. Hydrates from offset 0 on every browser connect, so a tab opened mid-session sees the full session history.
+- `live/serve.py` — HTTP+SSE server on port 7878. Serves the dashboard shell (`view.html` + its JS modules) at `/`, an SSE stream at `/events` (replays from offset 0 on every connect), and a `/state` JSON snapshot. `/state` projects the **authoritative SQLite logbook** (`logbook.sqlite`) — frames, ideas with lineage parents + temperature zones, assessments, operator runs — and overlays the event stream for the bits the DB can't express (the plan, which op is mid-flight, open checkpoints, completion). The logbook is read strictly read-only.
 - `live/emit.py` — appends one JSON line to `.logbooks/ideation/<slug>/live-events.jsonl`. Independent of the server: emits always succeed even if no server is running (events accumulate in the file).
-- `live/view.html` — sticky-note board served at `/`.
+- `live/view.html` + `views.jsx` / `live-data.jsx` / `app.jsx` — the React "Ideation Dashboard" served at `/`: a lineage **Tree** (hero), **Timeline**, and **Board** view over the live session. `live-data.jsx` polls `/state` and re-fetches on every SSE event, so the wall reflects the logbook with no lost state. The events you emit below drive the live overlay (running op, plan, checkpoints); the idea/assessment/lineage content is read from the logbook your operators write.
 
 The emit command is uniform:
 
@@ -770,7 +770,7 @@ The same pattern works for `idea_scored` (query `score_summary`), `idea_kept`/`i
 - `references/output-rules.md` — mandatory style rules (coffee-talk descriptions, ID discipline, no methodology names in user-facing text)
 - `references/personas/<name>.md` — specialist voices loaded by parameterized operators
 - `references/zones/<name>.md` — temperature-zone constraints loaded by `transform.john` and `transform.ratchet`
-- `live/serve.py` — SSE server; `live/emit.py` — event emitter; `live/view.html` — sticky-note dashboard
+- `live/serve.py` — HTTP+SSE server (`/`, `/events`, `/state`); `live/emit.py` — event emitter; `live/view.html` + `views.jsx`/`live-data.jsx`/`app.jsx` — the React Ideation Dashboard (Tree / Timeline / Board)
 
 ## Tool usage reminders
 
